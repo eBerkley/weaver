@@ -18,6 +18,22 @@ option go_package = "github.com/ServiceWeaver/weaver/internal/tool/multi";
 package multi;
 import "runtime/protos/config.proto";
 
+// ReplicaDefs defines the number of replicas to create for each group / component.
+// if a group / component does not have an associated ReplicaDefs entry,
+// the defaultReplicas value is used instead.
+
+message ReplicaDefs {
+    // The name of the component.
+    // if the component is the name of a group,
+    // this will set the number of replicas for that group.
+    // 
+    // Note that the name of the group is the first entry in each colocation list.
+    string group = 1;
+
+    // which cpus should this process be allowed to run in.
+    string cpus = 2;
+}
+ 
 // MultiConfig stores the configuration information for one execution of a
 // Service Weaver application using the multiprocess deployer.
 message MultiConfig {
@@ -36,4 +52,8 @@ message MultiConfig {
     string address = 1;
   }
   map<string, ListenerOptions> listeners = 3;
+
+  repeated ReplicaDefs replicas = 4;
+
+  string cpus = 5;
 }

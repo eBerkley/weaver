@@ -25,6 +25,7 @@ import (
 	"net/http"
 	"os"
 	"slices"
+	"strings"
 	"sync"
 	"syscall"
 	"time"
@@ -48,10 +49,12 @@ import (
 	"golang.org/x/exp/maps"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/protobuf/types/known/timestamppb"
+
+	"github.com/ServiceWeaver/weaver/internal/tool/multi/cpusets"
 )
 
 // The default number of times a component is replicated.
-const defaultReplication = 2
+const defaultReplication = 1
 
 // A deployer manages an application deployment.
 type deployer struct {
@@ -90,6 +93,8 @@ type group struct {
 	callable    []string                        // callable components for group
 	certPEM     []byte                          // group certificate
 	keyPEM      []byte                          // group private key
+
+	numreplicas int //  number of replicas, specified by the number of replicas specified in the weaver.toml file.
 }
 
 // A proxyInfo contains information about a proxy.
@@ -108,6 +113,19 @@ type handler struct {
 }
 
 var _ envelope.EnvelopeHandler = &handler{}
+
+// getCgroupName returns a string that should be passed to cpusets.NewCgroup and cpusets.AddPidToCgroup
+//
+// groupName should be the name specified in the config file (e.g. github.com/ServiceWeaver/weaver/Main)
+// index is the value that distinguishes each cgroup in a service weaver group from eachother.
+// If there are 3 main components, index should be one of 0,1,2.
+//
+// returns a name like Main-0
+func getCgroupName(groupName string, index int) string {
+	tmp := strings.Split(groupName, "/")
+	baseName := tmp[len(tmp)-1]
+	return fmt.Sprintf("%v-%v", baseName, index)
+}
 
 // newDeployer creates a new deployer. The deployer can be stopped at any
 // time by canceling the passed-in context.
@@ -163,6 +181,21 @@ func newDeployer(ctx context.Context, deploymentId string, config *MultiConfig, 
 	// Form co-location groups.
 	if err := d.computeGroups(); err != nil {
 		return nil, err
+	}
+
+	// Start cgroup code
+	cpusets.InitCPUs(config.Cpus)
+
+	// for each replica specified
+	for _, g := range config.Replicas {
+		d.logger.Info(fmt.Sprintf("group %v assigned cpus %v ", g.Group, g.Cpus))
+		cgroup_name := getCgroupName(g.Group, d.groups[g.Group].numreplicas)
+
+		if err := cpusets.NewCgroup(cgroup_name, g.Cpus); err != nil {
+			return nil, err
+		}
+
+		d.groups[g.Group].numreplicas++
 	}
 
 	// Start a goroutine that collects metrics.
@@ -224,6 +257,8 @@ func (d *deployer) computeGroups() error {
 			subscribers: map[string][]*envelope.Envelope{},
 			certPEM:     certPEM,
 			keyPEM:      keyPEM,
+
+			numreplicas: 0,
 		}
 		groups[component] = g
 		return g, nil
@@ -286,7 +321,7 @@ func (d *deployer) stop(err error) {
 		d.err = err
 	}
 	d.mu.Unlock()
-
+	cpusets.Cleanup()
 	// Cancel the context.
 	d.ctxCancel()
 }
@@ -313,13 +348,19 @@ func (d *deployer) startColocationGroup(g *group) error {
 	if d.err != nil {
 		return d.err
 	}
-	if len(g.envelopes) == defaultReplication {
+	useCgroups := true
+	if g.numreplicas == 0 {
+		useCgroups = false
+		g.numreplicas = defaultReplication
+	}
+
+	if len(g.envelopes) == g.numreplicas {
 		// Already started.
 		return nil
 	}
 
 	components := maps.Keys(g.started)
-	for r := 0; r < defaultReplication; r++ {
+	for r := 0; r < g.numreplicas; r++ {
 		// Start the weavelet and capture its logs, traces, and metrics.
 		info := &protos.WeaveletArgs{
 			App:             d.config.App.Name,
@@ -362,6 +403,12 @@ func (d *deployer) startColocationGroup(g *group) error {
 			return err
 		}
 		g.envelopes = append(g.envelopes, e)
+
+		if useCgroups {
+			cgroup := getCgroupName(g.name, r)
+			cpusets.AddPidToCgroup(cgroup, pid)
+		}
+
 	}
 	return nil
 }
