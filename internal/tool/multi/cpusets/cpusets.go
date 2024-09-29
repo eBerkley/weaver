@@ -13,6 +13,7 @@ import (
 )
 
 const (
+	USE_CGROUPS                    = true
 	shutdownAttempts               = 5
 	shutdownTimeout  time.Duration = 500 * time.Millisecond
 )
@@ -24,14 +25,24 @@ var (
 )
 
 func init() {
-	runtime.OnExitSignal(Cleanup)
+	if USE_CGROUPS {
+		runtime.OnExitSignal(Cleanup)
+	}
 }
 
 // Cleanup removes the cgroups created by this package.
 //
 // Because all processes within cgroups need to be terminated before the cgroup can be deleted, this function will attempt to shutdown multiple times on a timeout.
 func Cleanup() {
+	if !USE_CGROUPS {
+		return
+	}
+
 	var err error
+	if headCgroup == nil {
+		return
+	}
+
 	// fmt.Println("trying to delete...")
 	for i := 0; i < shutdownAttempts; i++ {
 		err = headCgroup.Destroy()
@@ -47,6 +58,9 @@ func Cleanup() {
 //
 // all_cpus is the list of cpus that processes will be allowed to pull from, and should be a Linux CPU list formatted string.
 func InitCPUs(all_cpus string) {
+	if !USE_CGROUPS {
+		return
+	}
 	// assign initial set of CPU cores to be used
 	unused = must.Must(cpuset.Parse(all_cpus))
 
@@ -75,6 +89,10 @@ func RemainingCpus() string {
 //
 // cpu_req should be a Linux CPU list formatted string.
 func NewCgroup(name string, cpu_req string) error {
+	if !USE_CGROUPS {
+		return nil
+	}
+
 	cpus, err := requestCPUs(cpu_req)
 	if err != nil {
 		return err
@@ -86,6 +104,10 @@ func NewCgroup(name string, cpu_req string) error {
 // AddPidToCgroup restrics a process to a cgroup created with NewCgroup.
 // name should be a valid cgroup that was passed to NewCgroup prior without error.
 func AddPidToCgroup(name string, pid int) error {
+	if !USE_CGROUPS {
+		return nil
+	}
+
 	c, ok := subCgroups[name]
 	if !ok || !c.Exists() {
 		return fmt.Errorf("cgroup name %s not found", name)
@@ -95,6 +117,9 @@ func AddPidToCgroup(name string, pid int) error {
 }
 
 func requestCPUs(s string) (cpuset.CPUSet, error) {
+	if !USE_CGROUPS {
+		return cpuset.CPUSet{}, nil
+	}
 	req := must.Must(cpuset.Parse(s))
 	if !req.IsSubsetOf(unused) {
 		return cpuset.CPUSet{}, fmt.Errorf("CPUs %v already used", req.Difference(unused).List())
@@ -105,6 +130,10 @@ func requestCPUs(s string) (cpuset.CPUSet, error) {
 
 // Assumes that RequestCPUs has been called prior.
 func createCgroup(name string, cpus cpuset.CPUSet) error {
+	if !USE_CGROUPS {
+		return nil
+	}
+
 	if _, ok := subCgroups[name]; ok {
 		return fmt.Errorf("cgroup name %s already used", name)
 	}

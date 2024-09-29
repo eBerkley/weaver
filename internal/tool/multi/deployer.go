@@ -184,7 +184,9 @@ func newDeployer(ctx context.Context, deploymentId string, config *MultiConfig, 
 	}
 
 	// Start cgroup code
-	cpusets.InitCPUs(config.Cpus)
+	if config.Cpus != "" {
+		cpusets.InitCPUs(config.Cpus)
+	}
 
 	// for each replica specified
 	for _, g := range config.Replicas {
