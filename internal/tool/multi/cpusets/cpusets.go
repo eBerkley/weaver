@@ -16,6 +16,8 @@ const (
 	USE_CGROUPS                    = true
 	shutdownAttempts               = 5
 	shutdownTimeout  time.Duration = 500 * time.Millisecond
+
+	CGROUP_DIR = "/OB/"
 )
 
 var (
@@ -66,7 +68,7 @@ func InitCPUs(all_cpus string) {
 
 	// create base cgroup with all_cpus as the cpuset
 	headCgroup = must.Must(manager.New(&configs.Cgroup{
-		Name:      "head",
+		Path:      CGROUP_DIR,
 		Resources: &configs.Resources{CpusetCpus: all_cpus},
 	}))
 
@@ -139,8 +141,7 @@ func createCgroup(name string, cpus cpuset.CPUSet) error {
 	}
 
 	c, err := manager.New(&configs.Cgroup{
-		Name:   name,
-		Parent: "head",
+		Path: CGROUP_DIR + name,
 	})
 	if err != nil {
 		return err
