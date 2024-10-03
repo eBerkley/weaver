@@ -32,6 +32,9 @@ message ReplicaDefs {
 
     // which cpus should this process be allowed to run in.
     string cpus = 2;
+
+    // Which memory nodes should this process be allowed to run in
+    string mems = 3;
 }
  
 // MultiConfig stores the configuration information for one execution of a

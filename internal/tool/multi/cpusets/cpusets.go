@@ -90,7 +90,7 @@ func RemainingCpus() string {
 // No other feature of cgroups are currently used.
 //
 // cpu_req should be a Linux CPU list formatted string.
-func NewCgroup(name string, cpu_req string) error {
+func NewCgroup(name string, cpu_req string, mem_req string) error {
 	if !USE_CGROUPS {
 		return nil
 	}
@@ -100,7 +100,7 @@ func NewCgroup(name string, cpu_req string) error {
 		return err
 	}
 
-	return createCgroup(name, cpus)
+	return createCgroup(name, cpus, mem_req)
 }
 
 // AddPidToCgroup restrics a process to a cgroup created with NewCgroup.
@@ -131,7 +131,7 @@ func requestCPUs(s string) (cpuset.CPUSet, error) {
 }
 
 // Assumes that RequestCPUs has been called prior.
-func createCgroup(name string, cpus cpuset.CPUSet) error {
+func createCgroup(name string, cpus cpuset.CPUSet, mem_req string) error {
 	if !USE_CGROUPS {
 		return nil
 	}
@@ -150,8 +150,14 @@ func createCgroup(name string, cpus cpuset.CPUSet) error {
 	if err = c.Apply(-1); err != nil {
 		return err
 	}
-	if err = c.Set(&configs.Resources{CpusetCpus: cpus.String()}); err != nil {
-		return err
+	if mem_req == "" {
+		if err = c.Set(&configs.Resources{CpusetCpus: cpus.String()}); err != nil {
+			return err
+		}
+	} else {
+		if err = c.Set(&configs.Resources{CpusetCpus: cpus.String(), CpusetMems: mem_req}); err != nil {
+			return err
+		}
 	}
 	subCgroups[name] = c
 	return nil

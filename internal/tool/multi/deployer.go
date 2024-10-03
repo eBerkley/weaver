@@ -193,7 +193,7 @@ func newDeployer(ctx context.Context, deploymentId string, config *MultiConfig, 
 		d.logger.Info(fmt.Sprintf("group %v assigned cpus %v ", g.Group, g.Cpus))
 		cgroup_name := getCgroupName(g.Group, d.groups[g.Group].numreplicas)
 
-		if err := cpusets.NewCgroup(cgroup_name, g.Cpus); err != nil {
+		if err := cpusets.NewCgroup(cgroup_name, g.Cpus, g.Mems); err != nil {
 			return nil, err
 		}
 
