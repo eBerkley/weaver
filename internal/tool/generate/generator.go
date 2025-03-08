@@ -933,6 +933,7 @@ func (g *generator) generate() error {
 		g.generateRouterChecks(fn)
 		g.generateLocalStubs(fn)
 		g.generateClientStubs(fn)
+		g.generateRoutedLocalStubs(fn)
 		if err := g.generateVersionCheck(fn); err != nil {
 			return err
 		}
@@ -1237,6 +1238,8 @@ func (g *generator) generateRegisteredComponents(p printFn) {
 			context.qualify("Context"), notExported(name),
 		)
 
+		routedLocalStubFn := fmt.Sprintf(`func(impl any, stub %s, caller string, tracer %s, isLocal func(shardKey uint64) bool) any { return %s_routed_local_stub{impl: impl.(%s), stub: stub, tracer: tracer%s}`, g.codegen().qualify("Stub"), g.trace().qualify("Tracer"), notExported(name), g.componentRef(comp), b.String())
+
 		var refData strings.Builder
 		myName := comp.fullIntfName()
 		for _, ref := range comp.refs {
@@ -1275,6 +1278,7 @@ func (g *generator) generateRegisteredComponents(p printFn) {
 		p(`		ClientStubFn: %s,`, clientStubFn)
 		p(`		ServerStubFn: %s,`, serverStubFn)
 		p(`		ReflectStubFn: %s,`, reflectStubFn)
+		p(`   RoutedLocalStubFn: %s`, routedLocalStubFn)
 		p(`		RefData: %s,`, strconv.Quote(refData.String()))
 		p(`	})`)
 	}
@@ -1487,6 +1491,222 @@ func (g *generator) generateClientStubs(p printFn) {
 				p(`	shardKey := _hash%s(r.%s(%s))`, exported(comp.intfName()), m.Name(), strings.Join(args, ", "))
 			} else {
 				p(`	var shardKey uint64`)
+			}
+
+			// Invoke call.Run.
+			p(``)
+			p(`	// Call the remote method.`)
+			data := "nil"
+			if mt.Params().Len() > 1 {
+				data = "enc.Data()"
+				p(`	requestBytes = len(enc.Data())`)
+			}
+			p(`	var results []byte`)
+			p(`	results, err = s.stub.Run(ctx, %d, %s, shardKey)`, methodIndex[m.Name()], data)
+			p(`	replyBytes = len(results)`)
+			p(`	if err != nil {`)
+			p(`		err = %s(%s, err)`, g.errorsPackage().qualify("Join"), g.weaver().qualify("RemoteCallError"))
+			p(`		return`)
+			p(`	}`)
+
+			// Invoke call.Decode.
+			b.Reset()
+			p(``)
+			p(`	// Decode the results.`)
+			p(`	dec := %s(results)`, g.codegen().qualify("NewDecoder"))
+			for i := 0; i < mt.Results().Len()-1; i++ { // Skip final error
+				rt := mt.Results().At(i).Type()
+				res := fmt.Sprintf("r%d", i)
+				if x, ok := rt.(*types.Pointer); ok && (g.tset.isProto(x) || g.tset.hasMarshalBinary(x)) {
+					// To decode a pointer *t where t is a proto or
+					// BinaryUnmarshaler, we need to instantiate a zero value
+					// of type t before calling the appropriate decoding
+					// function. For all other types, this is unnecessary.
+					tmp := fmt.Sprintf("tmp%d", i)
+					p(`	var %s %s`, tmp, g.tset.genTypeString(x.Elem()))
+					p(`	%s`, g.decode("dec", ref(tmp), x.Elem()))
+					p(`	%s = %s`, res, ref(tmp))
+				} else {
+					p(`	%s`, g.decode("dec", ref(res), rt))
+				}
+			}
+			p(`	err = dec.Error()`)
+
+			p(`	return`)
+			p(`}`)
+		}
+	}
+}
+
+func (g *generator) generateRoutedLocalStubs(p printFn) {
+	p(``)
+	p(``)
+	p(`// Routed local stub implementations.`)
+	// RoutedLocalStubFn func(impl any, stub Stub, caller string, tracer trace.Tracer) any
+	var b strings.Builder
+	for _, comp := range g.components {
+		stub := notExported(comp.intfName()) + "_routed_local_stub"
+		p(``)
+		p(`type %s struct {`, stub)
+		p(` impl %s`, g.componentRef(comp))
+		p(`	stub %s`, g.codegen().qualify("Stub"))
+		p(`	tracer %s`, g.trace().qualify("Tracer"))
+		for _, m := range comp.methods() {
+			p(`	%sMetrics *%s`, notExported(m.Name()), g.codegen().qualify("MethodMetrics"))
+		}
+		p(`}`)
+
+		p(``)
+		p(`// Check that %s implements the %s interface.`, stub, g.tset.genTypeString(comp.intf))
+		p(`var _ %s = (*%s)(nil)`, g.tset.genTypeString(comp.intf), stub)
+		p(``)
+
+		// ** Remote  **
+		// Assign method indices in sorted order.
+		mlist := make([]string, len(comp.methods()))
+		for i, m := range comp.methods() {
+			mlist[i] = m.Name()
+		}
+		sort.Strings(mlist)
+		methodIndex := make(map[string]int, len(mlist))
+		for i, m := range mlist {
+			methodIndex[m] = i
+		}
+
+		for _, m := range comp.methods() {
+			mt := m.Type().(*types.Signature)
+			p(``)
+			p(`func (s %s) %s(%s) (%s) {`, stub, m.Name(), g.args(mt), g.returns(mt))
+
+			// If this method should not be routed,
+			// Have the method just raise an error saying such.
+			if !comp.routedMethods[m.Name()] {
+				p(` err = %s("can not call routed local method on unrouted component")`, g.errorsPackage().qualify("New"))
+
+				p(` err = %s(%s, err)`, g.errorsPackage().qualify("Join"), g.weaver().qualify("RemoteCallError"))
+				p(` return`)
+				p(`}`)
+				continue
+			}
+
+			p(`	// Update metrics.`)
+			p(`	var requestBytes, replyBytes int`)
+			p(`	begin := s.%sMetrics.Begin()`, notExported(m.Name()))
+			p(`	defer func() { s.%sMetrics.End(begin, err != nil, requestBytes, replyBytes) }()`, notExported(m.Name()))
+			p(``)
+
+			// Create a child span iff tracing is enabled in ctx.
+			p(`	span := %s(ctx)`, g.trace().qualify("SpanFromContext"))
+			p(`	if span.SpanContext().IsValid() {`)
+			p(`		// Create a child span for this method.`)
+			p(`		ctx, span = s.stub.Tracer().Start(ctx, "%s.%s.%s", trace.WithSpanKind(trace.SpanKindClient))`, g.pkg.Name, comp.intfName(), m.Name())
+			// ** From generateLocalStubs
+			p(`		defer func() {`)
+			p(`			if err != nil {`)
+			p(`				span.RecordError(err)`)
+			p(`				span.SetStatus(%s, err.Error())`, g.codes().qualify("Error"))
+			p(`			}`)
+			p(`			span.End()`)
+			p(`		}()`)
+			p(`	}`)
+
+			// LAST LOCAL PART
+			// Set the routing key.
+			p(``)
+			p(`	// Set the shardKey.`)
+			p(`     var r %s`, g.tset.genTypeString(comp.router))
+			n := mt.Params().Len()
+			args := make([]string, n)
+			args[0] = "ctx"
+			for i := 1; i < n; i++ {
+				args[i] = fmt.Sprintf("a%d", i-1)
+			}
+			p(`	shardKey := _hash%s(r.%s(%s))`, exported(comp.intfName()), m.Name(), strings.Join(args, ", "))
+
+			// if local, call the local method.
+			p(`	if s.IsLocal(shardKey) {`)
+
+			// Call the local method.
+			b.Reset()
+			fmt.Fprintf(&b, "ctx")
+			for i := 1; i < mt.Params().Len(); i++ {
+				if mt.Variadic() && i == mt.Params().Len()-1 {
+					fmt.Fprintf(&b, ", a%d...", i-1)
+				} else {
+					fmt.Fprintf(&b, ", a%d", i-1)
+				}
+			}
+			argList := b.String()
+			b.Reset()
+			for i := 0; i < mt.Results().Len()-1; i++ {
+				fmt.Fprintf(&b, "r%d, ", i)
+			}
+
+			p(``)
+			// Change from local stubs, since we can't just return the s.impl.method.
+			retList := b.String()
+			p(`	 %s, err = s.impl.%s(%s)`, retList, m.Name(), argList)
+			p(`  return`)
+			p(` }`)
+			// NO MORE LOCAL
+
+			// Handle remote cleanup.
+			p(``)
+			p(`	defer func() {`)
+			p(`		// Catch and return any panics detected during encoding/decoding/rpc.`)
+			p(`		if err == nil {`)
+			p(`			err = %s(recover())`, g.codegen().qualify("CatchPanics"))
+			p(`			if err != nil {`)
+			p(`				err = %s(%s, err)`, g.errorsPackage().qualify("Join"), g.weaver().qualify("RemoteCallError"))
+			p(`			}`)
+			p(`		}`)
+			p(``)
+			p(`		if err != nil {`)
+			p(`			span.RecordError(err)`)
+			p(`			span.SetStatus(%s, err.Error())`, g.codes().qualify("Error"))
+			p(`		}`)
+			p(`		span.End()`)
+			p(``)
+			p(`	}()`)
+			p(``)
+
+			preallocated := false
+			if mt.Params().Len() > 1 {
+				// Preallocate a perfectly sized buffer if possible.
+				canPreallocate := true
+				for i := 1; i < mt.Params().Len(); i++ { // Skip initial context.Context
+					if !g.preallocatable(mt.Params().At(i).Type()) {
+						canPreallocate = false
+						break
+					}
+				}
+				if canPreallocate {
+					p("")
+					p("	// Preallocate a buffer of the right size.")
+					p("	size := 0")
+					for i := 1; i < mt.Params().Len(); i++ {
+						at := mt.Params().At(i).Type()
+						p("	size += %s", g.size(fmt.Sprintf("a%d", i-1), at))
+					}
+					p("	enc := %s", g.codegen().qualify("NewEncoder()"))
+					p("	enc.Reset(size)")
+					preallocated = true
+				}
+			}
+
+			// Invoke call.Encode.
+			b.Reset()
+			if mt.Params().Len() > 1 {
+				p(``)
+				p(`	// Encode arguments.`)
+				if !preallocated {
+					p("	enc := %s", g.codegen().qualify("NewEncoder()"))
+				}
+			}
+			for i := 1; i < mt.Params().Len(); i++ { // Skip initial context.Context
+				at := mt.Params().At(i).Type()
+				arg := fmt.Sprintf("a%d", i-1)
+				p(`	%s`, g.encode("enc", arg, at))
 			}
 
 			// Invoke call.Run.

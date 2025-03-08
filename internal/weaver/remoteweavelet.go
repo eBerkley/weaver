@@ -386,6 +386,18 @@ func (w *RemoteWeavelet) getIntf(t reflect.Type, requester string) (any, error) 
 		if err != nil {
 			return nil, err
 		}
+		// If it's also routed, we have to pick between
+		// local and remote based on routing key.
+		if c.reg.Routed {
+			stub, err := w.getStub(c)
+			if err != nil {
+				return nil, err
+			}
+
+			return c.reg.RoutedLocalStubFn(impl, stub, requester, w.tracer,
+					func(shardKey uint64) bool { return c.balancer.IsLocal(shardKey, w.dialAddr) }),
+				nil
+		}
 		return c.reg.LocalStubFn(impl, requester, w.tracer), nil
 	}
 
@@ -632,17 +644,19 @@ func (w *RemoteWeavelet) UpdateRoutingInfo(_ context.Context, req *protos.Update
 		return nil, fmt.Errorf("RoutingInfo.Local for %q: got %t, want %t", info.Component, got, want)
 	}
 
+	// *** NO LONGER TRUE:
 	// If the component is local, we don't have to update anything. The routing
 	// info shouldn't contain any replicas or assignment.
-	if info.Local {
-		if len(info.Replicas) > 0 {
-			w.syslogger.Error("Local routing info has replicas", "component", info.Component, "replicas", info.Replicas)
-		}
-		if info.Assignment != nil {
-			w.syslogger.Error("Local routing info has assignment", "component", info.Component, "assignment", info.Assignment)
-		}
-		return
-	}
+	// if info.Local {
+	// 	if len(info.Replicas) > 0 {
+	// 		w.syslogger.Error("Local routing info has replicas", "component", info.Component, "replicas", info.Replicas)
+	// 	}
+	// 	if info.Assignment != nil {
+	// 		w.syslogger.Error("Local routing info has assignment", "component", info.Component, "assignment", info.Assignment)
+	// 	}
+	// 	return
+	// }
+	// ***
 
 	// Update resolver.
 	endpoints, err := parseEndpoints(info.Replicas, c.clientTLS)

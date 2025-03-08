@@ -81,6 +81,43 @@ func (rb *routingBalancer) update(assignment *protos.Assignment) {
 	rb.index = index
 }
 
+// Used for routed method calls that may be local.
+// If the shardKey points to the same address as dialAddr, returns true.
+func (rb *routingBalancer) IsLocal(shardKey uint64, dialAddr string) bool {
+	if shardKey == 0 {
+		return true
+	}
+
+	rb.mu.RLock()
+	assignment := rb.assignment
+	index := rb.index
+	rb.mu.RUnlock()
+
+	if assignment == nil {
+		// There is no assignment. This is possible if we haven't received an
+		// assignment from the assigner yet.
+		// Probably will end up in a failure.
+		return true
+	}
+
+	slice, ok := index.find(shardKey)
+	if !ok {
+		// Should be impossible.
+		return true
+	}
+
+	rb.mu.RLock()
+	defer rb.mu.RUnlock()
+
+	for _, addr := range slice.replicas {
+		if addr == dialAddr {
+			return true
+		}
+	}
+
+	return false
+}
+
 // Pick implements the call.Balancer interface.
 func (rb *routingBalancer) Pick(opts call.CallOptions) (call.ReplicaConnection, bool) {
 	if opts.ShardKey == 0 {

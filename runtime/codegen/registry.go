@@ -72,6 +72,9 @@ type Registration struct {
 	ServerStubFn  func(impl any, load func(key uint64, load float64)) Server
 	ReflectStubFn func(func(method string, ctx context.Context, args []any, returns []any) error) any
 
+	// Contains functionality of both LocalStubFn and ClientStubFn.
+	RoutedLocalStubFn func(impl any, stub Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any
+
 	// RefData holds a string containing the result of MakeEdgeString(Name, Dst)
 	// for all components named Dst used by this component.
 	RefData string
@@ -123,6 +126,9 @@ func verifyRegistration(reg Registration) error {
 	}
 	if reg.ServerStubFn == nil {
 		return errors.New("nil ServerStubFn")
+	}
+	if reg.RoutedLocalStubFn == nil {
+		return errors.New("nil RoutedLocalStubFn")
 	}
 	return nil
 }
