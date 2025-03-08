@@ -1238,8 +1238,7 @@ func (g *generator) generateRegisteredComponents(p printFn) {
 			context.qualify("Context"), notExported(name),
 		)
 
-		routedLocalStubFn := fmt.Sprintf(`func(impl any, stub %s, caller string, tracer %s, isLocal func(shardKey uint64) bool) any { return %s_routed_local_stub{impl: impl.(%s), stub: stub, tracer: tracer%s}`, g.codegen().qualify("Stub"), g.trace().qualify("Tracer"), notExported(name), g.componentRef(comp), b.String())
-
+		routedLocalStubFn := fmt.Sprintf(`func(impl any, stub %s, caller string, tracer %s, isLocal func(shardKey uint64) bool) any { return %s_routed_local_stub{impl: impl.(%s), stub: stub, tracer: tracer, isLocal: isLocal %s} }`, g.codegen().qualify("Stub"), g.trace().qualify("Tracer"), notExported(name), g.componentRef(comp), b.String())
 		var refData strings.Builder
 		myName := comp.fullIntfName()
 		for _, ref := range comp.refs {
@@ -1278,7 +1277,7 @@ func (g *generator) generateRegisteredComponents(p printFn) {
 		p(`		ClientStubFn: %s,`, clientStubFn)
 		p(`		ServerStubFn: %s,`, serverStubFn)
 		p(`		ReflectStubFn: %s,`, reflectStubFn)
-		p(`   RoutedLocalStubFn: %s`, routedLocalStubFn)
+		p(`		RoutedLocalStubFn: %s,`, routedLocalStubFn)
 		p(`		RefData: %s,`, strconv.Quote(refData.String()))
 		p(`	})`)
 	}
@@ -1551,6 +1550,7 @@ func (g *generator) generateRoutedLocalStubs(p printFn) {
 		p(` impl %s`, g.componentRef(comp))
 		p(`	stub %s`, g.codegen().qualify("Stub"))
 		p(`	tracer %s`, g.trace().qualify("Tracer"))
+		p(` isLocal func(shardKey uint64) bool`)
 		for _, m := range comp.methods() {
 			p(`	%sMetrics *%s`, notExported(m.Name()), g.codegen().qualify("MethodMetrics"))
 		}
@@ -1614,7 +1614,7 @@ func (g *generator) generateRoutedLocalStubs(p printFn) {
 			// Set the routing key.
 			p(``)
 			p(`	// Set the shardKey.`)
-			p(`     var r %s`, g.tset.genTypeString(comp.router))
+			p(` var r %s`, g.tset.genTypeString(comp.router))
 			n := mt.Params().Len()
 			args := make([]string, n)
 			args[0] = "ctx"
@@ -1624,7 +1624,7 @@ func (g *generator) generateRoutedLocalStubs(p printFn) {
 			p(`	shardKey := _hash%s(r.%s(%s))`, exported(comp.intfName()), m.Name(), strings.Join(args, ", "))
 
 			// if local, call the local method.
-			p(`	if s.IsLocal(shardKey) {`)
+			p(`	if s.isLocal(shardKey) {`)
 
 			// Call the local method.
 			b.Reset()
@@ -1642,10 +1642,9 @@ func (g *generator) generateRoutedLocalStubs(p printFn) {
 				fmt.Fprintf(&b, "r%d, ", i)
 			}
 
-			p(``)
 			// Change from local stubs, since we can't just return the s.impl.method.
 			retList := b.String()
-			p(`	 %s, err = s.impl.%s(%s)`, retList, m.Name(), argList)
+			p(`	 %s err = s.impl.%s(%s)`, retList, m.Name(), argList)
 			p(`  return`)
 			p(` }`)
 			// NO MORE LOCAL

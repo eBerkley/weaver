@@ -30,6 +30,9 @@ func init() {
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return deployerControl_reflect_stub{caller: caller}
 		},
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return deployerControl_routed_local_stub{impl: impl.(deployerControl), stub: stub, tracer: tracer, activateComponentMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/ServiceWeaver/weaver/deployerControl", Method: "ActivateComponent", Remote: true, Generated: true}), exportListenerMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/ServiceWeaver/weaver/deployerControl", Method: "ExportListener", Remote: true, Generated: true}), getListenerAddressMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/ServiceWeaver/weaver/deployerControl", Method: "GetListenerAddress", Remote: true, Generated: true}), getSelfCertificateMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/ServiceWeaver/weaver/deployerControl", Method: "GetSelfCertificate", Remote: true, Generated: true}), handleTraceSpansMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/ServiceWeaver/weaver/deployerControl", Method: "HandleTraceSpans", Remote: true, Generated: true}), logBatchMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/ServiceWeaver/weaver/deployerControl", Method: "LogBatch", Remote: true, Generated: true}), verifyClientCertificateMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/ServiceWeaver/weaver/deployerControl", Method: "VerifyClientCertificate", Remote: true, Generated: true}), verifyServerCertificateMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/ServiceWeaver/weaver/deployerControl", Method: "VerifyServerCertificate", Remote: true, Generated: true})}
+		},
 		RefData: "",
 	})
 	codegen.Register(codegen.Registration{
@@ -47,6 +50,9 @@ func init() {
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return weaveletControl_reflect_stub{caller: caller}
+		},
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return weaveletControl_routed_local_stub{impl: impl.(weaveletControl), stub: stub, tracer: tracer, getHealthMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/ServiceWeaver/weaver/weaveletControl", Method: "GetHealth", Remote: true, Generated: true}), getLoadMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/ServiceWeaver/weaver/weaveletControl", Method: "GetLoad", Remote: true, Generated: true}), getMetricsMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/ServiceWeaver/weaver/weaveletControl", Method: "GetMetrics", Remote: true, Generated: true}), getProfileMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/ServiceWeaver/weaver/weaveletControl", Method: "GetProfile", Remote: true, Generated: true}), initWeaveletMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/ServiceWeaver/weaver/weaveletControl", Method: "InitWeavelet", Remote: true, Generated: true}), updateComponentsMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/ServiceWeaver/weaver/weaveletControl", Method: "UpdateComponents", Remote: true, Generated: true}), updateRoutingInfoMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/ServiceWeaver/weaver/weaveletControl", Method: "UpdateRoutingInfo", Remote: true, Generated: true})}
 		},
 		RefData: "",
 	})
@@ -1184,6 +1190,131 @@ func (s weaveletControl_client_stub) UpdateRoutingInfo(ctx context.Context, a0 *
 	dec := codegen.NewDecoder(results)
 	r0 = serviceweaver_dec_ptr_UpdateRoutingInfoReply_d1854fd5(dec)
 	err = dec.Error()
+	return
+}
+
+// Routed local stub implementations.
+
+type deployerControl_routed_local_stub struct {
+	impl                           deployerControl
+	stub                           codegen.Stub
+	tracer                         trace.Tracer
+	activateComponentMetrics       *codegen.MethodMetrics
+	exportListenerMetrics          *codegen.MethodMetrics
+	getListenerAddressMetrics      *codegen.MethodMetrics
+	getSelfCertificateMetrics      *codegen.MethodMetrics
+	handleTraceSpansMetrics        *codegen.MethodMetrics
+	logBatchMetrics                *codegen.MethodMetrics
+	verifyClientCertificateMetrics *codegen.MethodMetrics
+	verifyServerCertificateMetrics *codegen.MethodMetrics
+}
+
+// Check that deployerControl_routed_local_stub implements the deployerControl interface.
+var _ deployerControl = (*deployerControl_routed_local_stub)(nil)
+
+func (s deployerControl_routed_local_stub) ActivateComponent(ctx context.Context, a0 *protos.ActivateComponentRequest) (r0 *protos.ActivateComponentReply, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(RemoteCallError, err)
+	return
+}
+
+func (s deployerControl_routed_local_stub) ExportListener(ctx context.Context, a0 *protos.ExportListenerRequest) (r0 *protos.ExportListenerReply, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(RemoteCallError, err)
+	return
+}
+
+func (s deployerControl_routed_local_stub) GetListenerAddress(ctx context.Context, a0 *protos.GetListenerAddressRequest) (r0 *protos.GetListenerAddressReply, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(RemoteCallError, err)
+	return
+}
+
+func (s deployerControl_routed_local_stub) GetSelfCertificate(ctx context.Context, a0 *protos.GetSelfCertificateRequest) (r0 *protos.GetSelfCertificateReply, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(RemoteCallError, err)
+	return
+}
+
+func (s deployerControl_routed_local_stub) HandleTraceSpans(ctx context.Context, a0 *protos.TraceSpans) (err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(RemoteCallError, err)
+	return
+}
+
+func (s deployerControl_routed_local_stub) LogBatch(ctx context.Context, a0 *protos.LogEntryBatch) (err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(RemoteCallError, err)
+	return
+}
+
+func (s deployerControl_routed_local_stub) VerifyClientCertificate(ctx context.Context, a0 *protos.VerifyClientCertificateRequest) (r0 *protos.VerifyClientCertificateReply, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(RemoteCallError, err)
+	return
+}
+
+func (s deployerControl_routed_local_stub) VerifyServerCertificate(ctx context.Context, a0 *protos.VerifyServerCertificateRequest) (r0 *protos.VerifyServerCertificateReply, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(RemoteCallError, err)
+	return
+}
+
+type weaveletControl_routed_local_stub struct {
+	impl                     weaveletControl
+	stub                     codegen.Stub
+	tracer                   trace.Tracer
+	getHealthMetrics         *codegen.MethodMetrics
+	getLoadMetrics           *codegen.MethodMetrics
+	getMetricsMetrics        *codegen.MethodMetrics
+	getProfileMetrics        *codegen.MethodMetrics
+	initWeaveletMetrics      *codegen.MethodMetrics
+	updateComponentsMetrics  *codegen.MethodMetrics
+	updateRoutingInfoMetrics *codegen.MethodMetrics
+}
+
+// Check that weaveletControl_routed_local_stub implements the weaveletControl interface.
+var _ weaveletControl = (*weaveletControl_routed_local_stub)(nil)
+
+func (s weaveletControl_routed_local_stub) GetHealth(ctx context.Context, a0 *protos.GetHealthRequest) (r0 *protos.GetHealthReply, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(RemoteCallError, err)
+	return
+}
+
+func (s weaveletControl_routed_local_stub) GetLoad(ctx context.Context, a0 *protos.GetLoadRequest) (r0 *protos.GetLoadReply, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(RemoteCallError, err)
+	return
+}
+
+func (s weaveletControl_routed_local_stub) GetMetrics(ctx context.Context, a0 *protos.GetMetricsRequest) (r0 *protos.GetMetricsReply, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(RemoteCallError, err)
+	return
+}
+
+func (s weaveletControl_routed_local_stub) GetProfile(ctx context.Context, a0 *protos.GetProfileRequest) (r0 *protos.GetProfileReply, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(RemoteCallError, err)
+	return
+}
+
+func (s weaveletControl_routed_local_stub) InitWeavelet(ctx context.Context, a0 *protos.InitWeaveletRequest) (r0 *protos.InitWeaveletReply, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(RemoteCallError, err)
+	return
+}
+
+func (s weaveletControl_routed_local_stub) UpdateComponents(ctx context.Context, a0 *protos.UpdateComponentsRequest) (r0 *protos.UpdateComponentsReply, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(RemoteCallError, err)
+	return
+}
+
+func (s weaveletControl_routed_local_stub) UpdateRoutingInfo(ctx context.Context, a0 *protos.UpdateRoutingInfoRequest) (r0 *protos.UpdateRoutingInfoReply, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(RemoteCallError, err)
 	return
 }
 

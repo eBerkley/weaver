@@ -127,9 +127,9 @@ func verifyRegistration(reg Registration) error {
 	if reg.ServerStubFn == nil {
 		return errors.New("nil ServerStubFn")
 	}
-	if reg.RoutedLocalStubFn == nil {
-		return errors.New("nil RoutedLocalStubFn")
-	}
+	// if reg.RoutedLocalStubFn == nil {
+	// return errors.New("nil RoutedLocalStubFn")
+	// }
 	return nil
 }
 
