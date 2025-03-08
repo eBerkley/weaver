@@ -24,14 +24,14 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/ServiceWeaver/weaver/internal/tool/config"
-	"github.com/ServiceWeaver/weaver/runtime"
-	"github.com/ServiceWeaver/weaver/runtime/codegen"
-	"github.com/ServiceWeaver/weaver/runtime/tool"
+	"github.com/eberkley/weaver/internal/tool/config"
+	"github.com/eberkley/weaver/runtime"
+	"github.com/eberkley/weaver/runtime/codegen"
+	"github.com/eberkley/weaver/runtime/tool"
 )
 
 const (
-	ConfigKey      = "github.com/ServiceWeaver/weaver/single"
+	ConfigKey      = "github.com/eberkley/weaver/single"
 	ShortConfigKey = "single"
 )
 

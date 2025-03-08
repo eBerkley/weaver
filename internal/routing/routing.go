@@ -23,7 +23,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/ServiceWeaver/weaver/runtime/protos"
+	"github.com/eberkley/weaver/runtime/protos"
 )
 
 // FormatAssignment pretty formats the provided assignment.

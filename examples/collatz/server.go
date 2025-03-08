@@ -21,7 +21,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ServiceWeaver/weaver"
+	"github.com/eberkley/weaver"
 )
 
 type server struct {

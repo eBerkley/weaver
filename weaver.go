@@ -34,10 +34,10 @@ import (
 	"os"
 	"sync"
 
-	"github.com/ServiceWeaver/weaver/internal/reflection"
-	"github.com/ServiceWeaver/weaver/internal/weaver"
-	"github.com/ServiceWeaver/weaver/runtime"
-	"github.com/ServiceWeaver/weaver/runtime/codegen"
+	"github.com/eberkley/weaver/internal/reflection"
+	"github.com/eberkley/weaver/internal/weaver"
+	"github.com/eberkley/weaver/runtime"
+	"github.com/eberkley/weaver/runtime/codegen"
 	"go.opentelemetry.io/otel/trace"
 )
 

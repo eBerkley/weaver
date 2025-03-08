@@ -18,7 +18,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/ServiceWeaver/weaver/runtime/codegen"
+	"github.com/eberkley/weaver/runtime/codegen"
 )
 
 func TestGraphEdges(t *testing.T) {

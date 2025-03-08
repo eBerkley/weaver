@@ -21,8 +21,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ServiceWeaver/weaver/internal/proto"
-	"github.com/ServiceWeaver/weaver/runtime/protos"
+	"github.com/eberkley/weaver/internal/proto"
+	"github.com/eberkley/weaver/runtime/protos"
 )
 
 const (

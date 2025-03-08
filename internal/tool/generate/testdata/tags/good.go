@@ -20,7 +20,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ServiceWeaver/weaver"
+	"github.com/eberkley/weaver"
 )
 
 type GoodService interface {

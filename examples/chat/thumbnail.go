@@ -21,8 +21,8 @@ import (
 	"image/png"
 	"math"
 
+	"github.com/eberkley/weaver"
 	"golang.org/x/image/draw"
-	"github.com/ServiceWeaver/weaver"
 )
 
 type ImageScaler interface {

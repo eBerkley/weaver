@@ -19,9 +19,9 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/ServiceWeaver/weaver/runtime/metrics"
-	imetrics "github.com/ServiceWeaver/weaver/runtime/prometheus"
-	"github.com/ServiceWeaver/weaver/runtime/protos"
+	"github.com/eberkley/weaver/runtime/metrics"
+	imetrics "github.com/eberkley/weaver/runtime/prometheus"
+	"github.com/eberkley/weaver/runtime/protos"
 )
 
 func TestTranslateMetricsToPrometheus(t *testing.T) {

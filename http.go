@@ -21,8 +21,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	imetrics "github.com/ServiceWeaver/weaver/internal/metrics"
-	"github.com/ServiceWeaver/weaver/metrics"
+	imetrics "github.com/eberkley/weaver/internal/metrics"
+	"github.com/eberkley/weaver/metrics"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 

@@ -27,8 +27,8 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/ServiceWeaver/weaver/runtime/codegen"
-	"github.com/ServiceWeaver/weaver/weavertest"
+	"github.com/eberkley/weaver/runtime/codegen"
+	"github.com/eberkley/weaver/weavertest"
 	"github.com/google/go-cmp/cmp"
 	"google.golang.org/protobuf/proto"
 )

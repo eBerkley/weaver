@@ -36,7 +36,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/ServiceWeaver/weaver"
+	"github.com/eberkley/weaver"
 )
 
 type Bar struct {

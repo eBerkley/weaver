@@ -17,7 +17,7 @@ package contacts
 import (
 	"errors"
 
-	"github.com/ServiceWeaver/weaver"
+	"github.com/eberkley/weaver"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

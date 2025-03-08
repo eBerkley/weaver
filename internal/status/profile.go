@@ -23,8 +23,8 @@ import (
 	"text/template"
 	"time"
 
-	protos "github.com/ServiceWeaver/weaver/runtime/protos"
-	"github.com/ServiceWeaver/weaver/runtime/tool"
+	protos "github.com/eberkley/weaver/runtime/protos"
+	"github.com/eberkley/weaver/runtime/tool"
 	pprof "github.com/google/pprof/profile"
 )
 

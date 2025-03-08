@@ -35,7 +35,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ServiceWeaver/weaver"
+	"github.com/eberkley/weaver"
 )
 
 // A Bank is a persistent collection of user bank account balances.

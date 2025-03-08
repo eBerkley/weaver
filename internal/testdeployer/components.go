@@ -20,8 +20,8 @@ package testdeployer
 import (
 	"context"
 
-	"github.com/ServiceWeaver/weaver"
-	"github.com/ServiceWeaver/weaver/metrics"
+	"github.com/eberkley/weaver"
+	"github.com/eberkley/weaver/metrics"
 )
 
 //go:generate ../../cmd/weaver/weaver generate .

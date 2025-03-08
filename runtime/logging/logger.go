@@ -24,8 +24,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ServiceWeaver/weaver/runtime/colors"
-	"github.com/ServiceWeaver/weaver/runtime/protos"
+	"github.com/eberkley/weaver/runtime/colors"
+	"github.com/eberkley/weaver/runtime/protos"
 	"github.com/google/uuid"
 )
 

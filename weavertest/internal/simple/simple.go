@@ -28,8 +28,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/ServiceWeaver/weaver"
-	"github.com/ServiceWeaver/weaver/metadata"
+	"github.com/eberkley/weaver"
+	"github.com/eberkley/weaver/metadata"
 )
 
 //go:generate ../../../cmd/weaver/weaver generate

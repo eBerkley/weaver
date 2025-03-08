@@ -23,10 +23,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ServiceWeaver/weaver/internal/weaver"
-	"github.com/ServiceWeaver/weaver/runtime"
-	"github.com/ServiceWeaver/weaver/runtime/codegen"
-	"github.com/ServiceWeaver/weaver/runtime/protos"
+	"github.com/eberkley/weaver/internal/weaver"
+	"github.com/eberkley/weaver/runtime"
+	"github.com/eberkley/weaver/runtime/codegen"
+	"github.com/eberkley/weaver/runtime/protos"
 	"github.com/google/uuid"
 )
 

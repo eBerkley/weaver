@@ -22,10 +22,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/ServiceWeaver/weaver/runtime/colors"
-	"github.com/ServiceWeaver/weaver/runtime/envelope"
-	"github.com/ServiceWeaver/weaver/runtime/logging"
-	"github.com/ServiceWeaver/weaver/runtime/protos"
+	"github.com/eberkley/weaver/runtime/colors"
+	"github.com/eberkley/weaver/runtime/envelope"
+	"github.com/eberkley/weaver/runtime/logging"
+	"github.com/eberkley/weaver/runtime/protos"
 	"github.com/google/uuid"
 )
 

@@ -19,7 +19,7 @@ package main
 import (
 	"context"
 
-	"github.com/ServiceWeaver/weaver"
+	"github.com/eberkley/weaver"
 )
 
 //go:generate ../../../../cmd/weaver/weaver generate

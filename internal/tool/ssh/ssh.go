@@ -15,9 +15,9 @@
 package ssh
 
 import (
-	"github.com/ServiceWeaver/weaver/internal/status"
-	itool "github.com/ServiceWeaver/weaver/internal/tool"
-	"github.com/ServiceWeaver/weaver/runtime/tool"
+	"github.com/eberkley/weaver/internal/status"
+	itool "github.com/eberkley/weaver/internal/tool"
+	"github.com/eberkley/weaver/runtime/tool"
 )
 
 var (

@@ -26,7 +26,7 @@ import (
 	"context"
 	xt "time"
 
-	"github.com/ServiceWeaver/weaver"
+	"github.com/eberkley/weaver"
 )
 
 type foo interface {

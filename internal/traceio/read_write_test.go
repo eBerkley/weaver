@@ -21,8 +21,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ServiceWeaver/weaver/internal/traceio"
-	"github.com/ServiceWeaver/weaver/runtime/protos"
+	"github.com/eberkley/weaver/internal/traceio"
+	"github.com/eberkley/weaver/runtime/protos"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/uuid"
 	"google.golang.org/protobuf/testing/protocmp"

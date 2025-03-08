@@ -1,4 +1,4 @@
-module github.com/ServiceWeaver/weaver
+module github.com/eberkley/weaver
 
 go 1.21
 

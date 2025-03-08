@@ -14,7 +14,7 @@
 
 package main
 
-import "github.com/ServiceWeaver/weaver/metrics"
+import "github.com/eberkley/weaver/metrics"
 
 type labels struct {
 	Path       string `weaver:"path"`

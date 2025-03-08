@@ -25,13 +25,13 @@ import (
 	"os/exec"
 	"strings"
 
-	itool "github.com/ServiceWeaver/weaver/internal/tool"
-	"github.com/ServiceWeaver/weaver/internal/tool/callgraph"
-	"github.com/ServiceWeaver/weaver/internal/tool/generate"
-	"github.com/ServiceWeaver/weaver/internal/tool/multi"
-	"github.com/ServiceWeaver/weaver/internal/tool/single"
-	"github.com/ServiceWeaver/weaver/internal/tool/ssh"
-	"github.com/ServiceWeaver/weaver/runtime/tool"
+	itool "github.com/eberkley/weaver/internal/tool"
+	"github.com/eberkley/weaver/internal/tool/callgraph"
+	"github.com/eberkley/weaver/internal/tool/generate"
+	"github.com/eberkley/weaver/internal/tool/multi"
+	"github.com/eberkley/weaver/internal/tool/single"
+	"github.com/eberkley/weaver/internal/tool/ssh"
+	"github.com/eberkley/weaver/runtime/tool"
 )
 
 const usage = `USAGE

@@ -24,7 +24,7 @@ package foo
 import (
 	"context"
 
-	"github.com/ServiceWeaver/weaver"
+	"github.com/eberkley/weaver"
 	"google.golang.org/protobuf/reflect/protoreflect"
 )
 

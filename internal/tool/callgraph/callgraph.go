@@ -20,9 +20,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ServiceWeaver/weaver/runtime/bin"
-	"github.com/ServiceWeaver/weaver/runtime/graph"
-	"github.com/ServiceWeaver/weaver/runtime/logging"
+	"github.com/eberkley/weaver/runtime/bin"
+	"github.com/eberkley/weaver/runtime/graph"
+	"github.com/eberkley/weaver/runtime/logging"
 )
 
 // Mermaid returns a Mermaid diagram, https://mermaid.js.org/, of the component

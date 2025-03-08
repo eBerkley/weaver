@@ -25,7 +25,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ServiceWeaver/weaver"
+	"github.com/eberkley/weaver"
 )
 
 // See TestPassingExecution.

@@ -21,8 +21,8 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/eberkley/weaver/runtime/codegen"
 	"google.golang.org/protobuf/proto"
-	"github.com/ServiceWeaver/weaver/runtime/codegen"
 )
 
 // CallArgs holds arguments for the Call method.

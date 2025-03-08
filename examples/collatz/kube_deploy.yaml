@@ -34,7 +34,7 @@ listeners:
 #groups:
 #- name: colocated
 #  components:
-#  - github.com/ServiceWeaver/weaver/Main
+#  - github.com/eberkley/weaver/Main
 #  - github.com/ServiceWeaver/weaver/examples/collatz/Even
 #  - github.com/ServiceWeaver/weaver/examples/collatz/Odd
 #

@@ -24,10 +24,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ServiceWeaver/weaver/internal/reflection"
-	"github.com/ServiceWeaver/weaver/internal/weaver"
-	"github.com/ServiceWeaver/weaver/runtime/codegen"
-	"github.com/ServiceWeaver/weaver/runtime/logging"
+	"github.com/eberkley/weaver/internal/reflection"
+	"github.com/eberkley/weaver/internal/weaver"
+	"github.com/eberkley/weaver/runtime/codegen"
+	"github.com/eberkley/weaver/runtime/logging"
 )
 
 // Runner runs user-supplied testing code as a weaver application.

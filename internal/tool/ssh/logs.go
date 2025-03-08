@@ -17,9 +17,9 @@ package ssh
 import (
 	"context"
 
-	"github.com/ServiceWeaver/weaver/internal/tool/ssh/impl"
-	"github.com/ServiceWeaver/weaver/runtime/logging"
-	"github.com/ServiceWeaver/weaver/runtime/tool"
+	"github.com/eberkley/weaver/internal/tool/ssh/impl"
+	"github.com/eberkley/weaver/runtime/logging"
+	"github.com/eberkley/weaver/runtime/tool"
 )
 
 var logsSpec = tool.LogsSpec{

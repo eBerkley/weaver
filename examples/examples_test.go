@@ -25,7 +25,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ServiceWeaver/weaver/runtime/retry"
+	"github.com/eberkley/weaver/runtime/retry"
 )
 
 type test struct {

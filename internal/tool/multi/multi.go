@@ -19,12 +19,12 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/ServiceWeaver/weaver/internal/must"
-	"github.com/ServiceWeaver/weaver/internal/status"
-	itool "github.com/ServiceWeaver/weaver/internal/tool"
-	"github.com/ServiceWeaver/weaver/runtime"
-	"github.com/ServiceWeaver/weaver/runtime/logging"
-	"github.com/ServiceWeaver/weaver/runtime/tool"
+	"github.com/eberkley/weaver/internal/must"
+	"github.com/eberkley/weaver/internal/status"
+	itool "github.com/eberkley/weaver/internal/tool"
+	"github.com/eberkley/weaver/runtime"
+	"github.com/eberkley/weaver/runtime/logging"
+	"github.com/eberkley/weaver/runtime/tool"
 )
 
 var (

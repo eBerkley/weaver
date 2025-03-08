@@ -16,7 +16,7 @@
 package foo
 
 import (
-	"github.com/ServiceWeaver/weaver"
+	"github.com/eberkley/weaver"
 )
 
 var _ weaver.NotRetriable = 100

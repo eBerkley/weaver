@@ -24,8 +24,8 @@ import (
 	"runtime/debug"
 	"time"
 
-	imetrics "github.com/ServiceWeaver/weaver/internal/metrics"
-	"github.com/ServiceWeaver/weaver/metrics"
+	imetrics "github.com/eberkley/weaver/internal/metrics"
+	"github.com/eberkley/weaver/metrics"
 	"google.golang.org/protobuf/proto"
 )
 

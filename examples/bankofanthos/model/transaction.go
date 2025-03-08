@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ServiceWeaver/weaver"
+	"github.com/eberkley/weaver"
 )
 
 // Transaction defines a banking transaction.

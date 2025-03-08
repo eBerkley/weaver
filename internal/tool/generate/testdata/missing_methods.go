@@ -15,7 +15,7 @@
 // Implementation has no methods.
 package foo
 
-import "github.com/ServiceWeaver/weaver"
+import "github.com/eberkley/weaver"
 
 type foo interface{}
 
