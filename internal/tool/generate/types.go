@@ -302,8 +302,6 @@ func (tset *typeSet) checkSerializable(t types.Type) []error {
 				tset.checked.Set(t, check(x.Underlying(), path, false))
 				break
 			}
-			fmt.Println(tset.automarshalCandidates)
-			fmt.Println(t)
 			// If the underlying type is a struct that has not been declared to
 			// implement the AutoMarshal interface, then it is not
 			// serializable.

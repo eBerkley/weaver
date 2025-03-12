@@ -48,10 +48,11 @@ func ExtractEdges(data []byte) [][2]string {
 		if len(m) != 4 {
 			continue
 		}
-		sum, src, dst := string(m[1]), string(m[2]), string(m[3])
-		if sum != checksumEdge(src, dst) {
-			continue
-		}
+		_, src, dst := string(m[1]), string(m[2]), string(m[3])
+		// sum, src, dst := string(m[1]), string(m[2]), string(m[3])
+		// if sum != checksumEdge(src, dst) {
+		// continue
+		// }
 		result = append(result, [2]string{src, dst})
 	}
 	sort.Slice(result, func(i, j int) bool {

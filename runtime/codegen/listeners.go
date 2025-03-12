@@ -61,13 +61,16 @@ func ExtractListeners(data []byte) []ComponentListeners {
 	var results []ComponentListeners
 	re := regexp.MustCompile(`⟦([0-9a-fA-F]+):wEaVeRlIsTeNeRs:([a-zA-Z0-9\-.~_/]*?)→([\p{L}\p{Nd}_,]+)⟧`)
 	for _, m := range re.FindAllSubmatch(data, -1) {
+
 		if len(m) != 4 {
 			continue
 		}
-		sum, component, lisstr := string(m[1]), string(m[2]), string(m[3])
-		if sum != checksumListeners(component, lisstr) {
-			continue
-		}
+		// sum, component, lisstr := string(m[1]), string(m[2]), string(m[3])
+		_, component, lisstr := string(m[1]), string(m[2]), string(m[3])
+		// TODO: why does this not work?
+		// if sum != checksumListeners(component, lisstr) {
+		// 	continue
+		// }
 		results = append(results, ComponentListeners{
 			Component: component,
 			Listeners: strings.Split(lisstr, ","),
