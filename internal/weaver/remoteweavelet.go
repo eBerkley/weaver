@@ -619,6 +619,7 @@ func (w *RemoteWeavelet) UpdateRoutingInfo(_ context.Context, req *protos.Update
 	}
 	info := req.RoutingInfo
 
+	w.syslogger.Debug(fmt.Sprintf("assignment: %v", info.Assignment))
 	defer func() {
 		name := logging.ShortenComponent(info.Component)
 		routing := fmt.Sprint(info.Replicas)
