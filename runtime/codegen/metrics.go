@@ -21,6 +21,8 @@ import (
 	"github.com/eberkley/weaver/metrics"
 )
 
+var latencyBuckets []float64
+
 var (
 	// The following metrics are automatically populated for the user.
 	methodCounts = metrics.NewCounterMap[MethodLabels](
@@ -30,11 +32,6 @@ var (
 	methodErrors = metrics.NewCounterMap[MethodLabels](
 		imetrics.MethodErrorsName,
 		"Count of Service Weaver component method invocations that result in an error",
-	)
-	methodLatencies = metrics.NewHistogramMap[MethodLabels](
-		imetrics.MethodLatenciesName,
-		"Duration, in microseconds, of Service Weaver component method execution",
-		imetrics.GeneratedBuckets,
 	)
 	methodBytesRequest = metrics.NewHistogramMap[MethodLabels](
 		imetrics.MethodBytesRequestName,
@@ -46,7 +43,37 @@ var (
 		"Number of bytes in Service Weaver component method replies",
 		imetrics.GeneratedBuckets,
 	)
+
+	methodLatencies *metrics.HistogramMap[MethodLabels]
 )
+
+func init() {
+	latencyBuckets = make([]float64, 1)
+	latencyBuckets[0] = 1
+
+	for l := 25.0; l < 250; l += 25 {
+		latencyBuckets = append(latencyBuckets, l) // 25us - 250us: 25us
+	}
+	for l := 250.0; l < 1_000; l += 50 {
+		latencyBuckets = append(latencyBuckets, l) // 250us - 1ms: 50us
+	}
+	for l := 1_000.0; l < 2_000; l += 100 {
+		latencyBuckets = append(latencyBuckets, l) // 1ms - 2ms: 100us
+	}
+	for l := 2_000.0; l < 20_000; l += 1_000 {
+		latencyBuckets = append(latencyBuckets, l) // 2ms - 20ms: 1ms
+	}
+	for l := 20_000.0; l < 100_000; l += 10_000 {
+		latencyBuckets = append(latencyBuckets, l) // 20ms - 100ms: 10ms
+	}
+	latencyBuckets = append(latencyBuckets, 100_000.0, 150_000.0, 250_000.0, 1_000_000.0)
+
+	methodLatencies = metrics.NewHistogramMap[MethodLabels](
+		imetrics.MethodLatenciesName,
+		"Duration, in microseconds, of Service Weaver component method execution",
+		latencyBuckets,
+	)
+}
 
 type MethodLabels struct {
 	Caller    string // full calling component name
