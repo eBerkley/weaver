@@ -23,6 +23,7 @@ import (
 
 	imetrics "github.com/eberkley/weaver/internal/metrics"
 	"github.com/eberkley/weaver/metrics"
+	cmetrics "github.com/eberkley/weaver/runtime/codegen"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
@@ -59,7 +60,7 @@ var (
 	httpRequestLatencyMicros = metrics.NewHistogramMap[httpLabels](
 		"serviceweaver_http_request_latency_micros",
 		"Duration, in microseconds, of HTTP request execution",
-		imetrics.GeneratedBuckets,
+		cmetrics.LatencyBuckets,
 	)
 	httpRequestBytesReceived = metrics.NewHistogramMap[httpLabels](
 		"serviceweaver_http_request_bytes_received",
