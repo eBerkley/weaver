@@ -16,11 +16,12 @@ package metrics
 
 // Names of automatically populated metrics.
 const (
-	MethodCountsName       = "serviceweaver_method_count"
-	MethodErrorsName       = "serviceweaver_method_error_count"
-	MethodLatenciesName    = "serviceweaver_method_latency_micros"
-	MethodBytesRequestName = "serviceweaver_method_bytes_request"
-	MethodBytesReplyName   = "serviceweaver_method_bytes_reply"
+	MethodCountsName            = "serviceweaver_method_count"
+	MethodErrorsName            = "serviceweaver_method_error_count"
+	MethodLatenciesName         = "serviceweaver_method_latency_micros"
+	InternalMethodLatenciesName = "serviceweaver_internal_method_latency_micros"
+	MethodBytesRequestName      = "serviceweaver_method_bytes_request"
+	MethodBytesReplyName        = "serviceweaver_method_bytes_reply"
 )
 
 // GeneratedBuckets provides rounded bucket boundaries for histograms

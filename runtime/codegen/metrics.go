@@ -44,7 +44,8 @@ var (
 		imetrics.GeneratedBuckets,
 	)
 
-	methodLatencies *metrics.HistogramMap[MethodLabels]
+	methodLatencies         *metrics.HistogramMap[MethodLabels]
+	internalMethodLatencies *metrics.HistogramMap[InternalMethodLabels]
 )
 
 func init() {
@@ -73,6 +74,12 @@ func init() {
 		"Duration, in microseconds, of Service Weaver component method execution",
 		LatencyBuckets,
 	)
+
+	internalMethodLatencies = metrics.NewHistogramMap[InternalMethodLabels](
+		imetrics.InternalMethodLatenciesName,
+		"Internal method duration",
+		LatencyBuckets,
+	)
 }
 
 type MethodLabels struct {
@@ -91,6 +98,16 @@ type MethodMetrics struct {
 	latency      *metrics.Histogram // See MethodLatencies.
 	bytesRequest *metrics.Histogram // See MethodBytesRequest.
 	bytesReply   *metrics.Histogram // See MethodBytesReply.
+}
+
+// ALWAYS RETURNS A HISTOGRAM!!!!
+type InternalMethodLabels struct {
+	Component string
+	Method    string
+}
+
+func InternalMetricsFor(labels InternalMethodLabels) *metrics.Histogram {
+	return internalMethodLatencies.Get(labels)
 }
 
 // MethodMetricsFor returns metrics for the specified method.
