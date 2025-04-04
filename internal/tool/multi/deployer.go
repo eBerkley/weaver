@@ -90,6 +90,9 @@ type group struct {
 	callable    []string                        // callable components for group
 	certPEM     []byte                          // group certificate
 	keyPEM      []byte                          // group private key
+
+	ctx    context.Context
+	cancel context.CancelFunc
 }
 
 // A proxyInfo contains information about a proxy.
@@ -214,6 +217,7 @@ func (d *deployer) computeGroups() error {
 			}
 		}
 
+		ctx, cancelFunc := context.WithCancel(d.ctx)
 		g := &group{
 			// TODO(spetrovic): ensure a consistent name is picked for
 			// colocation groups across versions.
@@ -224,6 +228,8 @@ func (d *deployer) computeGroups() error {
 			subscribers: map[string][]*envelope.Envelope{},
 			certPEM:     certPEM,
 			keyPEM:      keyPEM,
+			ctx:         ctx,
+			cancel:      cancelFunc,
 		}
 		groups[component] = g
 		return g, nil
@@ -302,6 +308,171 @@ func (g *group) routing(component string) *protos.RoutingInfo {
 	}
 }
 
+func (d *deployer) Fuse(g1 *group, g2 *group) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.err != nil {
+		return d.err
+	}
+
+	components := maps.Keys(g1.started)
+	components = append(components, maps.Keys(g2.started)...)
+	subs := g1.subscribers
+	for k, v := range g2.subscribers {
+		subs[k] = v
+	}
+	ctx, cancel := context.WithCancel(d.ctx)
+	newG := &group{
+		name:        fmt.Sprintf("%s-%s", g1.name, g2.name),
+		subscribers: subs,
+		ctx:         ctx,
+		cancel:      cancel,
+	}
+
+	for _, c := range components {
+		d.groups[c] = newG
+	}
+
+	for r := 0; r < defaultReplication; r++ {
+		// Start the weavelet and capture its logs, traces, and metrics.
+		info := &protos.WeaveletArgs{
+			App:             d.config.App.Name,
+			DeploymentId:    d.deploymentId,
+			Id:              uuid.New().String(),
+			RunMain:         g1.started[runtime.Main] || g2.started[runtime.Main],
+			Mtls:            d.config.Mtls,
+			InternalAddress: "localhost:0",
+		}
+
+		// Child process created
+		e, err := envelope.NewEnvelope(newG.ctx, info, d.config.App, envelope.Options{
+			Logger: d.logger,
+		})
+
+		if err != nil {
+			return err
+		}
+
+		h := &handler{
+			deployer:   d,
+			g:          newG,
+			subscribed: map[string]bool{},
+			envelope:   e,
+		}
+
+		d.running.Go(func() error {
+			err := e.Serve(h)
+			d.stop(err)
+			return err
+		})
+
+		pid, ok := e.Pid()
+		if !ok {
+			panic("multi deployer child must be a real process")
+		}
+
+		// Add replica info to group
+		newG.replicas = append(newG.replicas, &status.Replica{Pid: int64(pid), WeaveletId: info.Id})
+
+		// Register replica does the following:
+		// sets newG.addresses[replAddr] = true
+		// Creates a routingAssignment for each component in the group
+		// Tells the subscribers ab the current assignments
+		// 		Note that this get's updated w/ each call
+		if err := d.registerReplica(newG, e.WeaveletAddress()); err != nil {
+			return err
+		}
+
+		if err := e.UpdateComponents(components); err != nil {
+			return err
+		}
+		newG.envelopes = append(newG.envelopes, e)
+	}
+
+	// Kill old group child processes
+	g1.cancel()
+	g2.cancel()
+
+	return nil
+}
+
+func (d *deployer) Defuse(g *group) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.err != nil {
+		return d.err
+	}
+
+	for _, c := range maps.Keys(g.started) {
+		ctx, cancel := context.WithCancel(d.ctx)
+		newG := &group{
+			name:        c,
+			subscribers: map[string][]*envelope.Envelope{c: g.subscribers[c]},
+			ctx:         ctx,
+			cancel:      cancel,
+		}
+		d.groups[c] = newG
+
+		for r := 0; r < defaultReplication; r++ {
+			info := &protos.WeaveletArgs{
+				App:             d.config.App.Name,
+				DeploymentId:    d.deploymentId,
+				Id:              uuid.New().String(),
+				RunMain:         g.started[runtime.Main],
+				Mtls:            d.config.Mtls,
+				InternalAddress: "localhost:0",
+			}
+			e, err := envelope.NewEnvelope(newG.ctx, info, d.config.App, envelope.Options{
+				Logger: d.logger,
+			})
+
+			if err != nil {
+				return err
+			}
+
+			h := &handler{
+				deployer:   d,
+				g:          newG,
+				subscribed: map[string]bool{},
+				envelope:   e,
+			}
+
+			d.running.Go(func() error {
+				err := e.Serve(h)
+				d.stop(err)
+				return err
+			})
+			pid, ok := e.Pid()
+			if !ok {
+				panic("multi deployer child must be a real process")
+			}
+
+			// Add replica info to group
+			newG.replicas = append(newG.replicas, &status.Replica{Pid: int64(pid), WeaveletId: info.Id})
+
+			// Register replica does the following:
+			// sets newG.addresses[replAddr] = true
+			// Creates a routingAssignment for each component in the group
+			// Tells the subscribers ab the current assignments
+			// 		Note that this get's updated w/ each call
+			if err := d.registerReplica(newG, e.WeaveletAddress()); err != nil {
+				return err
+			}
+
+			if err := e.UpdateComponents([]string{c}); err != nil {
+				return err
+			}
+			newG.envelopes = append(newG.envelopes, e)
+		}
+	}
+
+	// Kill old group subprocesses
+	g.cancel()
+	return nil
+}
+
 // startColocationGroup starts the colocation group hosting the provided
 // component, if it hasn't been started already.
 //
@@ -329,7 +500,7 @@ func (d *deployer) startColocationGroup(g *group) error {
 			Mtls:            d.config.Mtls,
 			InternalAddress: "localhost:0",
 		}
-		e, err := envelope.NewEnvelope(d.ctx, info, d.config.App, envelope.Options{
+		e, err := envelope.NewEnvelope(g.ctx, info, d.config.App, envelope.Options{
 			Logger: d.logger,
 		})
 		if err != nil {
@@ -636,6 +807,25 @@ func (d *deployer) Profile(_ context.Context, req *protos.GetProfileRequest) (*p
 
 // Status implements the status.Server interface.
 func (d *deployer) Status(context.Context) (*status.Status, error) {
+
+	// FOR THE SAKE OF TESTING, WE FUSE TWO RANDOM GROUPS
+	// WHEN THIS METHOD IS INVOKED.
+
+	var g1 *group
+	var g2 *group
+
+	for i, g := range maps.Keys(d.groups) {
+		if i == 0 {
+			g1 = d.groups[g]
+		} else if i == 1 {
+			g2 = d.groups[g]
+		} else {
+			break
+		}
+	}
+
+	return nil, d.Fuse(g1, g2)
+
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
@@ -700,6 +890,22 @@ func (d *deployer) Status(context.Context) (*status.Status, error) {
 
 // Metrics implements the status.Server interface.
 func (d *deployer) Metrics(context.Context) (*status.Metrics, error) {
+
+	// FOR THE SAKE OF TESTING, WE DEFUSE THE FIRST FUSION GROUP OF SIZE > 1
+	// WHEN THIS METHOD IS INVOKED.
+	var g1 *group
+	for _, g := range d.groups {
+		if len(maps.Keys(g.started)) > 1 {
+			g1 = g
+			break
+		}
+	}
+	if g1 == nil {
+		return nil, nil
+	}
+
+	return nil, d.Defuse(g1)
+
 	m := &status.Metrics{}
 	for _, snap := range d.readMetrics() {
 		m.Metrics = append(m.Metrics, snap.ToProto())
