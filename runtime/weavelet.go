@@ -15,10 +15,15 @@
 package runtime
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/eberkley/weaver/runtime/protos"
 )
+
+// RoutingDontCareError indicates that a remote component had it's UpdateRoutingHook method called for a component that it doesn't care about.
+// The envelope receiving this error will not do anything about it, unless the routing info was about the component that the hook was called for.
+var RoutingDontCareError = errors.New("Component does not care about this routing info")
 
 // Main is the name of the main component.
 const Main = "github.com/eberkley/weaver/Main"

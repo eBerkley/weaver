@@ -512,6 +512,26 @@ func (w *RemoteWeavelet) createComponent(ctx context.Context, reg *codegen.Regis
 		return nil, err
 	}
 
+	if i, ok := obj.(interface {
+		UpdateRoutingHook(context.Context, string, int) error
+	}); ok {
+		if err := i.UpdateRoutingHook(w.ctx, reg.Name, -1); err != nil {
+			if !errors.Is(err, runtime.RoutingDontCareError) {
+				return nil, fmt.Errorf("component %q initialization failed in UpdateRoutingHook: %w", reg.Name, err)
+			}
+
+			// Component must have been saying it doesn't want routing info about itself
+			// 		(i.e. it doesn't need to know it was scaled out),
+			// So we don't call [ActivateComponent()].
+
+		} else {
+			// Tell deployer we want more routing info
+			if _, err := w.deployer.ActivateComponent(ctx, &protos.ActivateComponentRequest{Component: reg.Name, Routed: reg.Routed}); err != nil {
+				return nil, fmt.Errorf("component %q invoking deployer.ActivateComponent for itself failed: %w", reg.Name, err)
+			}
+		}
+	}
+
 	// Call Init if available.
 	if i, ok := obj.(interface{ Init(context.Context) error }); ok {
 		if err := i.Init(ctx); err != nil {
@@ -674,6 +694,22 @@ func (w *RemoteWeavelet) UpdateRoutingInfo(_ context.Context, req *protos.Update
 	// Update load collector.
 	if c.load != nil && info.Assignment != nil {
 		c.load.updateAssignment(info.Assignment)
+	}
+
+	// Run component UpdateRoutingInfo hooks
+	for _, c := range maps.Values(w.componentsByName) {
+		// Only call hook on running components
+		if !c.implReady.Load() {
+			continue
+		}
+
+		if i, ok := c.impl.(interface {
+			UpdateRoutingHook(context.Context, string, int) error
+		}); ok {
+			if err := i.UpdateRoutingHook(w.ctx, info.Component, len(info.Replicas)); err != nil {
+				return nil, fmt.Errorf("component %q's UpdateRoutingHook failed: %w", c.reg.Name, err)
+			}
+		}
 	}
 
 	return &protos.UpdateRoutingInfoReply{}, nil
