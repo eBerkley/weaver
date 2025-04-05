@@ -309,13 +309,12 @@ func (g *group) routing(component string) *protos.RoutingInfo {
 }
 
 func (d *deployer) Fuse(g1 *group, g2 *group) error {
+
 	d.mu.Lock()
-	defer d.mu.Unlock()
 
 	if d.err != nil {
 		return d.err
 	}
-
 	components := maps.Keys(g1.started)
 	components = append(components, maps.Keys(g2.started)...)
 	subs := g1.subscribers
@@ -328,8 +327,13 @@ func (d *deployer) Fuse(g1 *group, g2 *group) error {
 		subscribers: subs,
 		ctx:         ctx,
 		cancel:      cancel,
-	}
+		callable:    append(g1.callable, g2.callable...),
 
+		started:     map[string]bool{},
+		addresses:   map[string]bool{},
+		assignments: map[string]*protos.Assignment{},
+	}
+	d.logger.Error(newG.name)
 	for _, c := range components {
 		d.groups[c] = newG
 	}
@@ -363,8 +367,10 @@ func (d *deployer) Fuse(g1 *group, g2 *group) error {
 
 		d.running.Go(func() error {
 			err := e.Serve(h)
-			d.stop(err)
-			return err
+			d.logger.Warn("process killed. ", "group name", newG.name, "reason", err.Error())
+			return nil
+			// d.stop(err)
+			// return err
 		})
 
 		pid, ok := e.Pid()
@@ -384,20 +390,47 @@ func (d *deployer) Fuse(g1 *group, g2 *group) error {
 			return err
 		}
 
-		if err := e.UpdateComponents(components); err != nil {
-			return err
-		}
+		// if err := e.UpdateComponents(components); err != nil {
+		// 	return err
+		// }
 		newG.envelopes = append(newG.envelopes, e)
 	}
 
-	// Kill old group child processes
-	g1.cancel()
-	g2.cancel()
+	d.mu.Unlock()
+
+	d.logger.Error(fmt.Sprintf("FUSE!!!! newG.subscribers: %v", newG.subscribers))
+	for c := range newG.subscribers {
+		d.logger.Error("activateComponent", "component", c)
+
+		if err := d.activateComponent(&protos.ActivateComponentRequest{Component: c}); err != nil {
+			d.logger.Error(err.Error())
+			return err
+		}
+	}
+
+	// Kill old group child processes in 5 seconds.
+	timer := time.NewTimer(time.Duration(5) * time.Second)
+	go func() {
+		<-timer.C
+		g1.cancel()
+		g2.cancel()
+	}()
 
 	return nil
 }
 
 func (d *deployer) Defuse(g *group) error {
+	d.logger.Error("WHY IS THIS GETTING CALLED!!!!!!!!!")
+	d.logger.Error("WHY IS THIS GETTING CALLED!!!!!!!!!")
+	d.logger.Error("WHY IS THIS GETTING CALLED!!!!!!!!!")
+	d.logger.Error("WHY IS THIS GETTING CALLED!!!!!!!!!")
+	d.logger.Error("WHY IS THIS GETTING CALLED!!!!!!!!!")
+	d.logger.Error("WHY IS THIS GETTING CALLED!!!!!!!!!")
+	d.logger.Error("WHY IS THIS GETTING CALLED!!!!!!!!!")
+	d.logger.Error("WHY IS THIS GETTING CALLED!!!!!!!!!")
+	d.logger.Error("WHY IS THIS GETTING CALLED!!!!!!!!!")
+	d.logger.Error("WHY IS THIS GETTING CALLED!!!!!!!!!")
+	d.logger.Error("WHY IS THIS GETTING CALLED!!!!!!!!!")
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
@@ -441,8 +474,10 @@ func (d *deployer) Defuse(g *group) error {
 
 			d.running.Go(func() error {
 				err := e.Serve(h)
-				d.stop(err)
-				return err
+				d.logger.Warn("process killed. ", "group name", newG.name, "reason", err.Error())
+				return nil
+				// d.stop(err)
+				// return err
 			})
 			pid, ok := e.Pid()
 			if !ok {
@@ -516,8 +551,10 @@ func (d *deployer) startColocationGroup(g *group) error {
 
 		d.running.Go(func() error {
 			err := e.Serve(h)
-			d.stop(err)
-			return err
+			d.logger.Warn("process killed. ", "group name", g.name, "reason", err.Error())
+			return nil
+			// d.stop(err)
+			// return err
 		})
 		pid, ok := e.Pid()
 		if !ok {
@@ -808,24 +845,6 @@ func (d *deployer) Profile(_ context.Context, req *protos.GetProfileRequest) (*p
 // Status implements the status.Server interface.
 func (d *deployer) Status(context.Context) (*status.Status, error) {
 
-	// FOR THE SAKE OF TESTING, WE FUSE TWO RANDOM GROUPS
-	// WHEN THIS METHOD IS INVOKED.
-
-	var g1 *group
-	var g2 *group
-
-	for i, g := range maps.Keys(d.groups) {
-		if i == 0 {
-			g1 = d.groups[g]
-		} else if i == 1 {
-			g2 = d.groups[g]
-		} else {
-			break
-		}
-	}
-
-	return nil, d.Fuse(g1, g2)
-
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
@@ -892,19 +911,39 @@ func (d *deployer) Status(context.Context) (*status.Status, error) {
 func (d *deployer) Metrics(context.Context) (*status.Metrics, error) {
 
 	// FOR THE SAKE OF TESTING, WE DEFUSE THE FIRST FUSION GROUP OF SIZE > 1
+	// AND THEN FUSE TWO RANDOM GROUPS
 	// WHEN THIS METHOD IS INVOKED.
-	var g1 *group
-	for _, g := range d.groups {
-		if len(maps.Keys(g.started)) > 1 {
-			g1 = g
+
+	// var g1 *group
+	// for _, g := range d.groups {
+	// 	if len(maps.Keys(g.started)) > 1 {
+	// 		g1 = g
+	// 		break
+	// 	}
+	// }
+	// if g1 == nil {
+	// 	return nil, nil
+	// }
+	// d.Defuse(g1)
+
+	var g2 *group
+	var g3 *group
+
+	for i, g := range maps.Keys(d.groups) {
+		if i == 0 {
+			g2 = d.groups[g]
+		} else if i == 1 {
+			g3 = d.groups[g]
+		} else {
 			break
 		}
 	}
-	if g1 == nil {
-		return nil, nil
+
+	if err := d.Fuse(g2, g3); err != nil {
+		d.logger.Error("FUSE ERROR: ", "err", err.Error())
 	}
 
-	return nil, d.Defuse(g1)
+	// return nil, d.Defuse(g1)
 
 	m := &status.Metrics{}
 	for _, snap := range d.readMetrics() {
