@@ -348,12 +348,15 @@ func (w *RemoteWeavelet) GetIntf(t reflect.Type) (any, error) {
 func (w *RemoteWeavelet) getIntf(t reflect.Type, requester string) (any, error) {
 	c, ok := w.componentsByIntf[t]
 	if !ok {
+		w.syslogger.Debug("getInft: w.componentsByIntf[t] not ok", "componentsByIntf", w.componentsByIntf)
 		return nil, fmt.Errorf("component of type %v was not registered; maybe you forgot to run weaver generate", t)
 	}
+	w.syslogger.Debug("getIntf: begin", "component", c.reg.Name)
 
 	if r, ok := w.redirects[c.reg.Name]; ok {
 		return w.redirect(requester, c, r.target, r.address)
 	}
+	w.syslogger.Debug("getIntf: not redirect", "component", c.reg.Name)
 
 	// Activate the component.
 	c.activateInit.Do(func() {
@@ -379,33 +382,42 @@ func (w *RemoteWeavelet) getIntf(t reflect.Type, requester string) (any, error) 
 	if c.activateErr != nil {
 		return nil, c.activateErr
 	}
-
+	w.syslogger.Debug("getIntf: activated component successfully.", "component", c.reg.Name)
 	// Return a local stub.
 	if c.local.Read() {
+		w.syslogger.Debug("getIntf: c.local.Read()", "component", c.reg.Name)
 		impl, err := w.GetImpl(c.reg.Impl)
 		if err != nil {
 			return nil, err
 		}
+		w.syslogger.Debug("getIntf: w.GetImpl successful.", "component", c.reg.Name)
+
 		// If it's also routed, we have to pick between
 		// local and remote based on routing key.
 		if c.reg.Routed {
+			w.syslogger.Debug("getIntf: component is routed.", "component", c.reg.Name)
 			stub, err := w.getStub(c)
 			if err != nil {
 				return nil, err
 			}
+			w.syslogger.Debug("getIntf: getStub(component) successful", "component", c.reg.Name)
 
 			return c.reg.RoutedLocalStubFn(impl, stub, requester, w.tracer,
 					func(shardKey uint64) bool { return c.balancer.IsLocal(shardKey, w.dialAddr) }),
 				nil
 		}
+		w.syslogger.Debug("getInft: getting the local stub fn", "component", c.reg.Name)
 		return c.reg.LocalStubFn(impl, requester, w.tracer), nil
 	}
+
+	w.syslogger.Debug("getInft: getting a remote stub.", "component", c.reg.Name)
 
 	// Return a remote stub.
 	stub, err := w.getStub(c)
 	if err != nil {
 		return nil, err
 	}
+	w.syslogger.Debug("getInft: successfully got a remote stub", "component", c.reg.Name)
 	return c.reg.ClientStubFn(stub, requester), nil
 }
 
@@ -476,6 +488,7 @@ func (w *RemoteWeavelet) createComponent(ctx context.Context, reg *codegen.Regis
 	// Create the implementation object.
 	v := reflect.New(reg.Impl)
 	obj := v.Interface()
+	w.syslogger.Debug("createComponent.", "component", reg.Name)
 
 	// Fill config if necessary.
 	if cfg := config.Config(v); cfg != nil {
@@ -483,16 +496,20 @@ func (w *RemoteWeavelet) createComponent(ctx context.Context, reg *codegen.Regis
 			return nil, err
 		}
 	}
+	w.syslogger.Debug("createComponent: filled config", "component", reg.Name)
 
 	// Set logger.
 	if err := SetLogger(obj, w.logger(reg.Name)); err != nil {
 		return nil, err
 	}
 
+	w.syslogger.Debug("createComponent: set logger", "component", reg.Name)
+
 	// Set application runtime information.
 	if err := SetWeaverInfo(obj, w.weaverInfo); err != nil {
 		return nil, err
 	}
+	w.syslogger.Debug("createComponent: set weaver info", "component", reg.Name)
 
 	// Fill ref fields.
 	if err := FillRefs(obj, func(t reflect.Type) (any, error) {
@@ -500,6 +517,7 @@ func (w *RemoteWeavelet) createComponent(ctx context.Context, reg *codegen.Regis
 	}); err != nil {
 		return nil, err
 	}
+	w.syslogger.Debug("createComponent: filled refs", "component", reg.Name)
 
 	// Fill listener fields.
 	if err := FillListeners(obj, func(name string) (net.Listener, string, error) {
@@ -512,6 +530,9 @@ func (w *RemoteWeavelet) createComponent(ctx context.Context, reg *codegen.Regis
 		return nil, err
 	}
 
+	w.syslogger.Debug("createComponent: filled listeners", "component", reg.Name)
+
+	w.syslogger.Debug("createComponent: preparing to call UpdateRoutingHook", "component", reg.Name)
 	if i, ok := obj.(interface {
 		UpdateRoutingHook(context.Context, string, int) error
 	}); ok {
@@ -523,27 +544,37 @@ func (w *RemoteWeavelet) createComponent(ctx context.Context, reg *codegen.Regis
 			// Component must have been saying it doesn't want routing info about itself
 			// 		(i.e. it doesn't need to know it was scaled out),
 			// So we don't call [ActivateComponent()].
+			w.syslogger.Debug("createComponent: component does not want updates about itself.", "component", reg.Name)
 
 		} else {
 			// Tell deployer we want more routing info
+			w.syslogger.Debug("createComponent: component wants updates about itself.", "component", reg.Name)
 			if _, err := w.deployer.ActivateComponent(ctx, &protos.ActivateComponentRequest{Component: reg.Name, Routed: reg.Routed}); err != nil {
 				return nil, fmt.Errorf("component %q invoking deployer.ActivateComponent for itself failed: %w", reg.Name, err)
 			}
 		}
+	} else {
+		w.syslogger.Debug("createComponent: component does not have an UpdateRoutingHook.", "component", reg.Name)
 	}
 
 	// Call Init if available.
 	if i, ok := obj.(interface{ Init(context.Context) error }); ok {
+		w.syslogger.Debug("createComponent: preparing to call Init method.", "component", reg.Name)
 		if err := i.Init(ctx); err != nil {
 			return nil, fmt.Errorf("component %q initialization failed: %w", reg.Name, err)
 		}
+		w.syslogger.Debug("createComponent: Init method returned successfully.", "component", reg.Name)
+	} else {
+		w.syslogger.Debug("createComponent: component does not have an Init method.", "component", reg.Name)
 	}
 	return obj, nil
 }
 
 // getStub returns a component's client stub, initializing it if necessary.
 func (w *RemoteWeavelet) getStub(c *component) (codegen.Stub, error) {
+	w.syslogger.Debug("getStub: begin", "component", c.reg.Name)
 	c.stubInit.Do(func() {
+		w.syslogger.Debug("getStub: stubInit", "component", c.reg.Name)
 		c.stub, c.stubErr = w.makeStub(c.reg.Name, c.reg, c.resolver, c.balancer, true)
 	})
 	return c.stub, c.stubErr
@@ -563,8 +594,10 @@ func (w *RemoteWeavelet) makeStub(fullName string, reg *codegen.Registration, re
 		w.syslogger.Error("Failed to connect to remote", "component", name, "err", err)
 		return nil, err
 	}
+	w.syslogger.Debug("makeStub: call.Connect returned", "component", name)
 	if wait {
-		if err := waitUntilReady(w.ctx, conn, fullName); err != nil {
+		w.syslogger.Debug("makeStub: preparing to call waitUntilReady", "component", name)
+		if err := waitUntilReady(w.ctx, conn, fullName, w.syslogger); err != nil {
 			w.syslogger.Error("Failed to wait for remote", "component", name, "err", err)
 			return nil, err
 		}
@@ -638,7 +671,6 @@ func (w *RemoteWeavelet) UpdateRoutingInfo(_ context.Context, req *protos.Update
 		return nil, fmt.Errorf("nil RoutingInfo")
 	}
 	info := req.RoutingInfo
-
 	w.syslogger.Debug(fmt.Sprintf("assignment: %v", info.Assignment))
 	defer func() {
 		name := logging.ShortenComponent(info.Component)
@@ -657,6 +689,7 @@ func (w *RemoteWeavelet) UpdateRoutingInfo(_ context.Context, req *protos.Update
 	if err != nil {
 		return nil, err
 	}
+	w.syslogger.Debug("w.getComponent successful.")
 
 	// Record whether the component is local or remote. Currently, a component
 	// must always be local or always be remote. It cannot change.
@@ -664,6 +697,7 @@ func (w *RemoteWeavelet) UpdateRoutingInfo(_ context.Context, req *protos.Update
 	if got, want := c.local.Read(), info.Local; got != want {
 		return nil, fmt.Errorf("RoutingInfo.Local for %q: got %t, want %t", info.Component, got, want)
 	}
+	w.syslogger.Debug("c.local.TryWrite successful.")
 
 	// *** NO LONGER TRUE:
 	// If the component is local, we don't have to update anything. The routing
@@ -685,10 +719,14 @@ func (w *RemoteWeavelet) UpdateRoutingInfo(_ context.Context, req *protos.Update
 		return nil, err
 	}
 	c.resolver.update(endpoints)
-
+	w.syslogger.Debug(fmt.Sprintf("got endpoints: %v", endpoints))
 	// Update balancer.
-	if info.Assignment != nil {
+	if info.Stateful {
+		c.balancer.updateStateful(info.Replicas)
+		w.syslogger.Debug("balancer.updateStateful successful")
+	} else if info.Assignment != nil {
 		c.balancer.update(info.Assignment)
+		w.syslogger.Debug("balancer.update successful")
 	}
 
 	// Update load collector.
@@ -697,21 +735,27 @@ func (w *RemoteWeavelet) UpdateRoutingInfo(_ context.Context, req *protos.Update
 	}
 
 	// Run component UpdateRoutingInfo hooks
-	for _, c := range maps.Values(w.componentsByName) {
+	for _, comp := range maps.Values(w.componentsByName) {
 		// Only call hook on running components
-		if !c.implReady.Load() {
+		w.syslogger.Debug("Checking UpdateRoutingHook", "component", comp.reg.Name)
+		if !comp.implReady.Load() {
+			w.syslogger.Debug("component is not ready.", "component", comp.reg.Name)
 			continue
 		}
 
-		if i, ok := c.impl.(interface {
+		if i, ok := comp.impl.(interface {
 			UpdateRoutingHook(context.Context, string, int) error
 		}); ok {
+			w.syslogger.Debug(fmt.Sprintf("preparing to call UpdateRoutingHook on component %v", comp.reg.Name))
 			if err := i.UpdateRoutingHook(w.ctx, info.Component, len(info.Replicas)); err != nil {
-				return nil, fmt.Errorf("component %q's UpdateRoutingHook failed: %w", c.reg.Name, err)
+				return nil, fmt.Errorf("component %q's UpdateRoutingHook failed: %w", comp.reg.Name, err)
 			}
+			w.syslogger.Debug(fmt.Sprintf("UpdateRoutingHook on component %v returned successfully", comp.reg.Name))
+		} else {
+			w.syslogger.Debug("component does not have registered UpdateRoutingHook", "component", comp.reg.Name)
 		}
 	}
-
+	w.syslogger.Debug("UpdateRoutingInfo returned successfully.")
 	return &protos.UpdateRoutingInfoReply{}, nil
 }
 
@@ -1014,11 +1058,13 @@ func (s *server) handlers(components []string) (*call.HandlerMap, error) {
 
 // waitUntilReady blocks until a successful call to the "ready" method is made
 // on the provided component.
-func waitUntilReady(ctx context.Context, client call.Connection, fullComponentName string) error {
+func waitUntilReady(ctx context.Context, client call.Connection, fullComponentName string, log *slog.Logger) error {
 	for r := retry.Begin(); r.Continue(ctx); {
 		_, err := client.Call(ctx, call.MakeMethodKey(fullComponentName, readyMethodName), nil, call.CallOptions{})
 		if err == nil || !errors.Is(err, call.Unreachable) {
 			return err
+		} else {
+			log.Debug("waitUntilReady: client.Call failed.", "component", fullComponentName, "err", err)
 		}
 	}
 	return ctx.Err()

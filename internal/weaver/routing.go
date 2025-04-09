@@ -31,9 +31,11 @@ type routingBalancer struct {
 	balancer  call.Balancer // balancer to use for non-routed calls
 	tlsConfig *tls.Config   // tls config to use; may be nil.
 
-	mu         sync.RWMutex
-	assignment *protos.Assignment
-	index      index
+	stateful      bool // If we do routing using statefulSlice or assignment/index.
+	statefulSlice []string
+	mu            sync.RWMutex
+	assignment    *protos.Assignment
+	index         index
 
 	// Map from address to connection. We currently allow just one
 	// connection per address.
@@ -68,7 +70,16 @@ func (rb *routingBalancer) Remove(c call.ReplicaConnection) {
 	delete(rb.conns, c.Address())
 }
 
+// makes rb use stateful routing.
+func (rb *routingBalancer) updateStateful(replicas []string) {
+	rb.mu.Lock()
+	rb.statefulSlice = replicas
+	rb.stateful = true
+	rb.mu.Unlock()
+}
+
 // update updates the balancer with the provided assignment
+// makes rb not use stateful routing
 func (rb *routingBalancer) update(assignment *protos.Assignment) {
 	if assignment == nil {
 		return
@@ -76,6 +87,7 @@ func (rb *routingBalancer) update(assignment *protos.Assignment) {
 
 	index := newIndex(assignment)
 	rb.mu.Lock()
+	rb.stateful = false
 	defer rb.mu.Unlock()
 	rb.assignment = assignment
 	rb.index = index
@@ -84,11 +96,18 @@ func (rb *routingBalancer) update(assignment *protos.Assignment) {
 // Used for routed method calls that may be local.
 // If the shardKey points to the same address as dialAddr, returns true.
 func (rb *routingBalancer) IsLocal(shardKey uint64, dialAddr string) bool {
+	rb.mu.RLock()
+	if rb.stateful {
+		ret := rb.statefulSlice[shardKey] == dialAddr
+		rb.mu.RUnlock()
+		return ret
+	}
+
 	if shardKey == 0 {
+		rb.mu.RUnlock()
 		return true
 	}
 
-	rb.mu.RLock()
 	assignment := rb.assignment
 	index := rb.index
 	rb.mu.RUnlock()
@@ -114,22 +133,33 @@ func (rb *routingBalancer) IsLocal(shardKey uint64, dialAddr string) bool {
 			return true
 		}
 	}
-
 	return false
 }
 
 // Pick implements the call.Balancer interface.
 func (rb *routingBalancer) Pick(opts call.CallOptions) (call.ReplicaConnection, bool) {
+	rb.mu.RLock()
+	if rb.stateful {
+		defer rb.mu.RUnlock()
+		if len(rb.statefulSlice) <= int(opts.ShardKey) {
+			return nil, false
+		}
+		if c, ok := rb.conns[rb.statefulSlice[opts.ShardKey]]; ok {
+			return c, true
+		}
+		return nil, false
+	}
+
 	if opts.ShardKey == 0 {
 		// If the method we're calling is not sharded (which is guaranteed to
 		// be true for nonsharded components), then the shard key is 0.
+		rb.mu.RUnlock()
 		return rb.balancer.Pick(opts)
 	}
 
 	// Grab the current assignment. It's possible that the current assignment
 	// changes between when we release the lock and when we pick an endpoint,
 	// but using a slightly stale assignment is okay.
-	rb.mu.RLock()
 	assignment := rb.assignment
 	index := rb.index
 	rb.mu.RUnlock()

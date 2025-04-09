@@ -494,11 +494,12 @@ func extractComponent(opt Options, pkg *packages.Package, file *ast.File, tset *
 	}
 
 	// Find any weaver.Implements[T] or weaver.WithRouter[T] embedded fields.
-	var intf *types.Named   // The component interface type
-	var router *types.Named // Router type (if any)
-	var isMain bool         // Is intf weaver.Main?
-	var refs []*types.Named // T for which weaver.Ref[T] exists in struct
-	var listeners []string  // Names of all listener fields declared in struct
+	var intf *types.Named           // The component interface type
+	var router *types.Named         // Router type (if any)
+	var statefulRouter *types.Named // Stateful router type (if any)
+	var isMain bool                 // Is intf weaver.Main?
+	var refs []*types.Named         // T for which weaver.Ref[T] exists in struct
+	var listeners []string          // Names of all listener fields declared in struct
 	for _, f := range s.Fields.List {
 		typeAndValue, ok := pkg.TypesInfo.Types[f.Type]
 		if !ok {
@@ -576,6 +577,21 @@ func extractComponent(opt Options, pkg *packages.Package, file *ast.File, tset *
 					formatType(pkg, named))
 			}
 			router = named
+
+		case isWeaverWithStatefulRouter(t):
+			arg := t.(*types.Named).TypeArgs().At(0)
+			named, ok := arg.(*types.Named)
+			if !ok {
+				return nil, errorf(pkg.Fset, f.Pos(),
+					"weaver.WithStatefulRouter argument %s is not a named type.",
+					formatType(pkg, arg))
+			}
+			if named.Obj().Pkg() != pkg.Types {
+				return nil, errorf(pkg.Fset, f.Pos(),
+					"weaver.WithRouter argument %s is a type outside the current package.",
+					formatType(pkg, named))
+			}
+			statefulRouter = named
 		}
 	}
 
@@ -625,18 +641,25 @@ func extractComponent(opt Options, pkg *packages.Package, file *ast.File, tset *
 	}
 
 	comp := &component{
-		intf:      intf,
-		impl:      impl,
-		router:    router,
-		isMain:    isMain,
-		refs:      refs,
-		listeners: listeners,
+		intf:           intf,
+		impl:           impl,
+		router:         router,
+		statefulRouter: statefulRouter,
+		isMain:         isMain,
+		refs:           refs,
+		listeners:      listeners,
 	}
 
 	// Find routing information if needed.
-	if comp.router != nil {
+	if comp.statefulRouter != nil {
 		var err error
-		comp.routingKey, comp.routedMethods, err = routerMethods(pkg, intf, router)
+		comp.routingKey, comp.routedMethods, err = routerMethods(pkg, intf, statefulRouter, true)
+		if err != nil {
+			return nil, errorf(pkg.Fset, spec.Pos(), "%w", err)
+		}
+	} else if comp.router != nil {
+		var err error
+		comp.routingKey, comp.routedMethods, err = routerMethods(pkg, intf, router, false)
 		if err != nil {
 			return nil, errorf(pkg.Fset, spec.Pos(), "%w", err)
 		}
@@ -690,15 +713,16 @@ func getListenerNamesFromStructField(pkg *packages.Package, f *ast.Field) ([]str
 //	}
 //	type router struct{}
 type component struct {
-	intf          *types.Named        // component interface
-	impl          *types.Named        // component implementation
-	router        *types.Named        // router, or nil if there is no router
-	routingKey    types.Type          // routing key, or nil if there is no router
-	routedMethods map[string]bool     // the set of methods with a routing function
-	isMain        bool                // intf is weaver.Main
-	refs          []*types.Named      // List of T where a weaver.Ref[T] field is in impl struct
-	listeners     []string            // Names of listener fields declared in impl struct
-	noretry       map[string]struct{} // Methods that should not be retried
+	intf           *types.Named        // component interface
+	impl           *types.Named        // component implementation
+	router         *types.Named        // router, or nil if there is no router
+	statefulRouter *types.Named        // Stateful router, or nil if there is no stateful router
+	routingKey     types.Type          // routing key, or nil if there is no router
+	routedMethods  map[string]bool     // the set of methods with a routing function
+	isMain         bool                // intf is weaver.Main
+	refs           []*types.Named      // List of T where a weaver.Ref[T] field is in impl struct
+	listeners      []string            // Names of listener fields declared in impl struct
+	noretry        map[string]struct{} // Methods that should not be retried
 }
 
 func fullName(t *types.Named) string {
@@ -847,7 +871,7 @@ func checkMistypedInitOrShutdown(pkg *packages.Package, tset *typeSet, impl *typ
 //	type fooRouter struct{}
 //	func (fooRouter) A(context.Context) int {...}
 //	func (fooRouter) B(context.Context, int) int {...}
-func routerMethods(pkg *packages.Package, intf, router *types.Named) (types.Type, map[string]bool, error) {
+func routerMethods(pkg *packages.Package, intf, router *types.Named, stateful bool) (types.Type, map[string]bool, error) {
 	underlying := intf.Underlying().(*types.Interface)
 	componentMethods := map[string]*types.Signature{}
 	for i := 0; i < underlying.NumMethods(); i++ {
@@ -886,11 +910,18 @@ func routerMethods(pkg *packages.Package, intf, router *types.Named) (types.Type
 		}
 		ret := mt.Results().At(0).Type()
 		if i == 0 {
-			if !isValidRouterType(ret) {
+			if stateful {
+				if !isValidStatefulRouterType(ret) {
+					return nil, nil, errorf(pkg.Fset, pos,
+						"Router method %q has invalid stateful routing key type %q. A stateful routing key type must be a uint64.",
+						m.Name(), formatType(pkg, ret))
+				}
+			} else if !isValidRouterType(ret) {
 				return nil, nil, errorf(pkg.Fset, pos,
 					"Router method %q has invalid routing key type %q. A routing key type should be an integer, float, string, or a struct with every field being an integer, float, or string.",
 					m.Name(), formatType(pkg, ret))
 			}
+
 			routingKey = ret
 		} else if !types.Identical(ret, routingKey) {
 			return nil, nil, errorf(pkg.Fset, pos,
@@ -1100,9 +1131,13 @@ func (g *generator) generateRouterChecks(p printFn) {
 	p(`// weaver.Router checks.`)
 	for _, c := range g.components {
 		if c.router == nil {
-			// e.g., var _ weaver.Unrouted = &odd{}
-			p(`var _ %s = (*%s)(nil)`, g.weaver().qualify("Unrouted"), g.tset.genTypeString(c.impl))
-
+			if c.statefulRouter == nil {
+				// e.g., var _ weaver.Unrouted = &odd{}
+				p(`var _ %s = (*%s)(nil)`, g.weaver().qualify("Unrouted"), g.tset.genTypeString(c.impl))
+			} else {
+				// e.g., var _ weaver.StatefulRoutedBy[router] = &odd{}
+				p(`var _ %s[%s] = (*%s)(nil)`, g.weaver().qualify("RoutedBy"), g.tset.genTypeString(c.statefulRouter), g.tset.genTypeString(c.impl))
+			}
 		} else {
 			// e.g., var _ weaver.RoutedBy[router] = &odd{}
 			p(`var _ %s[%s] = (*%s)(nil)`, g.weaver().qualify("RoutedBy"), g.tset.genTypeString(c.router), g.tset.genTypeString(c.impl))
@@ -1110,10 +1145,15 @@ func (g *generator) generateRouterChecks(p printFn) {
 	}
 
 	for _, c := range g.components {
-		if c.router == nil {
+		if c.router == nil && c.statefulRouter == nil {
 			continue
 		}
-		p(`// Component %q, router %q checks.`, c.impl.Obj().Name(), c.router.Obj().Name())
+		router := c.statefulRouter
+		if router == nil {
+			router = c.router
+		}
+
+		p(`// Component %q, router %q checks.`, c.impl.Obj().Name(), router.Obj().Name())
 
 		// Collect the names of all unrouted methods.
 		methods := map[string]bool{}
@@ -1121,8 +1161,8 @@ func (g *generator) generateRouterChecks(p printFn) {
 		for i := 0; i < underlying.NumMethods(); i++ {
 			methods[underlying.Method(i).Name()] = true
 		}
-		for i := 0; i < c.router.NumMethods(); i++ {
-			delete(methods, c.router.Method(i).Name())
+		for i := 0; i < router.NumMethods(); i++ {
+			delete(methods, router.Method(i).Name())
 		}
 		unrouted := maps.Keys(methods)
 		sort.Strings(unrouted)
@@ -1139,11 +1179,11 @@ func (g *generator) generateRouterChecks(p printFn) {
 		//     type __calc_router_embedding struct {}
 		//     func (__calc_router_embedding) add()
 		//     func (__calc_router_embedding) sub()
-		checker := fmt.Sprintf("__%s_%s_if_youre_seeing_this_you_probably_forgot_to_run_weaver_generate", c.impl.Obj().Name(), c.router.Obj().Name())
-		embedding := fmt.Sprintf("__%s_%s_embedding", c.impl.Obj().Name(), c.router.Obj().Name())
+		checker := fmt.Sprintf("__%s_%s_if_youre_seeing_this_you_probably_forgot_to_run_weaver_generate", c.impl.Obj().Name(), router.Obj().Name())
+		embedding := fmt.Sprintf("__%s_%s_embedding", c.impl.Obj().Name(), router.Obj().Name())
 		if len(unrouted) > 0 {
 			p(`type %s struct {`, checker)
-			p(`	%s`, g.tset.genTypeString(c.router))
+			p(`	%s`, g.tset.genTypeString(router))
 			p(`	%s`, embedding)
 			p(`}`)
 			p(``)
@@ -1165,9 +1205,9 @@ func (g *generator) generateRouterChecks(p printFn) {
 		//     var _ func(context.Context, int, int) (int, error) = (&calc{}).mul // routed
 		//     var _ = (&__calc_router_if_youre_seeing_this_you_probably_forgot_to_run_weaver_generate{}).add // unrouted
 		//     var _ = (&__calc_router_if_youre_seeing_this_you_probably_forgot_to_run_weaver_generate{}).sub // unrouted
-		for i := 0; i < c.router.NumMethods(); i++ {
-			m := c.router.Method(i)
-			p(`var _ %s = (&%s{}).%s // routed`, g.tset.genTypeString(m.Type()), g.tset.genTypeString(c.router), m.Name())
+		for i := 0; i < router.NumMethods(); i++ {
+			m := router.Method(i)
+			p(`var _ %s = (&%s{}).%s // routed`, g.tset.genTypeString(m.Type()), g.tset.genTypeString(router), m.Name())
 		}
 		for _, m := range unrouted {
 			p(`var _ = (&%s{}).%s // unrouted`, checker, m)
@@ -1260,9 +1300,13 @@ func (g *generator) generateRegisteredComponents(p printFn) {
 		//   https://pkg.go.dev/reflect#example-TypeOf
 		p(`		Iface: %s((*%s)(nil)).Elem(),`, reflect.qualify("TypeOf"), g.componentRef(comp))
 		p(`		Impl: %s(%s{}),`, reflect.qualify("TypeOf"), comp.implName())
-		if comp.router != nil {
+		if comp.statefulRouter != nil {
+			p(`		Routed: true,`)
+			p(`		Stateful: true,`)
+		} else if comp.router != nil {
 			p(`		Routed: true,`)
 		}
+
 		if len(comp.listeners) > 0 {
 			listeners := make([]string, len(comp.listeners))
 			for i, lis := range comp.listeners {
@@ -1480,14 +1524,26 @@ func (g *generator) generateClientStubs(p printFn) {
 			if comp.routedMethods[m.Name()] {
 				p(``)
 				p(`	// Set the shardKey.`)
-				p(`     var r %s`, g.tset.genTypeString(comp.router))
-				n := mt.Params().Len()
-				args := make([]string, n)
-				args[0] = "ctx"
-				for i := 1; i < n; i++ {
-					args[i] = fmt.Sprintf("a%d", i-1)
+
+				if comp.statefulRouter != nil {
+					p(`     var r %s`, g.tset.genTypeString(comp.statefulRouter))
+					n := mt.Params().Len()
+					args := make([]string, n)
+					args[0] = "ctx"
+					for i := 1; i < n; i++ {
+						args[i] = fmt.Sprintf("a%d", i-1)
+					}
+					p(`	shardKey := r.%s(%s)`, m.Name(), strings.Join(args, ", "))
+				} else {
+					p(`     var r %s`, g.tset.genTypeString(comp.router))
+					n := mt.Params().Len()
+					args := make([]string, n)
+					args[0] = "ctx"
+					for i := 1; i < n; i++ {
+						args[i] = fmt.Sprintf("a%d", i-1)
+					}
+					p(`	shardKey := _hash%s(r.%s(%s))`, exported(comp.intfName()), m.Name(), strings.Join(args, ", "))
 				}
-				p(`	shardKey := _hash%s(r.%s(%s))`, exported(comp.intfName()), m.Name(), strings.Join(args, ", "))
 			} else {
 				p(`	var shardKey uint64`)
 			}
@@ -1614,14 +1670,25 @@ func (g *generator) generateRoutedLocalStubs(p printFn) {
 			// Set the routing key.
 			p(``)
 			p(`	// Set the shardKey.`)
-			p(` var r %s`, g.tset.genTypeString(comp.router))
-			n := mt.Params().Len()
-			args := make([]string, n)
-			args[0] = "ctx"
-			for i := 1; i < n; i++ {
-				args[i] = fmt.Sprintf("a%d", i-1)
+			if comp.statefulRouter != nil {
+				p(` var r %s`, g.tset.genTypeString(comp.statefulRouter))
+				n := mt.Params().Len()
+				args := make([]string, n)
+				args[0] = "ctx"
+				for i := 1; i < n; i++ {
+					args[i] = fmt.Sprintf("a%d", i-1)
+				}
+				p(`	shardKey := r.%s(%s)`, m.Name(), strings.Join(args, ", "))
+			} else {
+				p(` var r %s`, g.tset.genTypeString(comp.router))
+				n := mt.Params().Len()
+				args := make([]string, n)
+				args[0] = "ctx"
+				for i := 1; i < n; i++ {
+					args[i] = fmt.Sprintf("a%d", i-1)
+				}
+				p(`	shardKey := _hash%s(r.%s(%s))`, exported(comp.intfName()), m.Name(), strings.Join(args, ", "))
 			}
-			p(`	shardKey := _hash%s(r.%s(%s))`, exported(comp.intfName()), m.Name(), strings.Join(args, ", "))
 
 			// if local, call the local method.
 			p(`	if s.isLocal(shardKey) {`)
@@ -2142,11 +2209,15 @@ func (g *generator) generateServerStubs(p printFn) {
 				}
 			}
 			argList := b.String()
-
 			// Add load, if needed.
 			if comp.routedMethods[m.Name()] {
-				p(`     var r %s`, g.tset.genTypeString(comp.router))
-				p(`	s.addLoad(_hash%s(r.%s(%s)), 1.0)`, exported(comp.intfName()), m.Name(), argList)
+				if comp.statefulRouter != nil {
+					p(`     var r %s`, g.tset.genTypeString(comp.statefulRouter))
+					p(`	s.addLoad(r.%s(%s), 1.0)`, m.Name(), argList)
+				} else {
+					p(`     var r %s`, g.tset.genTypeString(comp.router))
+					p(`	s.addLoad(_hash%s(r.%s(%s)), 1.0)`, exported(comp.intfName()), m.Name(), argList)
+				}
 			}
 
 			b.Reset()

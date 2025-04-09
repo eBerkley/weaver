@@ -63,6 +63,7 @@ type Registration struct {
 	Iface     reflect.Type // interface type for the component
 	Impl      reflect.Type // implementation type (struct)
 	Routed    bool         // True if calls to this component should be routed
+	Stateful  bool         // True if calls to this component should be statefully routed
 	Listeners []string     // the names of any weaver.Listeners
 	NoRetry   []int        // indices of methods that should not be retried
 

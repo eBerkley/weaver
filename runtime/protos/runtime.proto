@@ -285,6 +285,11 @@ message RoutingInfo {
 
   // Routing assignment, if the component is routed.
   Assignment assignment = 4;
+
+  // If the component uses stateful routing.
+  // Stateful routing means that instead of using space partitioning and a hashed key,
+  // We simply use a key that must be equivalent to an index in the [replicas] field.
+  bool stateful = 5;
 }
 
 // Assignment partitions a key space (e.g., the hash space [0, 2^64)) into a set

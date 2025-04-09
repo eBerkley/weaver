@@ -531,6 +531,19 @@ type RoutedBy[T any] interface {
 	routedBy(T)
 }
 
+// Methods of StatefulRouter types must return this.
+type StateKey = uint64
+
+// Like WithRouter, but stateful.
+// Embedding WithRouter in a component with a WithStatefulRouter field
+// Does nothing
+type WithStatefulRouter[T any] struct{}
+
+// statefulRoutedBy(T) implements the RoutedBy[T] interface.
+//
+//lint:ignore U1000 statefulRoutedBy is used by StatefulRoutedBy and Unrouted
+func (WithStatefulRouter[T]) routedBy(T) {}
+
 // See Implements.implementsImpl.
 type implementsImpl struct{}
 

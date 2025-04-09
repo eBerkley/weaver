@@ -884,6 +884,10 @@ func isWeaverWithRouter(t types.Type) bool {
 	return isWeaverType(t, "WithRouter", 1)
 }
 
+func isWeaverWithStatefulRouter(t types.Type) bool {
+	return isWeaverType(t, "WithStatefulRouter", 1)
+}
+
 func isWeaverAutoMarshal(t types.Type) bool {
 	return isWeaverType(t, "AutoMarshal", 0)
 }
@@ -951,4 +955,13 @@ func isValidRouterType(t types.Type) bool {
 		}
 	}
 	return true
+}
+
+func isValidStatefulRouterType(t types.Type) bool {
+	t = t.Underlying()
+	b, ok := t.(*types.Basic)
+	if !ok {
+		return false
+	}
+	return b.Kind() == types.Uint64
 }
