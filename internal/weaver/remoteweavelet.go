@@ -532,7 +532,19 @@ func (w *RemoteWeavelet) createComponent(ctx context.Context, reg *codegen.Regis
 
 	w.syslogger.Debug("createComponent: filled listeners", "component", reg.Name)
 
+	// Call Init if available.
+	if i, ok := obj.(interface{ Init(context.Context) error }); ok {
+		w.syslogger.Debug("createComponent: preparing to call Init method.", "component", reg.Name)
+		if err := i.Init(ctx); err != nil {
+			return nil, fmt.Errorf("component %q initialization failed: %w", reg.Name, err)
+		}
+		w.syslogger.Debug("createComponent: Init method returned successfully.", "component", reg.Name)
+	} else {
+		w.syslogger.Debug("createComponent: component does not have an Init method.", "component", reg.Name)
+	}
+
 	w.syslogger.Debug("createComponent: preparing to call UpdateRoutingHook", "component", reg.Name)
+
 	if i, ok := obj.(interface {
 		UpdateRoutingHook(context.Context, string, int) error
 	}); ok {
@@ -553,20 +565,22 @@ func (w *RemoteWeavelet) createComponent(ctx context.Context, reg *codegen.Regis
 				return nil, fmt.Errorf("component %q invoking deployer.ActivateComponent for itself failed: %w", reg.Name, err)
 			}
 		}
+
+		// We now call UpdateRoutingHook for all current assignments, just in case.
+		for _, c := range maps.Values(w.componentsByName) {
+			if c.reg.Name == reg.Name {
+				continue
+			}
+
+			if err := i.UpdateRoutingHook(w.ctx, c.reg.Name, len(c.balancer.conns)); err != nil && !errors.Is(err, runtime.RoutingDontCareError) {
+				return nil, fmt.Errorf("component %q initialization failed in UpdateRoutingHook for component %q: %w", reg.Name, c.reg.Name, err)
+			}
+		}
+
 	} else {
 		w.syslogger.Debug("createComponent: component does not have an UpdateRoutingHook.", "component", reg.Name)
 	}
 
-	// Call Init if available.
-	if i, ok := obj.(interface{ Init(context.Context) error }); ok {
-		w.syslogger.Debug("createComponent: preparing to call Init method.", "component", reg.Name)
-		if err := i.Init(ctx); err != nil {
-			return nil, fmt.Errorf("component %q initialization failed: %w", reg.Name, err)
-		}
-		w.syslogger.Debug("createComponent: Init method returned successfully.", "component", reg.Name)
-	} else {
-		w.syslogger.Debug("createComponent: component does not have an Init method.", "component", reg.Name)
-	}
 	return obj, nil
 }
 
@@ -689,7 +703,7 @@ func (w *RemoteWeavelet) UpdateRoutingInfo(_ context.Context, req *protos.Update
 	if err != nil {
 		return nil, err
 	}
-	w.syslogger.Debug("w.getComponent successful.")
+	// w.syslogger.Debug("w.getComponent successful.")
 
 	// Record whether the component is local or remote. Currently, a component
 	// must always be local or always be remote. It cannot change.
@@ -697,7 +711,7 @@ func (w *RemoteWeavelet) UpdateRoutingInfo(_ context.Context, req *protos.Update
 	if got, want := c.local.Read(), info.Local; got != want {
 		return nil, fmt.Errorf("RoutingInfo.Local for %q: got %t, want %t", info.Component, got, want)
 	}
-	w.syslogger.Debug("c.local.TryWrite successful.")
+	// w.syslogger.Debug("c.local.TryWrite successful.")
 
 	// *** NO LONGER TRUE:
 	// If the component is local, we don't have to update anything. The routing
@@ -719,14 +733,14 @@ func (w *RemoteWeavelet) UpdateRoutingInfo(_ context.Context, req *protos.Update
 		return nil, err
 	}
 	c.resolver.update(endpoints)
-	w.syslogger.Debug(fmt.Sprintf("got endpoints: %v", endpoints))
+	// w.syslogger.Debug(fmt.Sprintf("got endpoints: %v", endpoints))
 	// Update balancer.
-	if info.Stateful {
+	if w.componentsByName[info.Component].reg.Stateful {
 		c.balancer.updateStateful(info.Replicas)
-		w.syslogger.Debug("balancer.updateStateful successful")
+		// w.syslogger.Debug("balancer.updateStateful successful")
 	} else if info.Assignment != nil {
 		c.balancer.update(info.Assignment)
-		w.syslogger.Debug("balancer.update successful")
+		// w.syslogger.Debug("balancer.update successful")
 	}
 
 	// Update load collector.
@@ -737,25 +751,25 @@ func (w *RemoteWeavelet) UpdateRoutingInfo(_ context.Context, req *protos.Update
 	// Run component UpdateRoutingInfo hooks
 	for _, comp := range maps.Values(w.componentsByName) {
 		// Only call hook on running components
-		w.syslogger.Debug("Checking UpdateRoutingHook", "component", comp.reg.Name)
+		// w.syslogger.Debug("Checking UpdateRoutingHook", "component", comp.reg.Name)
 		if !comp.implReady.Load() {
-			w.syslogger.Debug("component is not ready.", "component", comp.reg.Name)
+			// w.syslogger.Debug("component is not ready.", "component", comp.reg.Name)
 			continue
 		}
 
 		if i, ok := comp.impl.(interface {
 			UpdateRoutingHook(context.Context, string, int) error
 		}); ok {
-			w.syslogger.Debug(fmt.Sprintf("preparing to call UpdateRoutingHook on component %v", comp.reg.Name))
+			w.syslogger.Debug(fmt.Sprintf("preparing to call UpdateRoutingHook(ctx, %v, %v) on component %v", info.Component, len(info.Replicas), comp.reg.Name))
 			if err := i.UpdateRoutingHook(w.ctx, info.Component, len(info.Replicas)); err != nil {
 				return nil, fmt.Errorf("component %q's UpdateRoutingHook failed: %w", comp.reg.Name, err)
 			}
 			w.syslogger.Debug(fmt.Sprintf("UpdateRoutingHook on component %v returned successfully", comp.reg.Name))
-		} else {
-			w.syslogger.Debug("component does not have registered UpdateRoutingHook", "component", comp.reg.Name)
-		}
+		} //else {
+		// w.syslogger.Debug("component does not have registered UpdateRoutingHook", "component", comp.reg.Name)
+		// }
 	}
-	w.syslogger.Debug("UpdateRoutingInfo returned successfully.")
+	// w.syslogger.Debug("UpdateRoutingInfo returned successfully.")
 	return &protos.UpdateRoutingInfoReply{}, nil
 }
 
