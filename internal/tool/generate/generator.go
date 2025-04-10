@@ -1265,12 +1265,7 @@ func (g *generator) generateRegisteredComponents(p printFn) {
 		//   func(impl any, addLoad func(uint64, float64)) codegen.Server {
 		//       return foo_server_stub{impl: impl.(Foo), addLoad: addLoad}
 		//   }
-		serverStubFn := fmt.Sprintf(`func(impl any, addLoad func(uint64, float64)) %s { return %s_server_stub{impl: impl.(%s), addLoad: addLoad } }`, g.codegen().qualify("Server"), notExported(name), g.componentRef(comp))
 
-		// E.g.,
-		//   func(caller func(string, context.Context, []any) ([]any, error)) any {
-		//       return foo_reflect_stub{caller: caller}
-		//   }
 		reflect := g.tset.importPackage("reflect", "reflect")
 		context := g.tset.importPackage("context", "context")
 		reflectStubFn := fmt.Sprintf(
@@ -1287,6 +1282,19 @@ func (g *generator) generateRegisteredComponents(p printFn) {
 		if len(comp.listeners) > 0 {
 			refData.WriteString(codegen.MakeListenersString(myName, comp.listeners))
 		}
+
+		b.Reset()
+		for _, m := range comp.methods() {
+			// fmt.Fprintf(&b, `, %s`, m.Name())
+			fmt.Fprintf(&b, `, %sMetrics: %s(%s{Component: "%s", Method: "%s" })`,
+				notExported(m.Name()),
+				g.codegen().qualify("InternalConcurrentMetricsFor"),
+				g.codegen().qualify("InternalMethodLabels"),
+				comp.fullIntfName(),
+				m.Name())
+		}
+
+		serverStubFn := fmt.Sprintf(`func(impl any, addLoad func(uint64, float64)) %s { return %s_server_stub{impl: impl.(%s), addLoad: addLoad%s } }`, g.codegen().qualify("Server"), notExported(name), g.componentRef(comp), b.String())
 
 		// E.g.,
 		//	weaver.Register(weaver.Registration{
@@ -2140,6 +2148,9 @@ func (g *generator) generateServerStubs(p printFn) {
 		p(`type %s struct{`, stub)
 		p(`	impl %s`, g.componentRef(comp))
 		p(`	addLoad func(key uint64, load float64)`)
+		for _, m := range comp.methods() {
+			p(`	%sMetrics *%s`, notExported(m.Name()), g.codegen().qualify("ConcurrentMethodMetrics"))
+		}
 		p(`}`)
 		p(``)
 
@@ -2174,6 +2185,10 @@ func (g *generator) generateServerStubs(p printFn) {
 			p(`			err = %s(recover())`, g.codegen().qualify("CatchPanics"))
 			p(`		}`)
 			p(`	}()`)
+
+			// Concurrency metric
+			p(` s.%sMetrics.Begin()`, notExported(m.Name()))
+			p(` defer s.%sMetrics.End()`, notExported(m.Name()))
 
 			if mt.Params().Len() > 1 {
 				p(``)

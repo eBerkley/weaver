@@ -46,6 +46,15 @@ var (
 
 	methodLatencies         *metrics.HistogramMap[MethodLabels]
 	internalMethodLatencies *metrics.HistogramMap[InternalMethodLabels]
+
+	internalStartedMethods = metrics.NewCounterMap[InternalMethodLabels](
+		imetrics.StartedMethodsName,
+		"Number of concurrently executing calls to a given method.",
+	)
+	internalFinishedMethods = metrics.NewCounterMap[InternalMethodLabels](
+		imetrics.FinishedMethodsName,
+		"Number of concurrently executing calls to a given method.",
+	)
 )
 
 func init() {
@@ -98,13 +107,32 @@ type MethodMetrics struct {
 	latency      *metrics.Histogram // See MethodLatencies.
 	bytesRequest *metrics.Histogram // See MethodBytesRequest.
 	bytesReply   *metrics.Histogram // See MethodBytesReply.
+	started      *metrics.Counter
+	finished     *metrics.Counter
+	// concurrency  *metrics.Gauge
 }
 
-// ALWAYS RETURNS A HISTOGRAM!!!!
 type InternalMethodLabels struct {
+	Caller    string
 	Component string
 	Method    string
 }
+
+type ConcurrentMethodMetrics struct {
+	started  *metrics.Counter
+	finished *metrics.Counter
+}
+
+func InternalConcurrentMetricsFor(labels InternalMethodLabels) *ConcurrentMethodMetrics {
+	labels.Caller = "*"
+	return &ConcurrentMethodMetrics{
+		started:  internalStartedMethods.Get(labels),
+		finished: internalFinishedMethods.Get(labels),
+	}
+}
+
+func (c *ConcurrentMethodMetrics) Begin() { c.started.Inc() }
+func (c *ConcurrentMethodMetrics) End()   { c.finished.Inc() }
 
 func InternalMetricsFor(labels InternalMethodLabels) *metrics.Histogram {
 	return internalMethodLatencies.Get(labels)
@@ -112,6 +140,7 @@ func InternalMetricsFor(labels InternalMethodLabels) *metrics.Histogram {
 
 // MethodMetricsFor returns metrics for the specified method.
 func MethodMetricsFor(labels MethodLabels) *MethodMetrics {
+	label := InternalMethodLabels{Caller: labels.Caller, Component: labels.Component, Method: labels.Method}
 	return &MethodMetrics{
 		remote:       labels.Remote,
 		count:        methodCounts.Get(labels),
@@ -119,6 +148,8 @@ func MethodMetricsFor(labels MethodLabels) *MethodMetrics {
 		latency:      methodLatencies.Get(labels),
 		bytesRequest: methodBytesRequest.Get(labels),
 		bytesReply:   methodBytesReply.Get(labels),
+		started:      internalStartedMethods.Get(label),
+		finished:     internalFinishedMethods.Get(label),
 	}
 }
 
@@ -130,12 +161,14 @@ type MethodCallHandle struct {
 
 // Begin starts metric update recording for a call to method m.
 func (m *MethodMetrics) Begin() MethodCallHandle {
+	m.started.Inc()
 	return MethodCallHandle{time.Now()}
 }
 
 // End ends metric update recording for a call to method m.
 func (m *MethodMetrics) End(h MethodCallHandle, failed bool, requestBytes, replyBytes int) {
 	latency := time.Since(h.start).Microseconds()
+	m.finished.Inc()
 	m.count.Inc()
 	if failed {
 		m.errorCount.Inc()

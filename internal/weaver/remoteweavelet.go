@@ -735,7 +735,7 @@ func (w *RemoteWeavelet) UpdateRoutingInfo(_ context.Context, req *protos.Update
 	c.resolver.update(endpoints)
 	// w.syslogger.Debug(fmt.Sprintf("got endpoints: %v", endpoints))
 	// Update balancer.
-	if w.componentsByName[info.Component].reg.Stateful {
+	if c.reg.Stateful {
 		c.balancer.updateStateful(info.Replicas)
 		// w.syslogger.Debug("balancer.updateStateful successful")
 	} else if info.Assignment != nil {

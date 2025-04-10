@@ -22,6 +22,8 @@ const (
 	InternalMethodLatenciesName = "serviceweaver_internal_method_latency_micros"
 	MethodBytesRequestName      = "serviceweaver_method_bytes_request"
 	MethodBytesReplyName        = "serviceweaver_method_bytes_reply"
+	StartedMethodsName          = "serviceweaver_started_method_count"
+	FinishedMethodsName         = "serviceweaver_finished_method_count"
 )
 
 // GeneratedBuckets provides rounded bucket boundaries for histograms
