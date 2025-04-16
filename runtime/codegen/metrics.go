@@ -113,6 +113,7 @@ type MethodMetrics struct {
 }
 
 type InternalMethodLabels struct {
+	Remote    bool
 	Caller    string
 	Component string
 	Method    string
@@ -124,6 +125,7 @@ type ConcurrentMethodMetrics struct {
 }
 
 func InternalConcurrentMetricsFor(labels InternalMethodLabels) *ConcurrentMethodMetrics {
+	labels.Remote = false
 	labels.Caller = "*"
 	return &ConcurrentMethodMetrics{
 		started:  internalStartedMethods.Get(labels),
@@ -140,7 +142,7 @@ func InternalMetricsFor(labels InternalMethodLabels) *metrics.Histogram {
 
 // MethodMetricsFor returns metrics for the specified method.
 func MethodMetricsFor(labels MethodLabels) *MethodMetrics {
-	label := InternalMethodLabels{Caller: labels.Caller, Component: labels.Component, Method: labels.Method}
+	label := InternalMethodLabels{Remote:labels.Remote, Caller: labels.Caller, Component: labels.Component, Method: labels.Method}
 	return &MethodMetrics{
 		remote:       labels.Remote,
 		count:        methodCounts.Get(labels),
