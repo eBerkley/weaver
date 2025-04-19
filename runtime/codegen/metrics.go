@@ -55,6 +55,11 @@ var (
 		imetrics.FinishedMethodsName,
 		"Number of concurrently executing calls to a given method.",
 	)
+
+	goroutineGauge = metrics.NewGaugeMap[ComponentLabels](
+		imetrics.GroupGoroutineName,
+		"Number of goroutines in the Service Weaver component",
+	)
 )
 
 func init() {
@@ -122,6 +127,14 @@ type InternalMethodLabels struct {
 type ConcurrentMethodMetrics struct {
 	started  *metrics.Counter
 	finished *metrics.Counter
+}
+
+type ComponentLabels struct {
+	Component string
+}
+
+func GroupGoroutineFor(labels ComponentLabels) *metrics.Gauge {
+	return goroutineGauge.Get(labels)
 }
 
 func InternalConcurrentMetricsFor(labels InternalMethodLabels) *ConcurrentMethodMetrics {

@@ -24,6 +24,7 @@ const (
 	MethodBytesReplyName        = "serviceweaver_method_bytes_reply"
 	StartedMethodsName          = "serviceweaver_started_method_count"
 	FinishedMethodsName         = "serviceweaver_finished_method_count"
+	GroupGoroutineName          = "serviceweaver_goroutines"
 )
 
 // GeneratedBuckets provides rounded bucket boundaries for histograms
