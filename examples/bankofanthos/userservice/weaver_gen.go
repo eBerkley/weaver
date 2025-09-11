@@ -26,10 +26,13 @@ func init() {
 			return t_client_stub{stub: stub, createUserMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/bankofanthos/userservice/T", Method: "CreateUser", Remote: true, Generated: true}), loginMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/bankofanthos/userservice/T", Method: "Login", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return t_server_stub{impl: impl.(T), addLoad: addLoad}
+			return t_server_stub{impl: impl.(T), addLoad: addLoad, createUserMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/examples/bankofanthos/userservice/T", Method: "CreateUser"}), loginMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/examples/bankofanthos/userservice/T", Method: "Login"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return t_reflect_stub{caller: caller}
+		},
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return t_routed_local_stub{impl: impl.(T), stub: stub, tracer: tracer, isLocal: isLocal, createUserMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/bankofanthos/userservice/T", Method: "CreateUser", Remote: true, Generated: true}), loginMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/bankofanthos/userservice/T", Method: "Login", Remote: true, Generated: true})}
 		},
 		RefData: "",
 	})
@@ -135,7 +138,7 @@ func (s t_client_stub) CreateUser(ctx context.Context, a0 CreateUserRequest) (er
 
 	// Preallocate a buffer of the right size.
 	size := 0
-	size += serviceweaver_size_CreateUserRequest_4ef79cd1(&a0)
+	size += serviceweaver_size_CreateUserRequest_80fba6b3(&a0)
 	enc := codegen.NewEncoder()
 	enc.Reset(size)
 
@@ -190,7 +193,7 @@ func (s t_client_stub) Login(ctx context.Context, a0 LoginRequest) (r0 string, e
 
 	// Preallocate a buffer of the right size.
 	size := 0
-	size += serviceweaver_size_LoginRequest_cbd66e76(&a0)
+	size += serviceweaver_size_LoginRequest_e06c1c10(&a0)
 	enc := codegen.NewEncoder()
 	enc.Reset(size)
 
@@ -215,12 +218,38 @@ func (s t_client_stub) Login(ctx context.Context, a0 LoginRequest) (r0 string, e
 	return
 }
 
+// Routed local stub implementations.
+
+type t_routed_local_stub struct {
+	impl              T
+	stub              codegen.Stub
+	tracer            trace.Tracer
+	isLocal           func(shardKey uint64) bool
+	createUserMetrics *codegen.MethodMetrics
+	loginMetrics      *codegen.MethodMetrics
+}
+
+// Check that t_routed_local_stub implements the T interface.
+var _ T = (*t_routed_local_stub)(nil)
+
+func (s t_routed_local_stub) CreateUser(ctx context.Context, a0 CreateUserRequest) (err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+func (s t_routed_local_stub) Login(ctx context.Context, a0 LoginRequest) (r0 string, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
 // Note that "weaver generate" will always generate the error message below.
 // Everything is okay. The error message is only relevant if you see it when
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' (devel) (codegen
+ERROR: You generated this file with 'weaver generate' v0.25.2-0.20250419001101-42f7bf3eb269+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -241,8 +270,10 @@ please file an issue at https://github.com/eberkley/weaver/issues.
 // Server stub implementations.
 
 type t_server_stub struct {
-	impl    T
-	addLoad func(key uint64, load float64)
+	impl              T
+	addLoad           func(key uint64, load float64)
+	createUserMetrics *codegen.ConcurrentMethodMetrics
+	loginMetrics      *codegen.ConcurrentMethodMetrics
 }
 
 // Check that t_server_stub implements the codegen.Server interface.
@@ -267,6 +298,8 @@ func (s t_server_stub) createUser(ctx context.Context, args []byte) (res []byte,
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.createUserMetrics.Begin()
+	defer s.createUserMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -291,6 +324,8 @@ func (s t_server_stub) login(ctx context.Context, args []byte) (res []byte, err 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.loginMetrics.Begin()
+	defer s.loginMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -487,9 +522,9 @@ func serviceweaver_dec_slice_byte_87461245(dec *codegen.Decoder) []byte {
 
 // Size implementations.
 
-// serviceweaver_size_CreateUserRequest_4ef79cd1 returns the size (in bytes) of the serialization
+// serviceweaver_size_CreateUserRequest_80fba6b3 returns the size (in bytes) of the serialization
 // of the provided type.
-func serviceweaver_size_CreateUserRequest_4ef79cd1(x *CreateUserRequest) int {
+func serviceweaver_size_CreateUserRequest_80fba6b3(x *CreateUserRequest) int {
 	size := 0
 	size += 0
 	size += (4 + len(x.Username))
@@ -506,9 +541,9 @@ func serviceweaver_size_CreateUserRequest_4ef79cd1(x *CreateUserRequest) int {
 	return size
 }
 
-// serviceweaver_size_LoginRequest_cbd66e76 returns the size (in bytes) of the serialization
+// serviceweaver_size_LoginRequest_e06c1c10 returns the size (in bytes) of the serialization
 // of the provided type.
-func serviceweaver_size_LoginRequest_cbd66e76(x *LoginRequest) int {
+func serviceweaver_size_LoginRequest_e06c1c10(x *LoginRequest) int {
 	size := 0
 	size += 0
 	size += (4 + len(x.Username))

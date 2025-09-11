@@ -29,7 +29,10 @@ func init() {
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return main_reflect_stub{caller: caller}
 		},
-		RefData: "⟦8d621687:wEaVeReDgE:github.com/eberkley/weaver/Main→github.com/eberkley/weaver/examples/hello/Reverser⟧\n⟦17f36ff9:wEaVeRlIsTeNeRs:github.com/eberkley/weaver/Main→hello⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return main_routed_local_stub{impl: impl.(weaver.Main), stub: stub, tracer: tracer, isLocal: isLocal}
+		},
+		RefData: "⟦84f472f6:wEaVeReDgE:github.com/eberkley/weaver/Main→github.com/eberkley/weaver/examples/hello/Reverser⟧\n⟦860b3aa1:wEaVeRlIsTeNeRs:github.com/eberkley/weaver/Main→hello⟧\n",
 	})
 	codegen.Register(codegen.Registration{
 		Name:  "github.com/eberkley/weaver/examples/hello/Reverser",
@@ -42,10 +45,13 @@ func init() {
 			return reverser_client_stub{stub: stub, reverseMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/hello/Reverser", Method: "Reverse", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return reverser_server_stub{impl: impl.(Reverser), addLoad: addLoad}
+			return reverser_server_stub{impl: impl.(Reverser), addLoad: addLoad, reverseMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/examples/hello/Reverser", Method: "Reverse"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return reverser_reflect_stub{caller: caller}
+		},
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return reverser_routed_local_stub{impl: impl.(Reverser), stub: stub, tracer: tracer, isLocal: isLocal, reverseMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/hello/Reverser", Method: "Reverse", Remote: true, Generated: true})}
 		},
 		RefData: "",
 	})
@@ -171,12 +177,41 @@ func (s reverser_client_stub) Reverse(ctx context.Context, a0 string) (r0 string
 	return
 }
 
+// Routed local stub implementations.
+
+type main_routed_local_stub struct {
+	impl    weaver.Main
+	stub    codegen.Stub
+	tracer  trace.Tracer
+	isLocal func(shardKey uint64) bool
+}
+
+// Check that main_routed_local_stub implements the weaver.Main interface.
+var _ weaver.Main = (*main_routed_local_stub)(nil)
+
+type reverser_routed_local_stub struct {
+	impl           Reverser
+	stub           codegen.Stub
+	tracer         trace.Tracer
+	isLocal        func(shardKey uint64) bool
+	reverseMetrics *codegen.MethodMetrics
+}
+
+// Check that reverser_routed_local_stub implements the Reverser interface.
+var _ Reverser = (*reverser_routed_local_stub)(nil)
+
+func (s reverser_routed_local_stub) Reverse(ctx context.Context, a0 string) (r0 string, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
 // Note that "weaver generate" will always generate the error message below.
 // Everything is okay. The error message is only relevant if you see it when
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' (devel) (codegen
+ERROR: You generated this file with 'weaver generate' v0.25.2-0.20250419001101-42f7bf3eb269+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -213,8 +248,9 @@ func (s main_server_stub) GetStubFn(method string) func(ctx context.Context, arg
 }
 
 type reverser_server_stub struct {
-	impl    Reverser
-	addLoad func(key uint64, load float64)
+	impl           Reverser
+	addLoad        func(key uint64, load float64)
+	reverseMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that reverser_server_stub implements the codegen.Server interface.
@@ -237,6 +273,8 @@ func (s reverser_server_stub) reverse(ctx context.Context, args []byte) (res []b
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.reverseMetrics.Begin()
+	defer s.reverseMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)

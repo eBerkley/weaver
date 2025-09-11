@@ -1556,6 +1556,41 @@ func (g *generator) generateClientStubs(p printFn) {
 				p(`	var shardKey uint64`)
 			}
 
+			// Update the send time, if possible
+
+			if mt.Params().Len() > 1 {
+				wantsSendTime := func() bool {
+					// fmt.Printf("looking at %v.%v: \n", comp.intfName(), m.Name())
+					t := mt.Params().At(1).Type().Underlying()
+					obj, _, _ := types.LookupFieldOrMethod(t, true, g.tset.pkg.Types, "SetSendTime")
+					marshal, ok := obj.(*types.Func)
+					if !ok {
+						return false
+					}
+
+					if marshal.Name() != "SetSendTime" {
+						return false
+					}
+					sig, ok := marshal.Type().(*types.Signature)
+					if !ok {
+						return false
+					}
+					_, args, results := sig.Recv(), sig.Params(), sig.Results()
+					if args.Len() != 0 || results.Len() != 0 {
+
+						return false
+					}
+					return true
+
+				}
+
+				if wantsSendTime() {
+					p(``)
+					p(`	// Update the send time to calculate service latency later`)
+					p(` a0.SetSendTime()`)
+				}
+			}
+
 			// Invoke call.Run.
 			p(``)
 			p(`	// Call the remote method.`)

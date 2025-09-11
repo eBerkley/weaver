@@ -26,12 +26,15 @@ func init() {
 			return t_client_stub{stub: stub, addTransactionMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/bankofanthos/ledgerwriter/T", Method: "AddTransaction", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return t_server_stub{impl: impl.(T), addLoad: addLoad}
+			return t_server_stub{impl: impl.(T), addLoad: addLoad, addTransactionMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/examples/bankofanthos/ledgerwriter/T", Method: "AddTransaction"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return t_reflect_stub{caller: caller}
 		},
-		RefData: "⟦7237a6f4:wEaVeReDgE:github.com/eberkley/weaver/examples/bankofanthos/ledgerwriter/T→github.com/eberkley/weaver/examples/bankofanthos/balancereader/T⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return t_routed_local_stub{impl: impl.(T), stub: stub, tracer: tracer, isLocal: isLocal, addTransactionMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/bankofanthos/ledgerwriter/T", Method: "AddTransaction", Remote: true, Generated: true})}
+		},
+		RefData: "⟦c3069900:wEaVeReDgE:github.com/eberkley/weaver/examples/bankofanthos/ledgerwriter/T→github.com/eberkley/weaver/examples/bankofanthos/balancereader/T⟧\n",
 	})
 }
 
@@ -134,12 +137,31 @@ func (s t_client_stub) AddTransaction(ctx context.Context, a0 string, a1 string,
 	return
 }
 
+// Routed local stub implementations.
+
+type t_routed_local_stub struct {
+	impl                  T
+	stub                  codegen.Stub
+	tracer                trace.Tracer
+	isLocal               func(shardKey uint64) bool
+	addTransactionMetrics *codegen.MethodMetrics
+}
+
+// Check that t_routed_local_stub implements the T interface.
+var _ T = (*t_routed_local_stub)(nil)
+
+func (s t_routed_local_stub) AddTransaction(ctx context.Context, a0 string, a1 string, a2 model.Transaction) (err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
 // Note that "weaver generate" will always generate the error message below.
 // Everything is okay. The error message is only relevant if you see it when
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' (devel) (codegen
+ERROR: You generated this file with 'weaver generate' v0.25.2-0.20250419001101-42f7bf3eb269+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -160,8 +182,9 @@ please file an issue at https://github.com/eberkley/weaver/issues.
 // Server stub implementations.
 
 type t_server_stub struct {
-	impl    T
-	addLoad func(key uint64, load float64)
+	impl                  T
+	addLoad               func(key uint64, load float64)
+	addTransactionMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that t_server_stub implements the codegen.Server interface.
@@ -184,6 +207,8 @@ func (s t_server_stub) addTransaction(ctx context.Context, args []byte) (res []b
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.addTransactionMetrics.Begin()
+	defer s.addTransactionMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)

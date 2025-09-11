@@ -25,12 +25,15 @@ func init() {
 			return bank_client_stub{stub: stub, depositMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/sim/internal/bank/Bank", Method: "Deposit", Remote: true, Generated: true}), withdrawMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/sim/internal/bank/Bank", Method: "Withdraw", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return bank_server_stub{impl: impl.(Bank), addLoad: addLoad}
+			return bank_server_stub{impl: impl.(Bank), addLoad: addLoad, depositMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/sim/internal/bank/Bank", Method: "Deposit"}), withdrawMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/sim/internal/bank/Bank", Method: "Withdraw"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return bank_reflect_stub{caller: caller}
 		},
-		RefData: "⟦dab0c530:wEaVeReDgE:github.com/eberkley/weaver/sim/internal/bank/Bank→github.com/eberkley/weaver/sim/internal/bank/Store⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return bank_routed_local_stub{impl: impl.(Bank), stub: stub, tracer: tracer, isLocal: isLocal, depositMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/sim/internal/bank/Bank", Method: "Deposit", Remote: true, Generated: true}), withdrawMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/sim/internal/bank/Bank", Method: "Withdraw", Remote: true, Generated: true})}
+		},
+		RefData: "⟦98acde42:wEaVeReDgE:github.com/eberkley/weaver/sim/internal/bank/Bank→github.com/eberkley/weaver/sim/internal/bank/Store⟧\n",
 	})
 	codegen.Register(codegen.Registration{
 		Name:  "github.com/eberkley/weaver/sim/internal/bank/Store",
@@ -43,10 +46,13 @@ func init() {
 			return store_client_stub{stub: stub, addMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/sim/internal/bank/Store", Method: "Add", Remote: true, Generated: true}), getMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/sim/internal/bank/Store", Method: "Get", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return store_server_stub{impl: impl.(Store), addLoad: addLoad}
+			return store_server_stub{impl: impl.(Store), addLoad: addLoad, addMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/sim/internal/bank/Store", Method: "Add"}), getMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/sim/internal/bank/Store", Method: "Get"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return store_reflect_stub{caller: caller}
+		},
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return store_routed_local_stub{impl: impl.(Store), stub: stub, tracer: tracer, isLocal: isLocal, addMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/sim/internal/bank/Store", Method: "Add", Remote: true, Generated: true}), getMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/sim/internal/bank/Store", Method: "Get", Remote: true, Generated: true})}
 		},
 		RefData: "",
 	})
@@ -412,12 +418,62 @@ func (s store_client_stub) Get(ctx context.Context, a0 string) (r0 int, err erro
 	return
 }
 
+// Routed local stub implementations.
+
+type bank_routed_local_stub struct {
+	impl            Bank
+	stub            codegen.Stub
+	tracer          trace.Tracer
+	isLocal         func(shardKey uint64) bool
+	depositMetrics  *codegen.MethodMetrics
+	withdrawMetrics *codegen.MethodMetrics
+}
+
+// Check that bank_routed_local_stub implements the Bank interface.
+var _ Bank = (*bank_routed_local_stub)(nil)
+
+func (s bank_routed_local_stub) Deposit(ctx context.Context, a0 string, a1 int) (r0 int, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+func (s bank_routed_local_stub) Withdraw(ctx context.Context, a0 string, a1 int) (r0 int, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+type store_routed_local_stub struct {
+	impl       Store
+	stub       codegen.Stub
+	tracer     trace.Tracer
+	isLocal    func(shardKey uint64) bool
+	addMetrics *codegen.MethodMetrics
+	getMetrics *codegen.MethodMetrics
+}
+
+// Check that store_routed_local_stub implements the Store interface.
+var _ Store = (*store_routed_local_stub)(nil)
+
+func (s store_routed_local_stub) Add(ctx context.Context, a0 string, a1 int) (r0 int, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+func (s store_routed_local_stub) Get(ctx context.Context, a0 string) (r0 int, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
 // Note that "weaver generate" will always generate the error message below.
 // Everything is okay. The error message is only relevant if you see it when
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' (devel) (codegen
+ERROR: You generated this file with 'weaver generate' v0.25.2-0.20250419001101-42f7bf3eb269+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -438,8 +494,10 @@ please file an issue at https://github.com/eberkley/weaver/issues.
 // Server stub implementations.
 
 type bank_server_stub struct {
-	impl    Bank
-	addLoad func(key uint64, load float64)
+	impl            Bank
+	addLoad         func(key uint64, load float64)
+	depositMetrics  *codegen.ConcurrentMethodMetrics
+	withdrawMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that bank_server_stub implements the codegen.Server interface.
@@ -464,6 +522,8 @@ func (s bank_server_stub) deposit(ctx context.Context, args []byte) (res []byte,
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.depositMetrics.Begin()
+	defer s.depositMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -491,6 +551,8 @@ func (s bank_server_stub) withdraw(ctx context.Context, args []byte) (res []byte
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.withdrawMetrics.Begin()
+	defer s.withdrawMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -512,8 +574,10 @@ func (s bank_server_stub) withdraw(ctx context.Context, args []byte) (res []byte
 }
 
 type store_server_stub struct {
-	impl    Store
-	addLoad func(key uint64, load float64)
+	impl       Store
+	addLoad    func(key uint64, load float64)
+	addMetrics *codegen.ConcurrentMethodMetrics
+	getMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that store_server_stub implements the codegen.Server interface.
@@ -538,6 +602,8 @@ func (s store_server_stub) add(ctx context.Context, args []byte) (res []byte, er
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.addMetrics.Begin()
+	defer s.addMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -565,6 +631,8 @@ func (s store_server_stub) get(ctx context.Context, args []byte) (res []byte, er
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.getMetrics.Begin()
+	defer s.getMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)

@@ -27,7 +27,10 @@ func init() {
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return a_reflect_stub{caller: caller}
 		},
-		RefData: "⟦193f6c94:wEaVeReDgE:github.com/eberkley/weaver/runtime/bin/testprogram/A→github.com/eberkley/weaver/runtime/bin/testprogram/B⟧\n⟦8cd483a3:wEaVeReDgE:github.com/eberkley/weaver/runtime/bin/testprogram/A→github.com/eberkley/weaver/runtime/bin/testprogram/C⟧\n⟦93cd9612:wEaVeRlIsTeNeRs:github.com/eberkley/weaver/runtime/bin/testprogram/A→aLis1,aLis2,aLis3⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return a_routed_local_stub{impl: impl.(A), stub: stub, tracer: tracer, isLocal: isLocal}
+		},
+		RefData: "⟦4f3e77ff:wEaVeReDgE:github.com/eberkley/weaver/runtime/bin/testprogram/A→github.com/eberkley/weaver/runtime/bin/testprogram/B⟧\n⟦bedb1c22:wEaVeReDgE:github.com/eberkley/weaver/runtime/bin/testprogram/A→github.com/eberkley/weaver/runtime/bin/testprogram/C⟧\n⟦997611e7:wEaVeRlIsTeNeRs:github.com/eberkley/weaver/runtime/bin/testprogram/A→aLis1,aLis2,aLis3⟧\n",
 	})
 	codegen.Register(codegen.Registration{
 		Name:      "github.com/eberkley/weaver/runtime/bin/testprogram/B",
@@ -44,7 +47,10 @@ func init() {
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return b_reflect_stub{caller: caller}
 		},
-		RefData: "⟦7551e870:wEaVeRlIsTeNeRs:github.com/eberkley/weaver/runtime/bin/testprogram/B→Listener⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return b_routed_local_stub{impl: impl.(B), stub: stub, tracer: tracer, isLocal: isLocal}
+		},
+		RefData: "⟦f0315588:wEaVeRlIsTeNeRs:github.com/eberkley/weaver/runtime/bin/testprogram/B→Listener⟧\n",
 	})
 	codegen.Register(codegen.Registration{
 		Name:      "github.com/eberkley/weaver/runtime/bin/testprogram/C",
@@ -61,7 +67,10 @@ func init() {
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return c_reflect_stub{caller: caller}
 		},
-		RefData: "⟦105ddfd4:wEaVeRlIsTeNeRs:github.com/eberkley/weaver/runtime/bin/testprogram/C→cLis⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return c_routed_local_stub{impl: impl.(C), stub: stub, tracer: tracer, isLocal: isLocal}
+		},
+		RefData: "⟦85b45e8e:wEaVeRlIsTeNeRs:github.com/eberkley/weaver/runtime/bin/testprogram/C→cLis⟧\n",
 	})
 	codegen.Register(codegen.Registration{
 		Name:      "github.com/eberkley/weaver/Main",
@@ -78,7 +87,10 @@ func init() {
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return main_reflect_stub{caller: caller}
 		},
-		RefData: "⟦d90475cb:wEaVeReDgE:github.com/eberkley/weaver/Main→github.com/eberkley/weaver/runtime/bin/testprogram/A⟧\n⟦b7bc7e7d:wEaVeRlIsTeNeRs:github.com/eberkley/weaver/Main→appLis⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return main_routed_local_stub{impl: impl.(weaver.Main), stub: stub, tracer: tracer, isLocal: isLocal}
+		},
+		RefData: "⟦39d9dae7:wEaVeReDgE:github.com/eberkley/weaver/Main→github.com/eberkley/weaver/runtime/bin/testprogram/A⟧\n⟦09a9201c:wEaVeRlIsTeNeRs:github.com/eberkley/weaver/Main→appLis⟧\n",
 	})
 }
 
@@ -158,12 +170,54 @@ type main_client_stub struct {
 // Check that main_client_stub implements the weaver.Main interface.
 var _ weaver.Main = (*main_client_stub)(nil)
 
+// Routed local stub implementations.
+
+type a_routed_local_stub struct {
+	impl    A
+	stub    codegen.Stub
+	tracer  trace.Tracer
+	isLocal func(shardKey uint64) bool
+}
+
+// Check that a_routed_local_stub implements the A interface.
+var _ A = (*a_routed_local_stub)(nil)
+
+type b_routed_local_stub struct {
+	impl    B
+	stub    codegen.Stub
+	tracer  trace.Tracer
+	isLocal func(shardKey uint64) bool
+}
+
+// Check that b_routed_local_stub implements the B interface.
+var _ B = (*b_routed_local_stub)(nil)
+
+type c_routed_local_stub struct {
+	impl    C
+	stub    codegen.Stub
+	tracer  trace.Tracer
+	isLocal func(shardKey uint64) bool
+}
+
+// Check that c_routed_local_stub implements the C interface.
+var _ C = (*c_routed_local_stub)(nil)
+
+type main_routed_local_stub struct {
+	impl    weaver.Main
+	stub    codegen.Stub
+	tracer  trace.Tracer
+	isLocal func(shardKey uint64) bool
+}
+
+// Check that main_routed_local_stub implements the weaver.Main interface.
+var _ weaver.Main = (*main_routed_local_stub)(nil)
+
 // Note that "weaver generate" will always generate the error message below.
 // Everything is okay. The error message is only relevant if you see it when
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' (devel) (codegen
+ERROR: You generated this file with 'weaver generate' v0.25.2-0.20250419001101-42f7bf3eb269+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.

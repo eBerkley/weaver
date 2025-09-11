@@ -25,10 +25,13 @@ func init() {
 			return pingPonger_client_stub{stub: stub, pingMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/protos/PingPonger", Method: "Ping", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return pingPonger_server_stub{impl: impl.(PingPonger), addLoad: addLoad}
+			return pingPonger_server_stub{impl: impl.(PingPonger), addLoad: addLoad, pingMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/weavertest/internal/protos/PingPonger", Method: "Ping"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return pingPonger_reflect_stub{caller: caller}
+		},
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return pingPonger_routed_local_stub{impl: impl.(PingPonger), stub: stub, tracer: tracer, isLocal: isLocal, pingMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/protos/PingPonger", Method: "Ping", Remote: true, Generated: true})}
 		},
 		RefData: "",
 	})
@@ -112,7 +115,7 @@ func (s pingPonger_client_stub) Ping(ctx context.Context, a0 *Ping) (r0 *Pong, e
 
 	// Encode arguments.
 	enc := codegen.NewEncoder()
-	serviceweaver_enc_ptr_Ping_53efca65(enc, a0)
+	serviceweaver_enc_ptr_Ping_ffa6a940(enc, a0)
 	var shardKey uint64
 
 	// Call the remote method.
@@ -127,8 +130,27 @@ func (s pingPonger_client_stub) Ping(ctx context.Context, a0 *Ping) (r0 *Pong, e
 
 	// Decode the results.
 	dec := codegen.NewDecoder(results)
-	r0 = serviceweaver_dec_ptr_Pong_10ae1a4e(dec)
+	r0 = serviceweaver_dec_ptr_Pong_8c3ad4a5(dec)
 	err = dec.Error()
+	return
+}
+
+// Routed local stub implementations.
+
+type pingPonger_routed_local_stub struct {
+	impl        PingPonger
+	stub        codegen.Stub
+	tracer      trace.Tracer
+	isLocal     func(shardKey uint64) bool
+	pingMetrics *codegen.MethodMetrics
+}
+
+// Check that pingPonger_routed_local_stub implements the PingPonger interface.
+var _ PingPonger = (*pingPonger_routed_local_stub)(nil)
+
+func (s pingPonger_routed_local_stub) Ping(ctx context.Context, a0 *Ping) (r0 *Pong, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
 	return
 }
 
@@ -137,7 +159,7 @@ func (s pingPonger_client_stub) Ping(ctx context.Context, a0 *Ping) (r0 *Pong, e
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' (devel) (codegen
+ERROR: You generated this file with 'weaver generate' v0.25.2-0.20250419001101-42f7bf3eb269+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -158,8 +180,9 @@ please file an issue at https://github.com/eberkley/weaver/issues.
 // Server stub implementations.
 
 type pingPonger_server_stub struct {
-	impl    PingPonger
-	addLoad func(key uint64, load float64)
+	impl        PingPonger
+	addLoad     func(key uint64, load float64)
+	pingMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that pingPonger_server_stub implements the codegen.Server interface.
@@ -182,11 +205,13 @@ func (s pingPonger_server_stub) ping(ctx context.Context, args []byte) (res []by
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.pingMetrics.Begin()
+	defer s.pingMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
 	var a0 *Ping
-	a0 = serviceweaver_dec_ptr_Ping_53efca65(dec)
+	a0 = serviceweaver_dec_ptr_Ping_ffa6a940(dec)
 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
@@ -195,7 +220,7 @@ func (s pingPonger_server_stub) ping(ctx context.Context, args []byte) (res []by
 
 	// Encode the results.
 	enc := codegen.NewEncoder()
-	serviceweaver_enc_ptr_Pong_10ae1a4e(enc, r0)
+	serviceweaver_enc_ptr_Pong_8c3ad4a5(enc, r0)
 	enc.Error(appErr)
 	return enc.Data(), nil
 }
@@ -216,7 +241,7 @@ func (s pingPonger_reflect_stub) Ping(ctx context.Context, a0 *Ping) (r0 *Pong, 
 
 // Encoding/decoding implementations.
 
-func serviceweaver_enc_ptr_Ping_53efca65(enc *codegen.Encoder, arg *Ping) {
+func serviceweaver_enc_ptr_Ping_ffa6a940(enc *codegen.Encoder, arg *Ping) {
 	if arg == nil {
 		enc.Bool(false)
 	} else {
@@ -225,7 +250,7 @@ func serviceweaver_enc_ptr_Ping_53efca65(enc *codegen.Encoder, arg *Ping) {
 	}
 }
 
-func serviceweaver_dec_ptr_Ping_53efca65(dec *codegen.Decoder) *Ping {
+func serviceweaver_dec_ptr_Ping_ffa6a940(dec *codegen.Decoder) *Ping {
 	if !dec.Bool() {
 		return nil
 	}
@@ -234,7 +259,7 @@ func serviceweaver_dec_ptr_Ping_53efca65(dec *codegen.Decoder) *Ping {
 	return &res
 }
 
-func serviceweaver_enc_ptr_Pong_10ae1a4e(enc *codegen.Encoder, arg *Pong) {
+func serviceweaver_enc_ptr_Pong_8c3ad4a5(enc *codegen.Encoder, arg *Pong) {
 	if arg == nil {
 		enc.Bool(false)
 	} else {
@@ -243,7 +268,7 @@ func serviceweaver_enc_ptr_Pong_10ae1a4e(enc *codegen.Encoder, arg *Pong) {
 	}
 }
 
-func serviceweaver_dec_ptr_Pong_10ae1a4e(dec *codegen.Decoder) *Pong {
+func serviceweaver_dec_ptr_Pong_8c3ad4a5(dec *codegen.Decoder) *Pong {
 	if !dec.Bool() {
 		return nil
 	}

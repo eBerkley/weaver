@@ -25,10 +25,13 @@ func init() {
 			return started_client_stub{stub: stub, markStartedMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/deploy/Started", Method: "MarkStarted", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return started_server_stub{impl: impl.(Started), addLoad: addLoad}
+			return started_server_stub{impl: impl.(Started), addLoad: addLoad, markStartedMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/weavertest/internal/deploy/Started", Method: "MarkStarted"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return started_reflect_stub{caller: caller}
+		},
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return started_routed_local_stub{impl: impl.(Started), stub: stub, tracer: tracer, isLocal: isLocal, markStartedMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/deploy/Started", Method: "MarkStarted", Remote: true, Generated: true})}
 		},
 		RefData: "",
 	})
@@ -43,12 +46,15 @@ func init() {
 			return widget_client_stub{stub: stub, useMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/deploy/Widget", Method: "Use", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return widget_server_stub{impl: impl.(Widget), addLoad: addLoad}
+			return widget_server_stub{impl: impl.(Widget), addLoad: addLoad, useMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/weavertest/internal/deploy/Widget", Method: "Use"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return widget_reflect_stub{caller: caller}
 		},
-		RefData: "⟦f3fa3c18:wEaVeReDgE:github.com/eberkley/weaver/weavertest/internal/deploy/Widget→github.com/eberkley/weaver/weavertest/internal/deploy/Started⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return widget_routed_local_stub{impl: impl.(Widget), stub: stub, tracer: tracer, isLocal: isLocal, useMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/deploy/Widget", Method: "Use", Remote: true, Generated: true})}
+		},
+		RefData: "⟦9374c3d0:wEaVeReDgE:github.com/eberkley/weaver/weavertest/internal/deploy/Widget→github.com/eberkley/weaver/weavertest/internal/deploy/Started⟧\n",
 	})
 }
 
@@ -248,12 +254,48 @@ func (s widget_client_stub) Use(ctx context.Context, a0 string) (err error) {
 	return
 }
 
+// Routed local stub implementations.
+
+type started_routed_local_stub struct {
+	impl               Started
+	stub               codegen.Stub
+	tracer             trace.Tracer
+	isLocal            func(shardKey uint64) bool
+	markStartedMetrics *codegen.MethodMetrics
+}
+
+// Check that started_routed_local_stub implements the Started interface.
+var _ Started = (*started_routed_local_stub)(nil)
+
+func (s started_routed_local_stub) MarkStarted(ctx context.Context, a0 string) (err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+type widget_routed_local_stub struct {
+	impl       Widget
+	stub       codegen.Stub
+	tracer     trace.Tracer
+	isLocal    func(shardKey uint64) bool
+	useMetrics *codegen.MethodMetrics
+}
+
+// Check that widget_routed_local_stub implements the Widget interface.
+var _ Widget = (*widget_routed_local_stub)(nil)
+
+func (s widget_routed_local_stub) Use(ctx context.Context, a0 string) (err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
 // Note that "weaver generate" will always generate the error message below.
 // Everything is okay. The error message is only relevant if you see it when
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' (devel) (codegen
+ERROR: You generated this file with 'weaver generate' v0.25.2-0.20250419001101-42f7bf3eb269+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -274,8 +316,9 @@ please file an issue at https://github.com/eberkley/weaver/issues.
 // Server stub implementations.
 
 type started_server_stub struct {
-	impl    Started
-	addLoad func(key uint64, load float64)
+	impl               Started
+	addLoad            func(key uint64, load float64)
+	markStartedMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that started_server_stub implements the codegen.Server interface.
@@ -298,6 +341,8 @@ func (s started_server_stub) markStarted(ctx context.Context, args []byte) (res 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.markStartedMetrics.Begin()
+	defer s.markStartedMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -316,8 +361,9 @@ func (s started_server_stub) markStarted(ctx context.Context, args []byte) (res 
 }
 
 type widget_server_stub struct {
-	impl    Widget
-	addLoad func(key uint64, load float64)
+	impl       Widget
+	addLoad    func(key uint64, load float64)
+	useMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that widget_server_stub implements the codegen.Server interface.
@@ -340,6 +386,8 @@ func (s widget_server_stub) use(ctx context.Context, args []byte) (res []byte, e
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.useMetrics.Begin()
+	defer s.useMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)

@@ -37,7 +37,7 @@ import (
 // DefaultReplication is the default number of times a component is replicated.
 //
 // TODO(mwhittaker): Include this in the Options struct?
-const DefaultReplication = 2
+const DefaultReplication = 1
 
 // deployer is the weavertest multiprocess deployer. Every multiprocess
 // weavertest runs its own deployer. The main component is run in the same

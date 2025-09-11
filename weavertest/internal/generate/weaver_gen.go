@@ -26,10 +26,13 @@ func init() {
 			return testApp_client_stub{stub: stub, divModMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/generate/testApp", Method: "DivMod", Remote: true, Generated: true}), getMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/generate/testApp", Method: "Get", Remote: true, Generated: true}), incPointerMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/generate/testApp", Method: "IncPointer", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return testApp_server_stub{impl: impl.(testApp), addLoad: addLoad}
+			return testApp_server_stub{impl: impl.(testApp), addLoad: addLoad, divModMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/weavertest/internal/generate/testApp", Method: "DivMod"}), getMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/weavertest/internal/generate/testApp", Method: "Get"}), incPointerMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/weavertest/internal/generate/testApp", Method: "IncPointer"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return testApp_reflect_stub{caller: caller}
+		},
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return testApp_routed_local_stub{impl: impl.(testApp), stub: stub, tracer: tracer, isLocal: isLocal, divModMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/generate/testApp", Method: "DivMod", Remote: true, Generated: true}), getMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/generate/testApp", Method: "Get", Remote: true, Generated: true}), incPointerMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/generate/testApp", Method: "IncPointer", Remote: true, Generated: true})}
 		},
 		RefData: "",
 	})
@@ -299,12 +302,45 @@ func (s testApp_client_stub) IncPointer(ctx context.Context, a0 *int) (r0 *int, 
 	return
 }
 
+// Routed local stub implementations.
+
+type testApp_routed_local_stub struct {
+	impl              testApp
+	stub              codegen.Stub
+	tracer            trace.Tracer
+	isLocal           func(shardKey uint64) bool
+	divModMetrics     *codegen.MethodMetrics
+	getMetrics        *codegen.MethodMetrics
+	incPointerMetrics *codegen.MethodMetrics
+}
+
+// Check that testApp_routed_local_stub implements the testApp interface.
+var _ testApp = (*testApp_routed_local_stub)(nil)
+
+func (s testApp_routed_local_stub) DivMod(ctx context.Context, a0 int, a1 int) (r0 int, r1 int, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+func (s testApp_routed_local_stub) Get(ctx context.Context, a0 string, a1 behaviorType) (r0 int, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+func (s testApp_routed_local_stub) IncPointer(ctx context.Context, a0 *int) (r0 *int, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
 // Note that "weaver generate" will always generate the error message below.
 // Everything is okay. The error message is only relevant if you see it when
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' (devel) (codegen
+ERROR: You generated this file with 'weaver generate' v0.25.2-0.20250419001101-42f7bf3eb269+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -325,8 +361,11 @@ please file an issue at https://github.com/eberkley/weaver/issues.
 // Server stub implementations.
 
 type testApp_server_stub struct {
-	impl    testApp
-	addLoad func(key uint64, load float64)
+	impl              testApp
+	addLoad           func(key uint64, load float64)
+	divModMetrics     *codegen.ConcurrentMethodMetrics
+	getMetrics        *codegen.ConcurrentMethodMetrics
+	incPointerMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that testApp_server_stub implements the codegen.Server interface.
@@ -353,6 +392,8 @@ func (s testApp_server_stub) divMod(ctx context.Context, args []byte) (res []byt
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.divModMetrics.Begin()
+	defer s.divModMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -381,6 +422,8 @@ func (s testApp_server_stub) get(ctx context.Context, args []byte) (res []byte, 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.getMetrics.Begin()
+	defer s.getMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -408,6 +451,8 @@ func (s testApp_server_stub) incPointer(ctx context.Context, args []byte) (res [
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.incPointerMetrics.Begin()
+	defer s.incPointerMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)

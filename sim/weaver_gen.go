@@ -26,10 +26,13 @@ func init() {
 			return blocker_client_stub{stub: stub, blockMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/sim/blocker", Method: "Block", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return blocker_server_stub{impl: impl.(blocker), addLoad: addLoad}
+			return blocker_server_stub{impl: impl.(blocker), addLoad: addLoad, blockMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/sim/blocker", Method: "Block"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return blocker_reflect_stub{caller: caller}
+		},
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return blocker_routed_local_stub{impl: impl.(blocker), stub: stub, tracer: tracer, isLocal: isLocal, blockMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/sim/blocker", Method: "Block", Remote: true, Generated: true})}
 		},
 		RefData: "",
 	})
@@ -44,12 +47,15 @@ func init() {
 			return div_client_stub{stub: stub, divMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/sim/div", Method: "Div", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return div_server_stub{impl: impl.(div), addLoad: addLoad}
+			return div_server_stub{impl: impl.(div), addLoad: addLoad, divMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/sim/div", Method: "Div"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return div_reflect_stub{caller: caller}
 		},
-		RefData: "⟦6ddebe91:wEaVeReDgE:github.com/eberkley/weaver/sim/div→github.com/eberkley/weaver/sim/identity⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return div_routed_local_stub{impl: impl.(div), stub: stub, tracer: tracer, isLocal: isLocal, divMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/sim/div", Method: "Div", Remote: true, Generated: true})}
+		},
+		RefData: "⟦6cce35e9:wEaVeReDgE:github.com/eberkley/weaver/sim/div→github.com/eberkley/weaver/sim/identity⟧\n",
 	})
 	codegen.Register(codegen.Registration{
 		Name:  "github.com/eberkley/weaver/sim/divMod",
@@ -62,12 +68,15 @@ func init() {
 			return divMod_client_stub{stub: stub, divModMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/sim/divMod", Method: "DivMod", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return divMod_server_stub{impl: impl.(divMod), addLoad: addLoad}
+			return divMod_server_stub{impl: impl.(divMod), addLoad: addLoad, divModMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/sim/divMod", Method: "DivMod"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return divMod_reflect_stub{caller: caller}
 		},
-		RefData: "⟦df3a80a0:wEaVeReDgE:github.com/eberkley/weaver/sim/divMod→github.com/eberkley/weaver/sim/div⟧\n⟦b28314dd:wEaVeReDgE:github.com/eberkley/weaver/sim/divMod→github.com/eberkley/weaver/sim/mod⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return divMod_routed_local_stub{impl: impl.(divMod), stub: stub, tracer: tracer, isLocal: isLocal, divModMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/sim/divMod", Method: "DivMod", Remote: true, Generated: true})}
+		},
+		RefData: "⟦f2c2911e:wEaVeReDgE:github.com/eberkley/weaver/sim/divMod→github.com/eberkley/weaver/sim/div⟧\n⟦5a932eb6:wEaVeReDgE:github.com/eberkley/weaver/sim/divMod→github.com/eberkley/weaver/sim/mod⟧\n",
 	})
 	codegen.Register(codegen.Registration{
 		Name:  "github.com/eberkley/weaver/sim/identity",
@@ -80,10 +89,13 @@ func init() {
 			return identity_client_stub{stub: stub, identityMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/sim/identity", Method: "Identity", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return identity_server_stub{impl: impl.(identity), addLoad: addLoad}
+			return identity_server_stub{impl: impl.(identity), addLoad: addLoad, identityMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/sim/identity", Method: "Identity"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return identity_reflect_stub{caller: caller}
+		},
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return identity_routed_local_stub{impl: impl.(identity), stub: stub, tracer: tracer, isLocal: isLocal, identityMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/sim/identity", Method: "Identity", Remote: true, Generated: true})}
 		},
 		RefData: "",
 	})
@@ -98,12 +110,15 @@ func init() {
 			return mod_client_stub{stub: stub, modMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/sim/mod", Method: "Mod", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return mod_server_stub{impl: impl.(mod), addLoad: addLoad}
+			return mod_server_stub{impl: impl.(mod), addLoad: addLoad, modMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/sim/mod", Method: "Mod"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return mod_reflect_stub{caller: caller}
 		},
-		RefData: "⟦5bf2dcf2:wEaVeReDgE:github.com/eberkley/weaver/sim/mod→github.com/eberkley/weaver/sim/identity⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return mod_routed_local_stub{impl: impl.(mod), stub: stub, tracer: tracer, isLocal: isLocal, modMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/sim/mod", Method: "Mod", Remote: true, Generated: true})}
+		},
+		RefData: "⟦99b46a14:wEaVeReDgE:github.com/eberkley/weaver/sim/mod→github.com/eberkley/weaver/sim/identity⟧\n",
 	})
 	codegen.Register(codegen.Registration{
 		Name:  "github.com/eberkley/weaver/sim/panicker",
@@ -116,10 +131,13 @@ func init() {
 			return panicker_client_stub{stub: stub, panicMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/sim/panicker", Method: "Panic", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return panicker_server_stub{impl: impl.(panicker), addLoad: addLoad}
+			return panicker_server_stub{impl: impl.(panicker), addLoad: addLoad, panicMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/sim/panicker", Method: "Panic"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return panicker_reflect_stub{caller: caller}
+		},
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return panicker_routed_local_stub{impl: impl.(panicker), stub: stub, tracer: tracer, isLocal: isLocal, panicMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/sim/panicker", Method: "Panic", Remote: true, Generated: true})}
 		},
 		RefData: "",
 	})
@@ -699,12 +717,116 @@ func (s panicker_client_stub) Panic(ctx context.Context, a0 bool) (err error) {
 	return
 }
 
+// Routed local stub implementations.
+
+type blocker_routed_local_stub struct {
+	impl         blocker
+	stub         codegen.Stub
+	tracer       trace.Tracer
+	isLocal      func(shardKey uint64) bool
+	blockMetrics *codegen.MethodMetrics
+}
+
+// Check that blocker_routed_local_stub implements the blocker interface.
+var _ blocker = (*blocker_routed_local_stub)(nil)
+
+func (s blocker_routed_local_stub) Block(ctx context.Context) (err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+type div_routed_local_stub struct {
+	impl       div
+	stub       codegen.Stub
+	tracer     trace.Tracer
+	isLocal    func(shardKey uint64) bool
+	divMetrics *codegen.MethodMetrics
+}
+
+// Check that div_routed_local_stub implements the div interface.
+var _ div = (*div_routed_local_stub)(nil)
+
+func (s div_routed_local_stub) Div(ctx context.Context, a0 int, a1 int) (r0 int, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+type divMod_routed_local_stub struct {
+	impl          divMod
+	stub          codegen.Stub
+	tracer        trace.Tracer
+	isLocal       func(shardKey uint64) bool
+	divModMetrics *codegen.MethodMetrics
+}
+
+// Check that divMod_routed_local_stub implements the divMod interface.
+var _ divMod = (*divMod_routed_local_stub)(nil)
+
+func (s divMod_routed_local_stub) DivMod(ctx context.Context, a0 int, a1 int) (r0 int, r1 int, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+type identity_routed_local_stub struct {
+	impl            identity
+	stub            codegen.Stub
+	tracer          trace.Tracer
+	isLocal         func(shardKey uint64) bool
+	identityMetrics *codegen.MethodMetrics
+}
+
+// Check that identity_routed_local_stub implements the identity interface.
+var _ identity = (*identity_routed_local_stub)(nil)
+
+func (s identity_routed_local_stub) Identity(ctx context.Context, a0 int) (r0 int, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+type mod_routed_local_stub struct {
+	impl       mod
+	stub       codegen.Stub
+	tracer     trace.Tracer
+	isLocal    func(shardKey uint64) bool
+	modMetrics *codegen.MethodMetrics
+}
+
+// Check that mod_routed_local_stub implements the mod interface.
+var _ mod = (*mod_routed_local_stub)(nil)
+
+func (s mod_routed_local_stub) Mod(ctx context.Context, a0 int, a1 int) (r0 int, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+type panicker_routed_local_stub struct {
+	impl         panicker
+	stub         codegen.Stub
+	tracer       trace.Tracer
+	isLocal      func(shardKey uint64) bool
+	panicMetrics *codegen.MethodMetrics
+}
+
+// Check that panicker_routed_local_stub implements the panicker interface.
+var _ panicker = (*panicker_routed_local_stub)(nil)
+
+func (s panicker_routed_local_stub) Panic(ctx context.Context, a0 bool) (err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
 // Note that "weaver generate" will always generate the error message below.
 // Everything is okay. The error message is only relevant if you see it when
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' (devel) (codegen
+ERROR: You generated this file with 'weaver generate' v0.25.2-0.20250419001101-42f7bf3eb269+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -725,8 +847,9 @@ please file an issue at https://github.com/eberkley/weaver/issues.
 // Server stub implementations.
 
 type blocker_server_stub struct {
-	impl    blocker
-	addLoad func(key uint64, load float64)
+	impl         blocker
+	addLoad      func(key uint64, load float64)
+	blockMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that blocker_server_stub implements the codegen.Server interface.
@@ -749,6 +872,8 @@ func (s blocker_server_stub) block(ctx context.Context, args []byte) (res []byte
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.blockMetrics.Begin()
+	defer s.blockMetrics.End()
 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
@@ -762,8 +887,9 @@ func (s blocker_server_stub) block(ctx context.Context, args []byte) (res []byte
 }
 
 type div_server_stub struct {
-	impl    div
-	addLoad func(key uint64, load float64)
+	impl       div
+	addLoad    func(key uint64, load float64)
+	divMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that div_server_stub implements the codegen.Server interface.
@@ -786,6 +912,8 @@ func (s div_server_stub) div(ctx context.Context, args []byte) (res []byte, err 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.divMetrics.Begin()
+	defer s.divMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -807,8 +935,9 @@ func (s div_server_stub) div(ctx context.Context, args []byte) (res []byte, err 
 }
 
 type divMod_server_stub struct {
-	impl    divMod
-	addLoad func(key uint64, load float64)
+	impl          divMod
+	addLoad       func(key uint64, load float64)
+	divModMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that divMod_server_stub implements the codegen.Server interface.
@@ -831,6 +960,8 @@ func (s divMod_server_stub) divMod(ctx context.Context, args []byte) (res []byte
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.divModMetrics.Begin()
+	defer s.divModMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -853,8 +984,9 @@ func (s divMod_server_stub) divMod(ctx context.Context, args []byte) (res []byte
 }
 
 type identity_server_stub struct {
-	impl    identity
-	addLoad func(key uint64, load float64)
+	impl            identity
+	addLoad         func(key uint64, load float64)
+	identityMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that identity_server_stub implements the codegen.Server interface.
@@ -877,6 +1009,8 @@ func (s identity_server_stub) identity(ctx context.Context, args []byte) (res []
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.identityMetrics.Begin()
+	defer s.identityMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -896,8 +1030,9 @@ func (s identity_server_stub) identity(ctx context.Context, args []byte) (res []
 }
 
 type mod_server_stub struct {
-	impl    mod
-	addLoad func(key uint64, load float64)
+	impl       mod
+	addLoad    func(key uint64, load float64)
+	modMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that mod_server_stub implements the codegen.Server interface.
@@ -920,6 +1055,8 @@ func (s mod_server_stub) mod(ctx context.Context, args []byte) (res []byte, err 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.modMetrics.Begin()
+	defer s.modMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -941,8 +1078,9 @@ func (s mod_server_stub) mod(ctx context.Context, args []byte) (res []byte, err 
 }
 
 type panicker_server_stub struct {
-	impl    panicker
-	addLoad func(key uint64, load float64)
+	impl         panicker
+	addLoad      func(key uint64, load float64)
+	panicMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that panicker_server_stub implements the codegen.Server interface.
@@ -965,6 +1103,8 @@ func (s panicker_server_stub) panic(ctx context.Context, args []byte) (res []byt
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.panicMetrics.Begin()
+	defer s.panicMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)

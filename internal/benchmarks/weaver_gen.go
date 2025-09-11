@@ -26,12 +26,15 @@ func init() {
 			return ping1_client_stub{stub: stub, pingCMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping1", Method: "PingC", Remote: true, Generated: true}), pingSMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping1", Method: "PingS", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return ping1_server_stub{impl: impl.(Ping1), addLoad: addLoad}
+			return ping1_server_stub{impl: impl.(Ping1), addLoad: addLoad, pingCMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/internal/benchmarks/Ping1", Method: "PingC"}), pingSMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/internal/benchmarks/Ping1", Method: "PingS"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return ping1_reflect_stub{caller: caller}
 		},
-		RefData: "⟦544443c5:wEaVeReDgE:github.com/eberkley/weaver/internal/benchmarks/Ping1→github.com/eberkley/weaver/internal/benchmarks/Ping2⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return ping1_routed_local_stub{impl: impl.(Ping1), stub: stub, tracer: tracer, isLocal: isLocal, pingCMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping1", Method: "PingC", Remote: true, Generated: true}), pingSMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping1", Method: "PingS", Remote: true, Generated: true})}
+		},
+		RefData: "⟦2f7c4d0f:wEaVeReDgE:github.com/eberkley/weaver/internal/benchmarks/Ping1→github.com/eberkley/weaver/internal/benchmarks/Ping2⟧\n",
 	})
 	codegen.Register(codegen.Registration{
 		Name:  "github.com/eberkley/weaver/internal/benchmarks/Ping10",
@@ -44,10 +47,13 @@ func init() {
 			return ping10_client_stub{stub: stub, pingCMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping10", Method: "PingC", Remote: true, Generated: true}), pingSMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping10", Method: "PingS", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return ping10_server_stub{impl: impl.(Ping10), addLoad: addLoad}
+			return ping10_server_stub{impl: impl.(Ping10), addLoad: addLoad, pingCMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/internal/benchmarks/Ping10", Method: "PingC"}), pingSMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/internal/benchmarks/Ping10", Method: "PingS"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return ping10_reflect_stub{caller: caller}
+		},
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return ping10_routed_local_stub{impl: impl.(Ping10), stub: stub, tracer: tracer, isLocal: isLocal, pingCMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping10", Method: "PingC", Remote: true, Generated: true}), pingSMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping10", Method: "PingS", Remote: true, Generated: true})}
 		},
 		RefData: "",
 	})
@@ -62,12 +68,15 @@ func init() {
 			return ping2_client_stub{stub: stub, pingCMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping2", Method: "PingC", Remote: true, Generated: true}), pingSMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping2", Method: "PingS", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return ping2_server_stub{impl: impl.(Ping2), addLoad: addLoad}
+			return ping2_server_stub{impl: impl.(Ping2), addLoad: addLoad, pingCMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/internal/benchmarks/Ping2", Method: "PingC"}), pingSMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/internal/benchmarks/Ping2", Method: "PingS"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return ping2_reflect_stub{caller: caller}
 		},
-		RefData: "⟦b42b173c:wEaVeReDgE:github.com/eberkley/weaver/internal/benchmarks/Ping2→github.com/eberkley/weaver/internal/benchmarks/Ping3⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return ping2_routed_local_stub{impl: impl.(Ping2), stub: stub, tracer: tracer, isLocal: isLocal, pingCMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping2", Method: "PingC", Remote: true, Generated: true}), pingSMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping2", Method: "PingS", Remote: true, Generated: true})}
+		},
+		RefData: "⟦c981bbec:wEaVeReDgE:github.com/eberkley/weaver/internal/benchmarks/Ping2→github.com/eberkley/weaver/internal/benchmarks/Ping3⟧\n",
 	})
 	codegen.Register(codegen.Registration{
 		Name:  "github.com/eberkley/weaver/internal/benchmarks/Ping3",
@@ -80,12 +89,15 @@ func init() {
 			return ping3_client_stub{stub: stub, pingCMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping3", Method: "PingC", Remote: true, Generated: true}), pingSMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping3", Method: "PingS", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return ping3_server_stub{impl: impl.(Ping3), addLoad: addLoad}
+			return ping3_server_stub{impl: impl.(Ping3), addLoad: addLoad, pingCMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/internal/benchmarks/Ping3", Method: "PingC"}), pingSMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/internal/benchmarks/Ping3", Method: "PingS"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return ping3_reflect_stub{caller: caller}
 		},
-		RefData: "⟦8c498b47:wEaVeReDgE:github.com/eberkley/weaver/internal/benchmarks/Ping3→github.com/eberkley/weaver/internal/benchmarks/Ping4⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return ping3_routed_local_stub{impl: impl.(Ping3), stub: stub, tracer: tracer, isLocal: isLocal, pingCMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping3", Method: "PingC", Remote: true, Generated: true}), pingSMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping3", Method: "PingS", Remote: true, Generated: true})}
+		},
+		RefData: "⟦3c73f8e5:wEaVeReDgE:github.com/eberkley/weaver/internal/benchmarks/Ping3→github.com/eberkley/weaver/internal/benchmarks/Ping4⟧\n",
 	})
 	codegen.Register(codegen.Registration{
 		Name:  "github.com/eberkley/weaver/internal/benchmarks/Ping4",
@@ -98,12 +110,15 @@ func init() {
 			return ping4_client_stub{stub: stub, pingCMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping4", Method: "PingC", Remote: true, Generated: true}), pingSMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping4", Method: "PingS", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return ping4_server_stub{impl: impl.(Ping4), addLoad: addLoad}
+			return ping4_server_stub{impl: impl.(Ping4), addLoad: addLoad, pingCMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/internal/benchmarks/Ping4", Method: "PingC"}), pingSMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/internal/benchmarks/Ping4", Method: "PingS"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return ping4_reflect_stub{caller: caller}
 		},
-		RefData: "⟦90669915:wEaVeReDgE:github.com/eberkley/weaver/internal/benchmarks/Ping4→github.com/eberkley/weaver/internal/benchmarks/Ping5⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return ping4_routed_local_stub{impl: impl.(Ping4), stub: stub, tracer: tracer, isLocal: isLocal, pingCMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping4", Method: "PingC", Remote: true, Generated: true}), pingSMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping4", Method: "PingS", Remote: true, Generated: true})}
+		},
+		RefData: "⟦3ed35d1b:wEaVeReDgE:github.com/eberkley/weaver/internal/benchmarks/Ping4→github.com/eberkley/weaver/internal/benchmarks/Ping5⟧\n",
 	})
 	codegen.Register(codegen.Registration{
 		Name:  "github.com/eberkley/weaver/internal/benchmarks/Ping5",
@@ -116,12 +131,15 @@ func init() {
 			return ping5_client_stub{stub: stub, pingCMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping5", Method: "PingC", Remote: true, Generated: true}), pingSMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping5", Method: "PingS", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return ping5_server_stub{impl: impl.(Ping5), addLoad: addLoad}
+			return ping5_server_stub{impl: impl.(Ping5), addLoad: addLoad, pingCMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/internal/benchmarks/Ping5", Method: "PingC"}), pingSMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/internal/benchmarks/Ping5", Method: "PingS"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return ping5_reflect_stub{caller: caller}
 		},
-		RefData: "⟦a38d1914:wEaVeReDgE:github.com/eberkley/weaver/internal/benchmarks/Ping5→github.com/eberkley/weaver/internal/benchmarks/Ping6⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return ping5_routed_local_stub{impl: impl.(Ping5), stub: stub, tracer: tracer, isLocal: isLocal, pingCMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping5", Method: "PingC", Remote: true, Generated: true}), pingSMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping5", Method: "PingS", Remote: true, Generated: true})}
+		},
+		RefData: "⟦5b6ee4ae:wEaVeReDgE:github.com/eberkley/weaver/internal/benchmarks/Ping5→github.com/eberkley/weaver/internal/benchmarks/Ping6⟧\n",
 	})
 	codegen.Register(codegen.Registration{
 		Name:  "github.com/eberkley/weaver/internal/benchmarks/Ping6",
@@ -134,12 +152,15 @@ func init() {
 			return ping6_client_stub{stub: stub, pingCMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping6", Method: "PingC", Remote: true, Generated: true}), pingSMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping6", Method: "PingS", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return ping6_server_stub{impl: impl.(Ping6), addLoad: addLoad}
+			return ping6_server_stub{impl: impl.(Ping6), addLoad: addLoad, pingCMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/internal/benchmarks/Ping6", Method: "PingC"}), pingSMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/internal/benchmarks/Ping6", Method: "PingS"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return ping6_reflect_stub{caller: caller}
 		},
-		RefData: "⟦ebf8b6d3:wEaVeReDgE:github.com/eberkley/weaver/internal/benchmarks/Ping6→github.com/eberkley/weaver/internal/benchmarks/Ping7⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return ping6_routed_local_stub{impl: impl.(Ping6), stub: stub, tracer: tracer, isLocal: isLocal, pingCMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping6", Method: "PingC", Remote: true, Generated: true}), pingSMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping6", Method: "PingS", Remote: true, Generated: true})}
+		},
+		RefData: "⟦0ed243f9:wEaVeReDgE:github.com/eberkley/weaver/internal/benchmarks/Ping6→github.com/eberkley/weaver/internal/benchmarks/Ping7⟧\n",
 	})
 	codegen.Register(codegen.Registration{
 		Name:  "github.com/eberkley/weaver/internal/benchmarks/Ping7",
@@ -152,12 +173,15 @@ func init() {
 			return ping7_client_stub{stub: stub, pingCMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping7", Method: "PingC", Remote: true, Generated: true}), pingSMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping7", Method: "PingS", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return ping7_server_stub{impl: impl.(Ping7), addLoad: addLoad}
+			return ping7_server_stub{impl: impl.(Ping7), addLoad: addLoad, pingCMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/internal/benchmarks/Ping7", Method: "PingC"}), pingSMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/internal/benchmarks/Ping7", Method: "PingS"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return ping7_reflect_stub{caller: caller}
 		},
-		RefData: "⟦88d68418:wEaVeReDgE:github.com/eberkley/weaver/internal/benchmarks/Ping7→github.com/eberkley/weaver/internal/benchmarks/Ping8⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return ping7_routed_local_stub{impl: impl.(Ping7), stub: stub, tracer: tracer, isLocal: isLocal, pingCMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping7", Method: "PingC", Remote: true, Generated: true}), pingSMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping7", Method: "PingS", Remote: true, Generated: true})}
+		},
+		RefData: "⟦b56dd98d:wEaVeReDgE:github.com/eberkley/weaver/internal/benchmarks/Ping7→github.com/eberkley/weaver/internal/benchmarks/Ping8⟧\n",
 	})
 	codegen.Register(codegen.Registration{
 		Name:  "github.com/eberkley/weaver/internal/benchmarks/Ping8",
@@ -170,12 +194,15 @@ func init() {
 			return ping8_client_stub{stub: stub, pingCMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping8", Method: "PingC", Remote: true, Generated: true}), pingSMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping8", Method: "PingS", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return ping8_server_stub{impl: impl.(Ping8), addLoad: addLoad}
+			return ping8_server_stub{impl: impl.(Ping8), addLoad: addLoad, pingCMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/internal/benchmarks/Ping8", Method: "PingC"}), pingSMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/internal/benchmarks/Ping8", Method: "PingS"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return ping8_reflect_stub{caller: caller}
 		},
-		RefData: "⟦ed98271d:wEaVeReDgE:github.com/eberkley/weaver/internal/benchmarks/Ping8→github.com/eberkley/weaver/internal/benchmarks/Ping9⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return ping8_routed_local_stub{impl: impl.(Ping8), stub: stub, tracer: tracer, isLocal: isLocal, pingCMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping8", Method: "PingC", Remote: true, Generated: true}), pingSMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping8", Method: "PingS", Remote: true, Generated: true})}
+		},
+		RefData: "⟦1fb8ab5d:wEaVeReDgE:github.com/eberkley/weaver/internal/benchmarks/Ping8→github.com/eberkley/weaver/internal/benchmarks/Ping9⟧\n",
 	})
 	codegen.Register(codegen.Registration{
 		Name:  "github.com/eberkley/weaver/internal/benchmarks/Ping9",
@@ -188,12 +215,15 @@ func init() {
 			return ping9_client_stub{stub: stub, pingCMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping9", Method: "PingC", Remote: true, Generated: true}), pingSMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping9", Method: "PingS", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return ping9_server_stub{impl: impl.(Ping9), addLoad: addLoad}
+			return ping9_server_stub{impl: impl.(Ping9), addLoad: addLoad, pingCMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/internal/benchmarks/Ping9", Method: "PingC"}), pingSMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/internal/benchmarks/Ping9", Method: "PingS"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return ping9_reflect_stub{caller: caller}
 		},
-		RefData: "⟦5ceb96a7:wEaVeReDgE:github.com/eberkley/weaver/internal/benchmarks/Ping9→github.com/eberkley/weaver/internal/benchmarks/Ping10⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return ping9_routed_local_stub{impl: impl.(Ping9), stub: stub, tracer: tracer, isLocal: isLocal, pingCMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping9", Method: "PingC", Remote: true, Generated: true}), pingSMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/benchmarks/Ping9", Method: "PingS", Remote: true, Generated: true})}
+		},
+		RefData: "⟦aafdb195:wEaVeReDgE:github.com/eberkley/weaver/internal/benchmarks/Ping9→github.com/eberkley/weaver/internal/benchmarks/Ping10⟧\n",
 	})
 }
 
@@ -765,7 +795,7 @@ func (s ping1_client_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 p
 
 	// Preallocate a buffer of the right size.
 	size := 0
-	size += serviceweaver_size_payloadC_7e82696e(&a0)
+	size += serviceweaver_size_payloadC_714ab15d(&a0)
 	size += 8
 	enc := codegen.NewEncoder()
 	enc.Reset(size)
@@ -884,7 +914,7 @@ func (s ping10_client_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 
 
 	// Preallocate a buffer of the right size.
 	size := 0
-	size += serviceweaver_size_payloadC_7e82696e(&a0)
+	size += serviceweaver_size_payloadC_714ab15d(&a0)
 	size += 8
 	enc := codegen.NewEncoder()
 	enc.Reset(size)
@@ -1003,7 +1033,7 @@ func (s ping2_client_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 p
 
 	// Preallocate a buffer of the right size.
 	size := 0
-	size += serviceweaver_size_payloadC_7e82696e(&a0)
+	size += serviceweaver_size_payloadC_714ab15d(&a0)
 	size += 8
 	enc := codegen.NewEncoder()
 	enc.Reset(size)
@@ -1122,7 +1152,7 @@ func (s ping3_client_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 p
 
 	// Preallocate a buffer of the right size.
 	size := 0
-	size += serviceweaver_size_payloadC_7e82696e(&a0)
+	size += serviceweaver_size_payloadC_714ab15d(&a0)
 	size += 8
 	enc := codegen.NewEncoder()
 	enc.Reset(size)
@@ -1241,7 +1271,7 @@ func (s ping4_client_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 p
 
 	// Preallocate a buffer of the right size.
 	size := 0
-	size += serviceweaver_size_payloadC_7e82696e(&a0)
+	size += serviceweaver_size_payloadC_714ab15d(&a0)
 	size += 8
 	enc := codegen.NewEncoder()
 	enc.Reset(size)
@@ -1360,7 +1390,7 @@ func (s ping5_client_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 p
 
 	// Preallocate a buffer of the right size.
 	size := 0
-	size += serviceweaver_size_payloadC_7e82696e(&a0)
+	size += serviceweaver_size_payloadC_714ab15d(&a0)
 	size += 8
 	enc := codegen.NewEncoder()
 	enc.Reset(size)
@@ -1479,7 +1509,7 @@ func (s ping6_client_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 p
 
 	// Preallocate a buffer of the right size.
 	size := 0
-	size += serviceweaver_size_payloadC_7e82696e(&a0)
+	size += serviceweaver_size_payloadC_714ab15d(&a0)
 	size += 8
 	enc := codegen.NewEncoder()
 	enc.Reset(size)
@@ -1598,7 +1628,7 @@ func (s ping7_client_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 p
 
 	// Preallocate a buffer of the right size.
 	size := 0
-	size += serviceweaver_size_payloadC_7e82696e(&a0)
+	size += serviceweaver_size_payloadC_714ab15d(&a0)
 	size += 8
 	enc := codegen.NewEncoder()
 	enc.Reset(size)
@@ -1717,7 +1747,7 @@ func (s ping8_client_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 p
 
 	// Preallocate a buffer of the right size.
 	size := 0
-	size += serviceweaver_size_payloadC_7e82696e(&a0)
+	size += serviceweaver_size_payloadC_714ab15d(&a0)
 	size += 8
 	enc := codegen.NewEncoder()
 	enc.Reset(size)
@@ -1836,7 +1866,7 @@ func (s ping9_client_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 p
 
 	// Preallocate a buffer of the right size.
 	size := 0
-	size += serviceweaver_size_payloadC_7e82696e(&a0)
+	size += serviceweaver_size_payloadC_714ab15d(&a0)
 	size += 8
 	enc := codegen.NewEncoder()
 	enc.Reset(size)
@@ -1915,12 +1945,254 @@ func (s ping9_client_stub) PingS(ctx context.Context, a0 payloadS, a1 int) (r0 p
 	return
 }
 
+// Routed local stub implementations.
+
+type ping1_routed_local_stub struct {
+	impl         Ping1
+	stub         codegen.Stub
+	tracer       trace.Tracer
+	isLocal      func(shardKey uint64) bool
+	pingCMetrics *codegen.MethodMetrics
+	pingSMetrics *codegen.MethodMetrics
+}
+
+// Check that ping1_routed_local_stub implements the Ping1 interface.
+var _ Ping1 = (*ping1_routed_local_stub)(nil)
+
+func (s ping1_routed_local_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 payloadC, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+func (s ping1_routed_local_stub) PingS(ctx context.Context, a0 payloadS, a1 int) (r0 payloadS, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+type ping10_routed_local_stub struct {
+	impl         Ping10
+	stub         codegen.Stub
+	tracer       trace.Tracer
+	isLocal      func(shardKey uint64) bool
+	pingCMetrics *codegen.MethodMetrics
+	pingSMetrics *codegen.MethodMetrics
+}
+
+// Check that ping10_routed_local_stub implements the Ping10 interface.
+var _ Ping10 = (*ping10_routed_local_stub)(nil)
+
+func (s ping10_routed_local_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 payloadC, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+func (s ping10_routed_local_stub) PingS(ctx context.Context, a0 payloadS, a1 int) (r0 payloadS, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+type ping2_routed_local_stub struct {
+	impl         Ping2
+	stub         codegen.Stub
+	tracer       trace.Tracer
+	isLocal      func(shardKey uint64) bool
+	pingCMetrics *codegen.MethodMetrics
+	pingSMetrics *codegen.MethodMetrics
+}
+
+// Check that ping2_routed_local_stub implements the Ping2 interface.
+var _ Ping2 = (*ping2_routed_local_stub)(nil)
+
+func (s ping2_routed_local_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 payloadC, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+func (s ping2_routed_local_stub) PingS(ctx context.Context, a0 payloadS, a1 int) (r0 payloadS, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+type ping3_routed_local_stub struct {
+	impl         Ping3
+	stub         codegen.Stub
+	tracer       trace.Tracer
+	isLocal      func(shardKey uint64) bool
+	pingCMetrics *codegen.MethodMetrics
+	pingSMetrics *codegen.MethodMetrics
+}
+
+// Check that ping3_routed_local_stub implements the Ping3 interface.
+var _ Ping3 = (*ping3_routed_local_stub)(nil)
+
+func (s ping3_routed_local_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 payloadC, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+func (s ping3_routed_local_stub) PingS(ctx context.Context, a0 payloadS, a1 int) (r0 payloadS, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+type ping4_routed_local_stub struct {
+	impl         Ping4
+	stub         codegen.Stub
+	tracer       trace.Tracer
+	isLocal      func(shardKey uint64) bool
+	pingCMetrics *codegen.MethodMetrics
+	pingSMetrics *codegen.MethodMetrics
+}
+
+// Check that ping4_routed_local_stub implements the Ping4 interface.
+var _ Ping4 = (*ping4_routed_local_stub)(nil)
+
+func (s ping4_routed_local_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 payloadC, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+func (s ping4_routed_local_stub) PingS(ctx context.Context, a0 payloadS, a1 int) (r0 payloadS, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+type ping5_routed_local_stub struct {
+	impl         Ping5
+	stub         codegen.Stub
+	tracer       trace.Tracer
+	isLocal      func(shardKey uint64) bool
+	pingCMetrics *codegen.MethodMetrics
+	pingSMetrics *codegen.MethodMetrics
+}
+
+// Check that ping5_routed_local_stub implements the Ping5 interface.
+var _ Ping5 = (*ping5_routed_local_stub)(nil)
+
+func (s ping5_routed_local_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 payloadC, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+func (s ping5_routed_local_stub) PingS(ctx context.Context, a0 payloadS, a1 int) (r0 payloadS, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+type ping6_routed_local_stub struct {
+	impl         Ping6
+	stub         codegen.Stub
+	tracer       trace.Tracer
+	isLocal      func(shardKey uint64) bool
+	pingCMetrics *codegen.MethodMetrics
+	pingSMetrics *codegen.MethodMetrics
+}
+
+// Check that ping6_routed_local_stub implements the Ping6 interface.
+var _ Ping6 = (*ping6_routed_local_stub)(nil)
+
+func (s ping6_routed_local_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 payloadC, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+func (s ping6_routed_local_stub) PingS(ctx context.Context, a0 payloadS, a1 int) (r0 payloadS, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+type ping7_routed_local_stub struct {
+	impl         Ping7
+	stub         codegen.Stub
+	tracer       trace.Tracer
+	isLocal      func(shardKey uint64) bool
+	pingCMetrics *codegen.MethodMetrics
+	pingSMetrics *codegen.MethodMetrics
+}
+
+// Check that ping7_routed_local_stub implements the Ping7 interface.
+var _ Ping7 = (*ping7_routed_local_stub)(nil)
+
+func (s ping7_routed_local_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 payloadC, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+func (s ping7_routed_local_stub) PingS(ctx context.Context, a0 payloadS, a1 int) (r0 payloadS, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+type ping8_routed_local_stub struct {
+	impl         Ping8
+	stub         codegen.Stub
+	tracer       trace.Tracer
+	isLocal      func(shardKey uint64) bool
+	pingCMetrics *codegen.MethodMetrics
+	pingSMetrics *codegen.MethodMetrics
+}
+
+// Check that ping8_routed_local_stub implements the Ping8 interface.
+var _ Ping8 = (*ping8_routed_local_stub)(nil)
+
+func (s ping8_routed_local_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 payloadC, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+func (s ping8_routed_local_stub) PingS(ctx context.Context, a0 payloadS, a1 int) (r0 payloadS, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+type ping9_routed_local_stub struct {
+	impl         Ping9
+	stub         codegen.Stub
+	tracer       trace.Tracer
+	isLocal      func(shardKey uint64) bool
+	pingCMetrics *codegen.MethodMetrics
+	pingSMetrics *codegen.MethodMetrics
+}
+
+// Check that ping9_routed_local_stub implements the Ping9 interface.
+var _ Ping9 = (*ping9_routed_local_stub)(nil)
+
+func (s ping9_routed_local_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 payloadC, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+func (s ping9_routed_local_stub) PingS(ctx context.Context, a0 payloadS, a1 int) (r0 payloadS, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
 // Note that "weaver generate" will always generate the error message below.
 // Everything is okay. The error message is only relevant if you see it when
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' (devel) (codegen
+ERROR: You generated this file with 'weaver generate' v0.25.2-0.20250419001101-42f7bf3eb269+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -1941,8 +2213,10 @@ please file an issue at https://github.com/eberkley/weaver/issues.
 // Server stub implementations.
 
 type ping1_server_stub struct {
-	impl    Ping1
-	addLoad func(key uint64, load float64)
+	impl         Ping1
+	addLoad      func(key uint64, load float64)
+	pingCMetrics *codegen.ConcurrentMethodMetrics
+	pingSMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that ping1_server_stub implements the codegen.Server interface.
@@ -1967,6 +2241,8 @@ func (s ping1_server_stub) pingC(ctx context.Context, args []byte) (res []byte, 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.pingCMetrics.Begin()
+	defer s.pingCMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -1994,6 +2270,8 @@ func (s ping1_server_stub) pingS(ctx context.Context, args []byte) (res []byte, 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.pingSMetrics.Begin()
+	defer s.pingSMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -2015,8 +2293,10 @@ func (s ping1_server_stub) pingS(ctx context.Context, args []byte) (res []byte, 
 }
 
 type ping10_server_stub struct {
-	impl    Ping10
-	addLoad func(key uint64, load float64)
+	impl         Ping10
+	addLoad      func(key uint64, load float64)
+	pingCMetrics *codegen.ConcurrentMethodMetrics
+	pingSMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that ping10_server_stub implements the codegen.Server interface.
@@ -2041,6 +2321,8 @@ func (s ping10_server_stub) pingC(ctx context.Context, args []byte) (res []byte,
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.pingCMetrics.Begin()
+	defer s.pingCMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -2068,6 +2350,8 @@ func (s ping10_server_stub) pingS(ctx context.Context, args []byte) (res []byte,
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.pingSMetrics.Begin()
+	defer s.pingSMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -2089,8 +2373,10 @@ func (s ping10_server_stub) pingS(ctx context.Context, args []byte) (res []byte,
 }
 
 type ping2_server_stub struct {
-	impl    Ping2
-	addLoad func(key uint64, load float64)
+	impl         Ping2
+	addLoad      func(key uint64, load float64)
+	pingCMetrics *codegen.ConcurrentMethodMetrics
+	pingSMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that ping2_server_stub implements the codegen.Server interface.
@@ -2115,6 +2401,8 @@ func (s ping2_server_stub) pingC(ctx context.Context, args []byte) (res []byte, 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.pingCMetrics.Begin()
+	defer s.pingCMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -2142,6 +2430,8 @@ func (s ping2_server_stub) pingS(ctx context.Context, args []byte) (res []byte, 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.pingSMetrics.Begin()
+	defer s.pingSMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -2163,8 +2453,10 @@ func (s ping2_server_stub) pingS(ctx context.Context, args []byte) (res []byte, 
 }
 
 type ping3_server_stub struct {
-	impl    Ping3
-	addLoad func(key uint64, load float64)
+	impl         Ping3
+	addLoad      func(key uint64, load float64)
+	pingCMetrics *codegen.ConcurrentMethodMetrics
+	pingSMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that ping3_server_stub implements the codegen.Server interface.
@@ -2189,6 +2481,8 @@ func (s ping3_server_stub) pingC(ctx context.Context, args []byte) (res []byte, 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.pingCMetrics.Begin()
+	defer s.pingCMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -2216,6 +2510,8 @@ func (s ping3_server_stub) pingS(ctx context.Context, args []byte) (res []byte, 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.pingSMetrics.Begin()
+	defer s.pingSMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -2237,8 +2533,10 @@ func (s ping3_server_stub) pingS(ctx context.Context, args []byte) (res []byte, 
 }
 
 type ping4_server_stub struct {
-	impl    Ping4
-	addLoad func(key uint64, load float64)
+	impl         Ping4
+	addLoad      func(key uint64, load float64)
+	pingCMetrics *codegen.ConcurrentMethodMetrics
+	pingSMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that ping4_server_stub implements the codegen.Server interface.
@@ -2263,6 +2561,8 @@ func (s ping4_server_stub) pingC(ctx context.Context, args []byte) (res []byte, 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.pingCMetrics.Begin()
+	defer s.pingCMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -2290,6 +2590,8 @@ func (s ping4_server_stub) pingS(ctx context.Context, args []byte) (res []byte, 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.pingSMetrics.Begin()
+	defer s.pingSMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -2311,8 +2613,10 @@ func (s ping4_server_stub) pingS(ctx context.Context, args []byte) (res []byte, 
 }
 
 type ping5_server_stub struct {
-	impl    Ping5
-	addLoad func(key uint64, load float64)
+	impl         Ping5
+	addLoad      func(key uint64, load float64)
+	pingCMetrics *codegen.ConcurrentMethodMetrics
+	pingSMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that ping5_server_stub implements the codegen.Server interface.
@@ -2337,6 +2641,8 @@ func (s ping5_server_stub) pingC(ctx context.Context, args []byte) (res []byte, 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.pingCMetrics.Begin()
+	defer s.pingCMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -2364,6 +2670,8 @@ func (s ping5_server_stub) pingS(ctx context.Context, args []byte) (res []byte, 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.pingSMetrics.Begin()
+	defer s.pingSMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -2385,8 +2693,10 @@ func (s ping5_server_stub) pingS(ctx context.Context, args []byte) (res []byte, 
 }
 
 type ping6_server_stub struct {
-	impl    Ping6
-	addLoad func(key uint64, load float64)
+	impl         Ping6
+	addLoad      func(key uint64, load float64)
+	pingCMetrics *codegen.ConcurrentMethodMetrics
+	pingSMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that ping6_server_stub implements the codegen.Server interface.
@@ -2411,6 +2721,8 @@ func (s ping6_server_stub) pingC(ctx context.Context, args []byte) (res []byte, 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.pingCMetrics.Begin()
+	defer s.pingCMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -2438,6 +2750,8 @@ func (s ping6_server_stub) pingS(ctx context.Context, args []byte) (res []byte, 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.pingSMetrics.Begin()
+	defer s.pingSMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -2459,8 +2773,10 @@ func (s ping6_server_stub) pingS(ctx context.Context, args []byte) (res []byte, 
 }
 
 type ping7_server_stub struct {
-	impl    Ping7
-	addLoad func(key uint64, load float64)
+	impl         Ping7
+	addLoad      func(key uint64, load float64)
+	pingCMetrics *codegen.ConcurrentMethodMetrics
+	pingSMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that ping7_server_stub implements the codegen.Server interface.
@@ -2485,6 +2801,8 @@ func (s ping7_server_stub) pingC(ctx context.Context, args []byte) (res []byte, 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.pingCMetrics.Begin()
+	defer s.pingCMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -2512,6 +2830,8 @@ func (s ping7_server_stub) pingS(ctx context.Context, args []byte) (res []byte, 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.pingSMetrics.Begin()
+	defer s.pingSMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -2533,8 +2853,10 @@ func (s ping7_server_stub) pingS(ctx context.Context, args []byte) (res []byte, 
 }
 
 type ping8_server_stub struct {
-	impl    Ping8
-	addLoad func(key uint64, load float64)
+	impl         Ping8
+	addLoad      func(key uint64, load float64)
+	pingCMetrics *codegen.ConcurrentMethodMetrics
+	pingSMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that ping8_server_stub implements the codegen.Server interface.
@@ -2559,6 +2881,8 @@ func (s ping8_server_stub) pingC(ctx context.Context, args []byte) (res []byte, 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.pingCMetrics.Begin()
+	defer s.pingCMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -2586,6 +2910,8 @@ func (s ping8_server_stub) pingS(ctx context.Context, args []byte) (res []byte, 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.pingSMetrics.Begin()
+	defer s.pingSMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -2607,8 +2933,10 @@ func (s ping8_server_stub) pingS(ctx context.Context, args []byte) (res []byte, 
 }
 
 type ping9_server_stub struct {
-	impl    Ping9
-	addLoad func(key uint64, load float64)
+	impl         Ping9
+	addLoad      func(key uint64, load float64)
+	pingCMetrics *codegen.ConcurrentMethodMetrics
+	pingSMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that ping9_server_stub implements the codegen.Server interface.
@@ -2633,6 +2961,8 @@ func (s ping9_server_stub) pingC(ctx context.Context, args []byte) (res []byte, 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.pingCMetrics.Begin()
+	defer s.pingCMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -2660,6 +2990,8 @@ func (s ping9_server_stub) pingS(ctx context.Context, args []byte) (res []byte, 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.pingSMetrics.Begin()
+	defer s.pingSMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -3157,78 +3489,78 @@ func serviceweaver_dec_slice_string_4af10117(dec *codegen.Decoder) []string {
 
 // Size implementations.
 
-// serviceweaver_size_X1_25e7d26b returns the size (in bytes) of the serialization
+// serviceweaver_size_X1_e315accb returns the size (in bytes) of the serialization
 // of the provided type.
-func serviceweaver_size_X1_25e7d26b(x *X1) int {
+func serviceweaver_size_X1_e315accb(x *X1) int {
 	size := 0
 	size += 0
-	size += serviceweaver_size_X2_4061aeb8(&x.A)
+	size += serviceweaver_size_X2_866173c8(&x.A)
 	size += (4 + (len(x.B) * 8))
 	return size
 }
 
-// serviceweaver_size_X2_4061aeb8 returns the size (in bytes) of the serialization
+// serviceweaver_size_X2_866173c8 returns the size (in bytes) of the serialization
 // of the provided type.
-func serviceweaver_size_X2_4061aeb8(x *X2) int {
+func serviceweaver_size_X2_866173c8(x *X2) int {
 	size := 0
 	size += 0
-	size += serviceweaver_size_X3_25c4a6ab(&x.A)
+	size += serviceweaver_size_X3_5db88a6e(&x.A)
 	return size
 }
 
-// serviceweaver_size_X3_25c4a6ab returns the size (in bytes) of the serialization
+// serviceweaver_size_X3_5db88a6e returns the size (in bytes) of the serialization
 // of the provided type.
-func serviceweaver_size_X3_25c4a6ab(x *X3) int {
+func serviceweaver_size_X3_5db88a6e(x *X3) int {
 	size := 0
 	size += 0
-	size += serviceweaver_size_X4_d3ce6092(&x.A)
-	size += 8
-	size += 8
-	return size
-}
-
-// serviceweaver_size_X4_d3ce6092 returns the size (in bytes) of the serialization
-// of the provided type.
-func serviceweaver_size_X4_d3ce6092(x *X4) int {
-	size := 0
-	size += 0
-	size += 8
-	size += serviceweaver_size_X5_474b9a71(&x.B)
-	size += 8
-	return size
-}
-
-// serviceweaver_size_X5_474b9a71 returns the size (in bytes) of the serialization
-// of the provided type.
-func serviceweaver_size_X5_474b9a71(x *X5) int {
-	size := 0
-	size += 0
+	size += serviceweaver_size_X4_3ea7080a(&x.A)
 	size += 8
 	size += 8
 	return size
 }
 
-// serviceweaver_size_X6_7a3484cc returns the size (in bytes) of the serialization
+// serviceweaver_size_X4_3ea7080a returns the size (in bytes) of the serialization
 // of the provided type.
-func serviceweaver_size_X6_7a3484cc(x *X6) int {
+func serviceweaver_size_X4_3ea7080a(x *X4) int {
+	size := 0
+	size += 0
+	size += 8
+	size += serviceweaver_size_X5_e484daf9(&x.B)
+	size += 8
+	return size
+}
+
+// serviceweaver_size_X5_e484daf9 returns the size (in bytes) of the serialization
+// of the provided type.
+func serviceweaver_size_X5_e484daf9(x *X5) int {
+	size := 0
+	size += 0
+	size += 8
+	size += 8
+	return size
+}
+
+// serviceweaver_size_X6_9d6996c3 returns the size (in bytes) of the serialization
+// of the provided type.
+func serviceweaver_size_X6_9d6996c3(x *X6) int {
 	size := 0
 	size += 0
 	size += (4 + (len(x.A) * 1))
 	return size
 }
 
-// serviceweaver_size_payloadC_7e82696e returns the size (in bytes) of the serialization
+// serviceweaver_size_payloadC_714ab15d returns the size (in bytes) of the serialization
 // of the provided type.
-func serviceweaver_size_payloadC_7e82696e(x *payloadC) int {
+func serviceweaver_size_payloadC_714ab15d(x *payloadC) int {
 	size := 0
 	size += 0
 	size += 8
 	size += (4 + len(x.B))
 	size += 8
-	size += serviceweaver_size_X1_25e7d26b(&x.D)
+	size += serviceweaver_size_X1_e315accb(&x.D)
 	size += (4 + len(x.E))
 	size += 8
-	size += serviceweaver_size_X6_7a3484cc(&x.G)
+	size += serviceweaver_size_X6_9d6996c3(&x.G)
 	size += (4 + len(x.H))
 	size += 8
 	size += 4

@@ -26,10 +26,13 @@ func init() {
 			return factorer_client_stub{stub: stub, factorsMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/factors/Factorer", Method: "Factors", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return factorer_server_stub{impl: impl.(Factorer), addLoad: addLoad}
+			return factorer_server_stub{impl: impl.(Factorer), addLoad: addLoad, factorsMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/examples/factors/Factorer", Method: "Factors"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return factorer_reflect_stub{caller: caller}
+		},
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return factorer_routed_local_stub{impl: impl.(Factorer), stub: stub, tracer: tracer, isLocal: isLocal, factorsMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/factors/Factorer", Method: "Factors", Remote: true, Generated: true})}
 		},
 		RefData: "",
 	})
@@ -48,7 +51,10 @@ func init() {
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return main_reflect_stub{caller: caller}
 		},
-		RefData: "⟦4724da9b:wEaVeReDgE:github.com/eberkley/weaver/Main→github.com/eberkley/weaver/examples/factors/Factorer⟧\n⟦68699208:wEaVeRlIsTeNeRs:github.com/eberkley/weaver/Main→factors⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return main_routed_local_stub{impl: impl.(weaver.Main), stub: stub, tracer: tracer, isLocal: isLocal}
+		},
+		RefData: "⟦322c2834:wEaVeReDgE:github.com/eberkley/weaver/Main→github.com/eberkley/weaver/examples/factors/Factorer⟧\n⟦9677de2e:wEaVeRlIsTeNeRs:github.com/eberkley/weaver/Main→factors⟧\n",
 	})
 }
 
@@ -178,12 +184,105 @@ type main_client_stub struct {
 // Check that main_client_stub implements the weaver.Main interface.
 var _ weaver.Main = (*main_client_stub)(nil)
 
+// Routed local stub implementations.
+
+type factorer_routed_local_stub struct {
+	impl           Factorer
+	stub           codegen.Stub
+	tracer         trace.Tracer
+	isLocal        func(shardKey uint64) bool
+	factorsMetrics *codegen.MethodMetrics
+}
+
+// Check that factorer_routed_local_stub implements the Factorer interface.
+var _ Factorer = (*factorer_routed_local_stub)(nil)
+
+func (s factorer_routed_local_stub) Factors(ctx context.Context, a0 int) (r0 []int, err error) {
+	// Update metrics.
+	var requestBytes, replyBytes int
+	begin := s.factorsMetrics.Begin()
+	defer func() { s.factorsMetrics.End(begin, err != nil, requestBytes, replyBytes) }()
+
+	span := trace.SpanFromContext(ctx)
+	if span.SpanContext().IsValid() {
+		// Create a child span for this method.
+		ctx, span = s.stub.Tracer().Start(ctx, "main.Factorer.Factors", trace.WithSpanKind(trace.SpanKindClient))
+		defer func() {
+			if err != nil {
+				span.RecordError(err)
+				span.SetStatus(codes.Error, err.Error())
+			}
+			span.End()
+		}()
+	}
+
+	// Set the shardKey.
+	var r router
+	shardKey := _hashFactorer(r.Factors(ctx, a0))
+	if s.isLocal(shardKey) {
+		r0, err = s.impl.Factors(ctx, a0)
+		return
+	}
+
+	defer func() {
+		// Catch and return any panics detected during encoding/decoding/rpc.
+		if err == nil {
+			err = codegen.CatchPanics(recover())
+			if err != nil {
+				err = errors.Join(weaver.RemoteCallError, err)
+			}
+		}
+
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, err.Error())
+		}
+		span.End()
+
+	}()
+
+	// Preallocate a buffer of the right size.
+	size := 0
+	size += 8
+	enc := codegen.NewEncoder()
+	enc.Reset(size)
+
+	// Encode arguments.
+	enc.Int(a0)
+
+	// Call the remote method.
+	requestBytes = len(enc.Data())
+	var results []byte
+	results, err = s.stub.Run(ctx, 0, enc.Data(), shardKey)
+	replyBytes = len(results)
+	if err != nil {
+		err = errors.Join(weaver.RemoteCallError, err)
+		return
+	}
+
+	// Decode the results.
+	dec := codegen.NewDecoder(results)
+	r0 = serviceweaver_dec_slice_int_7c8c8866(dec)
+	err = dec.Error()
+	return
+}
+
+type main_routed_local_stub struct {
+	impl    weaver.Main
+	stub    codegen.Stub
+	tracer  trace.Tracer
+	isLocal func(shardKey uint64) bool
+}
+
+// Check that main_routed_local_stub implements the weaver.Main interface.
+var _ weaver.Main = (*main_routed_local_stub)(nil)
+
 // Note that "weaver generate" will always generate the error message below.
 // Everything is okay. The error message is only relevant if you see it when
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' (devel) (codegen
+ERROR: You generated this file with 'weaver generate' v0.25.2-0.20250419001101-42f7bf3eb269+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -204,8 +303,9 @@ please file an issue at https://github.com/eberkley/weaver/issues.
 // Server stub implementations.
 
 type factorer_server_stub struct {
-	impl    Factorer
-	addLoad func(key uint64, load float64)
+	impl           Factorer
+	addLoad        func(key uint64, load float64)
+	factorsMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that factorer_server_stub implements the codegen.Server interface.
@@ -228,6 +328,8 @@ func (s factorer_server_stub) factors(ctx context.Context, args []byte) (res []b
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.factorsMetrics.Begin()
+	defer s.factorsMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)

@@ -25,12 +25,15 @@ func init() {
 			return a_client_stub{stub: stub, propagateMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/chain/A", Method: "Propagate", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return a_server_stub{impl: impl.(A), addLoad: addLoad}
+			return a_server_stub{impl: impl.(A), addLoad: addLoad, propagateMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/weavertest/internal/chain/A", Method: "Propagate"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return a_reflect_stub{caller: caller}
 		},
-		RefData: "⟦d3d93f6e:wEaVeReDgE:github.com/eberkley/weaver/weavertest/internal/chain/A→github.com/eberkley/weaver/weavertest/internal/chain/B⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return a_routed_local_stub{impl: impl.(A), stub: stub, tracer: tracer, isLocal: isLocal, propagateMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/chain/A", Method: "Propagate", Remote: true, Generated: true})}
+		},
+		RefData: "⟦cb8722b0:wEaVeReDgE:github.com/eberkley/weaver/weavertest/internal/chain/A→github.com/eberkley/weaver/weavertest/internal/chain/B⟧\n",
 	})
 	codegen.Register(codegen.Registration{
 		Name:  "github.com/eberkley/weaver/weavertest/internal/chain/B",
@@ -43,12 +46,15 @@ func init() {
 			return b_client_stub{stub: stub, propagateMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/chain/B", Method: "Propagate", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return b_server_stub{impl: impl.(B), addLoad: addLoad}
+			return b_server_stub{impl: impl.(B), addLoad: addLoad, propagateMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/weavertest/internal/chain/B", Method: "Propagate"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return b_reflect_stub{caller: caller}
 		},
-		RefData: "⟦08d612ad:wEaVeReDgE:github.com/eberkley/weaver/weavertest/internal/chain/B→github.com/eberkley/weaver/weavertest/internal/chain/C⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return b_routed_local_stub{impl: impl.(B), stub: stub, tracer: tracer, isLocal: isLocal, propagateMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/chain/B", Method: "Propagate", Remote: true, Generated: true})}
+		},
+		RefData: "⟦3e99d861:wEaVeReDgE:github.com/eberkley/weaver/weavertest/internal/chain/B→github.com/eberkley/weaver/weavertest/internal/chain/C⟧\n",
 	})
 	codegen.Register(codegen.Registration{
 		Name:  "github.com/eberkley/weaver/weavertest/internal/chain/C",
@@ -61,10 +67,13 @@ func init() {
 			return c_client_stub{stub: stub, propagateMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/chain/C", Method: "Propagate", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return c_server_stub{impl: impl.(C), addLoad: addLoad}
+			return c_server_stub{impl: impl.(C), addLoad: addLoad, propagateMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/weavertest/internal/chain/C", Method: "Propagate"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return c_reflect_stub{caller: caller}
+		},
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return c_routed_local_stub{impl: impl.(C), stub: stub, tracer: tracer, isLocal: isLocal, propagateMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/chain/C", Method: "Propagate", Remote: true, Generated: true})}
 		},
 		RefData: "",
 	})
@@ -360,12 +369,65 @@ func (s c_client_stub) Propagate(ctx context.Context, a0 int) (err error) {
 	return
 }
 
+// Routed local stub implementations.
+
+type a_routed_local_stub struct {
+	impl             A
+	stub             codegen.Stub
+	tracer           trace.Tracer
+	isLocal          func(shardKey uint64) bool
+	propagateMetrics *codegen.MethodMetrics
+}
+
+// Check that a_routed_local_stub implements the A interface.
+var _ A = (*a_routed_local_stub)(nil)
+
+func (s a_routed_local_stub) Propagate(ctx context.Context, a0 int) (err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+type b_routed_local_stub struct {
+	impl             B
+	stub             codegen.Stub
+	tracer           trace.Tracer
+	isLocal          func(shardKey uint64) bool
+	propagateMetrics *codegen.MethodMetrics
+}
+
+// Check that b_routed_local_stub implements the B interface.
+var _ B = (*b_routed_local_stub)(nil)
+
+func (s b_routed_local_stub) Propagate(ctx context.Context, a0 int) (err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+type c_routed_local_stub struct {
+	impl             C
+	stub             codegen.Stub
+	tracer           trace.Tracer
+	isLocal          func(shardKey uint64) bool
+	propagateMetrics *codegen.MethodMetrics
+}
+
+// Check that c_routed_local_stub implements the C interface.
+var _ C = (*c_routed_local_stub)(nil)
+
+func (s c_routed_local_stub) Propagate(ctx context.Context, a0 int) (err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
 // Note that "weaver generate" will always generate the error message below.
 // Everything is okay. The error message is only relevant if you see it when
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' (devel) (codegen
+ERROR: You generated this file with 'weaver generate' v0.25.2-0.20250419001101-42f7bf3eb269+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -386,8 +448,9 @@ please file an issue at https://github.com/eberkley/weaver/issues.
 // Server stub implementations.
 
 type a_server_stub struct {
-	impl    A
-	addLoad func(key uint64, load float64)
+	impl             A
+	addLoad          func(key uint64, load float64)
+	propagateMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that a_server_stub implements the codegen.Server interface.
@@ -410,6 +473,8 @@ func (s a_server_stub) propagate(ctx context.Context, args []byte) (res []byte, 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.propagateMetrics.Begin()
+	defer s.propagateMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -428,8 +493,9 @@ func (s a_server_stub) propagate(ctx context.Context, args []byte) (res []byte, 
 }
 
 type b_server_stub struct {
-	impl    B
-	addLoad func(key uint64, load float64)
+	impl             B
+	addLoad          func(key uint64, load float64)
+	propagateMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that b_server_stub implements the codegen.Server interface.
@@ -452,6 +518,8 @@ func (s b_server_stub) propagate(ctx context.Context, args []byte) (res []byte, 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.propagateMetrics.Begin()
+	defer s.propagateMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -470,8 +538,9 @@ func (s b_server_stub) propagate(ctx context.Context, args []byte) (res []byte, 
 }
 
 type c_server_stub struct {
-	impl    C
-	addLoad func(key uint64, load float64)
+	impl             C
+	addLoad          func(key uint64, load float64)
+	propagateMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that c_server_stub implements the codegen.Server interface.
@@ -494,6 +563,8 @@ func (s c_server_stub) propagate(ctx context.Context, args []byte) (res []byte, 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.propagateMetrics.Begin()
+	defer s.propagateMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)

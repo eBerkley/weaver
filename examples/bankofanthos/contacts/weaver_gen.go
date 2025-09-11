@@ -26,10 +26,13 @@ func init() {
 			return t_client_stub{stub: stub, addContactMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/bankofanthos/contacts/T", Method: "AddContact", Remote: true, Generated: true}), getContactsMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/bankofanthos/contacts/T", Method: "GetContacts", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return t_server_stub{impl: impl.(T), addLoad: addLoad}
+			return t_server_stub{impl: impl.(T), addLoad: addLoad, addContactMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/examples/bankofanthos/contacts/T", Method: "AddContact"}), getContactsMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/examples/bankofanthos/contacts/T", Method: "GetContacts"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return t_reflect_stub{caller: caller}
+		},
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return t_routed_local_stub{impl: impl.(T), stub: stub, tracer: tracer, isLocal: isLocal, addContactMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/bankofanthos/contacts/T", Method: "AddContact", Remote: true, Generated: true}), getContactsMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/bankofanthos/contacts/T", Method: "GetContacts", Remote: true, Generated: true})}
 		},
 		RefData: "",
 	})
@@ -136,7 +139,7 @@ func (s t_client_stub) AddContact(ctx context.Context, a0 string, a1 Contact) (e
 	// Preallocate a buffer of the right size.
 	size := 0
 	size += (4 + len(a0))
-	size += serviceweaver_size_Contact_15811618(&a1)
+	size += serviceweaver_size_Contact_d0a2b193(&a1)
 	enc := codegen.NewEncoder()
 	enc.Reset(size)
 
@@ -212,8 +215,34 @@ func (s t_client_stub) GetContacts(ctx context.Context, a0 string) (r0 []Contact
 
 	// Decode the results.
 	dec := codegen.NewDecoder(results)
-	r0 = serviceweaver_dec_slice_Contact_d00a3378(dec)
+	r0 = serviceweaver_dec_slice_Contact_edb918d3(dec)
 	err = dec.Error()
+	return
+}
+
+// Routed local stub implementations.
+
+type t_routed_local_stub struct {
+	impl               T
+	stub               codegen.Stub
+	tracer             trace.Tracer
+	isLocal            func(shardKey uint64) bool
+	addContactMetrics  *codegen.MethodMetrics
+	getContactsMetrics *codegen.MethodMetrics
+}
+
+// Check that t_routed_local_stub implements the T interface.
+var _ T = (*t_routed_local_stub)(nil)
+
+func (s t_routed_local_stub) AddContact(ctx context.Context, a0 string, a1 Contact) (err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+func (s t_routed_local_stub) GetContacts(ctx context.Context, a0 string) (r0 []Contact, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
 	return
 }
 
@@ -222,7 +251,7 @@ func (s t_client_stub) GetContacts(ctx context.Context, a0 string) (r0 []Contact
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' (devel) (codegen
+ERROR: You generated this file with 'weaver generate' v0.25.2-0.20250419001101-42f7bf3eb269+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -243,8 +272,10 @@ please file an issue at https://github.com/eberkley/weaver/issues.
 // Server stub implementations.
 
 type t_server_stub struct {
-	impl    T
-	addLoad func(key uint64, load float64)
+	impl               T
+	addLoad            func(key uint64, load float64)
+	addContactMetrics  *codegen.ConcurrentMethodMetrics
+	getContactsMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that t_server_stub implements the codegen.Server interface.
@@ -269,6 +300,8 @@ func (s t_server_stub) addContact(ctx context.Context, args []byte) (res []byte,
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.addContactMetrics.Begin()
+	defer s.addContactMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -295,6 +328,8 @@ func (s t_server_stub) getContacts(ctx context.Context, args []byte) (res []byte
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.getContactsMetrics.Begin()
+	defer s.getContactsMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -308,7 +343,7 @@ func (s t_server_stub) getContacts(ctx context.Context, args []byte) (res []byte
 
 	// Encode the results.
 	enc := codegen.NewEncoder()
-	serviceweaver_enc_slice_Contact_d00a3378(enc, r0)
+	serviceweaver_enc_slice_Contact_edb918d3(enc, r0)
 	enc.Error(appErr)
 	return enc.Data(), nil
 }
@@ -371,7 +406,7 @@ func (x *Contact) WeaverUnmarshal(dec *codegen.Decoder) {
 
 // Encoding/decoding implementations.
 
-func serviceweaver_enc_slice_Contact_d00a3378(enc *codegen.Encoder, arg []Contact) {
+func serviceweaver_enc_slice_Contact_edb918d3(enc *codegen.Encoder, arg []Contact) {
 	if arg == nil {
 		enc.Len(-1)
 		return
@@ -382,7 +417,7 @@ func serviceweaver_enc_slice_Contact_d00a3378(enc *codegen.Encoder, arg []Contac
 	}
 }
 
-func serviceweaver_dec_slice_Contact_d00a3378(dec *codegen.Decoder) []Contact {
+func serviceweaver_dec_slice_Contact_edb918d3(dec *codegen.Decoder) []Contact {
 	n := dec.Len()
 	if n == -1 {
 		return nil
@@ -396,9 +431,9 @@ func serviceweaver_dec_slice_Contact_d00a3378(dec *codegen.Decoder) []Contact {
 
 // Size implementations.
 
-// serviceweaver_size_Contact_15811618 returns the size (in bytes) of the serialization
+// serviceweaver_size_Contact_d0a2b193 returns the size (in bytes) of the serialization
 // of the provided type.
-func serviceweaver_size_Contact_15811618(x *Contact) int {
+func serviceweaver_size_Contact_d0a2b193(x *Contact) int {
 	size := 0
 	size += 0
 	size += (4 + len(x.Username))

@@ -26,10 +26,13 @@ func init() {
 			return t_client_stub{stub: stub, getTransactionsMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/bankofanthos/transactionhistory/T", Method: "GetTransactions", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return t_server_stub{impl: impl.(T), addLoad: addLoad}
+			return t_server_stub{impl: impl.(T), addLoad: addLoad, getTransactionsMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/examples/bankofanthos/transactionhistory/T", Method: "GetTransactions"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return t_reflect_stub{caller: caller}
+		},
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return t_routed_local_stub{impl: impl.(T), stub: stub, tracer: tracer, isLocal: isLocal, getTransactionsMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/bankofanthos/transactionhistory/T", Method: "GetTransactions", Remote: true, Generated: true})}
 		},
 		RefData: "",
 	})
@@ -133,8 +136,27 @@ func (s t_client_stub) GetTransactions(ctx context.Context, a0 string) (r0 []mod
 
 	// Decode the results.
 	dec := codegen.NewDecoder(results)
-	r0 = serviceweaver_dec_slice_Transaction_d2a36fba(dec)
+	r0 = serviceweaver_dec_slice_Transaction_8e97c17f(dec)
 	err = dec.Error()
+	return
+}
+
+// Routed local stub implementations.
+
+type t_routed_local_stub struct {
+	impl                   T
+	stub                   codegen.Stub
+	tracer                 trace.Tracer
+	isLocal                func(shardKey uint64) bool
+	getTransactionsMetrics *codegen.MethodMetrics
+}
+
+// Check that t_routed_local_stub implements the T interface.
+var _ T = (*t_routed_local_stub)(nil)
+
+func (s t_routed_local_stub) GetTransactions(ctx context.Context, a0 string) (r0 []model.Transaction, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
 	return
 }
 
@@ -143,7 +165,7 @@ func (s t_client_stub) GetTransactions(ctx context.Context, a0 string) (r0 []mod
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' (devel) (codegen
+ERROR: You generated this file with 'weaver generate' v0.25.2-0.20250419001101-42f7bf3eb269+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -164,8 +186,9 @@ please file an issue at https://github.com/eberkley/weaver/issues.
 // Server stub implementations.
 
 type t_server_stub struct {
-	impl    T
-	addLoad func(key uint64, load float64)
+	impl                   T
+	addLoad                func(key uint64, load float64)
+	getTransactionsMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that t_server_stub implements the codegen.Server interface.
@@ -188,6 +211,8 @@ func (s t_server_stub) getTransactions(ctx context.Context, args []byte) (res []
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.getTransactionsMetrics.Begin()
+	defer s.getTransactionsMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -201,7 +226,7 @@ func (s t_server_stub) getTransactions(ctx context.Context, args []byte) (res []
 
 	// Encode the results.
 	enc := codegen.NewEncoder()
-	serviceweaver_enc_slice_Transaction_d2a36fba(enc, r0)
+	serviceweaver_enc_slice_Transaction_8e97c17f(enc, r0)
 	enc.Error(appErr)
 	return enc.Data(), nil
 }
@@ -222,7 +247,7 @@ func (s t_reflect_stub) GetTransactions(ctx context.Context, a0 string) (r0 []mo
 
 // Encoding/decoding implementations.
 
-func serviceweaver_enc_slice_Transaction_d2a36fba(enc *codegen.Encoder, arg []model.Transaction) {
+func serviceweaver_enc_slice_Transaction_8e97c17f(enc *codegen.Encoder, arg []model.Transaction) {
 	if arg == nil {
 		enc.Len(-1)
 		return
@@ -233,7 +258,7 @@ func serviceweaver_enc_slice_Transaction_d2a36fba(enc *codegen.Encoder, arg []mo
 	}
 }
 
-func serviceweaver_dec_slice_Transaction_d2a36fba(dec *codegen.Decoder) []model.Transaction {
+func serviceweaver_dec_slice_Transaction_8e97c17f(dec *codegen.Decoder) []model.Transaction {
 	n := dec.Len()
 	if n == -1 {
 		return nil

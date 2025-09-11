@@ -27,10 +27,13 @@ func init() {
 			return imageScaler_client_stub{stub: stub, scaleMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/chat/ImageScaler", Method: "Scale", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return imageScaler_server_stub{impl: impl.(ImageScaler), addLoad: addLoad}
+			return imageScaler_server_stub{impl: impl.(ImageScaler), addLoad: addLoad, scaleMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/examples/chat/ImageScaler", Method: "Scale"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return imageScaler_reflect_stub{caller: caller}
+		},
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return imageScaler_routed_local_stub{impl: impl.(ImageScaler), stub: stub, tracer: tracer, isLocal: isLocal, scaleMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/chat/ImageScaler", Method: "Scale", Remote: true, Generated: true})}
 		},
 		RefData: "",
 	})
@@ -45,10 +48,13 @@ func init() {
 			return localCache_client_stub{stub: stub, getMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/chat/LocalCache", Method: "Get", Remote: true, Generated: true}), putMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/chat/LocalCache", Method: "Put", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return localCache_server_stub{impl: impl.(LocalCache), addLoad: addLoad}
+			return localCache_server_stub{impl: impl.(LocalCache), addLoad: addLoad, getMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/examples/chat/LocalCache", Method: "Get"}), putMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/examples/chat/LocalCache", Method: "Put"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return localCache_reflect_stub{caller: caller}
+		},
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return localCache_routed_local_stub{impl: impl.(LocalCache), stub: stub, tracer: tracer, isLocal: isLocal, getMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/chat/LocalCache", Method: "Get", Remote: true, Generated: true}), putMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/chat/LocalCache", Method: "Put", Remote: true, Generated: true})}
 		},
 		RefData: "",
 	})
@@ -67,7 +73,10 @@ func init() {
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return main_reflect_stub{caller: caller}
 		},
-		RefData: "⟦7e1a0aa0:wEaVeReDgE:github.com/eberkley/weaver/Main→github.com/eberkley/weaver/examples/chat/SQLStore⟧\n⟦ae108c0d:wEaVeReDgE:github.com/eberkley/weaver/Main→github.com/eberkley/weaver/examples/chat/ImageScaler⟧\n⟦c86a1d44:wEaVeReDgE:github.com/eberkley/weaver/Main→github.com/eberkley/weaver/examples/chat/LocalCache⟧\n⟦7b9a3b0b:wEaVeRlIsTeNeRs:github.com/eberkley/weaver/Main→chat⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return main_routed_local_stub{impl: impl.(weaver.Main), stub: stub, tracer: tracer, isLocal: isLocal}
+		},
+		RefData: "⟦6a123525:wEaVeReDgE:github.com/eberkley/weaver/Main→github.com/eberkley/weaver/examples/chat/SQLStore⟧\n⟦7c237525:wEaVeReDgE:github.com/eberkley/weaver/Main→github.com/eberkley/weaver/examples/chat/ImageScaler⟧\n⟦21228c8b:wEaVeReDgE:github.com/eberkley/weaver/Main→github.com/eberkley/weaver/examples/chat/LocalCache⟧\n⟦76c296f2:wEaVeRlIsTeNeRs:github.com/eberkley/weaver/Main→chat⟧\n",
 	})
 	codegen.Register(codegen.Registration{
 		Name:    "github.com/eberkley/weaver/examples/chat/SQLStore",
@@ -81,10 +90,13 @@ func init() {
 			return sQLStore_client_stub{stub: stub, createPostMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/chat/SQLStore", Method: "CreatePost", Remote: true, Generated: true}), createThreadMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/chat/SQLStore", Method: "CreateThread", Remote: true, Generated: true}), getFeedMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/chat/SQLStore", Method: "GetFeed", Remote: true, Generated: true}), getImageMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/chat/SQLStore", Method: "GetImage", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return sQLStore_server_stub{impl: impl.(SQLStore), addLoad: addLoad}
+			return sQLStore_server_stub{impl: impl.(SQLStore), addLoad: addLoad, createPostMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/examples/chat/SQLStore", Method: "CreatePost"}), createThreadMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/examples/chat/SQLStore", Method: "CreateThread"}), getFeedMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/examples/chat/SQLStore", Method: "GetFeed"}), getImageMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/examples/chat/SQLStore", Method: "GetImage"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return sQLStore_reflect_stub{caller: caller}
+		},
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return sQLStore_routed_local_stub{impl: impl.(SQLStore), stub: stub, tracer: tracer, isLocal: isLocal, createPostMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/chat/SQLStore", Method: "CreatePost", Remote: true, Generated: true}), createThreadMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/chat/SQLStore", Method: "CreateThread", Remote: true, Generated: true}), getFeedMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/chat/SQLStore", Method: "GetFeed", Remote: true, Generated: true}), getImageMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/chat/SQLStore", Method: "GetImage", Remote: true, Generated: true})}
 		},
 		RefData: "",
 	})
@@ -652,7 +664,7 @@ func (s sQLStore_client_stub) GetFeed(ctx context.Context, a0 string) (r0 []Thre
 
 	// Decode the results.
 	dec := codegen.NewDecoder(results)
-	r0 = serviceweaver_dec_slice_Thread_511e1469(dec)
+	r0 = serviceweaver_dec_slice_Thread_eb739abf(dec)
 	err = dec.Error()
 	return
 }
@@ -715,12 +727,103 @@ func (s sQLStore_client_stub) GetImage(ctx context.Context, a0 string, a1 ImageI
 	return
 }
 
+// Routed local stub implementations.
+
+type imageScaler_routed_local_stub struct {
+	impl         ImageScaler
+	stub         codegen.Stub
+	tracer       trace.Tracer
+	isLocal      func(shardKey uint64) bool
+	scaleMetrics *codegen.MethodMetrics
+}
+
+// Check that imageScaler_routed_local_stub implements the ImageScaler interface.
+var _ ImageScaler = (*imageScaler_routed_local_stub)(nil)
+
+func (s imageScaler_routed_local_stub) Scale(ctx context.Context, a0 []byte, a1 int, a2 int) (r0 []byte, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+type localCache_routed_local_stub struct {
+	impl       LocalCache
+	stub       codegen.Stub
+	tracer     trace.Tracer
+	isLocal    func(shardKey uint64) bool
+	getMetrics *codegen.MethodMetrics
+	putMetrics *codegen.MethodMetrics
+}
+
+// Check that localCache_routed_local_stub implements the LocalCache interface.
+var _ LocalCache = (*localCache_routed_local_stub)(nil)
+
+func (s localCache_routed_local_stub) Get(ctx context.Context, a0 string) (r0 string, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+func (s localCache_routed_local_stub) Put(ctx context.Context, a0 string, a1 string) (err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+type main_routed_local_stub struct {
+	impl    weaver.Main
+	stub    codegen.Stub
+	tracer  trace.Tracer
+	isLocal func(shardKey uint64) bool
+}
+
+// Check that main_routed_local_stub implements the weaver.Main interface.
+var _ weaver.Main = (*main_routed_local_stub)(nil)
+
+type sQLStore_routed_local_stub struct {
+	impl                SQLStore
+	stub                codegen.Stub
+	tracer              trace.Tracer
+	isLocal             func(shardKey uint64) bool
+	createPostMetrics   *codegen.MethodMetrics
+	createThreadMetrics *codegen.MethodMetrics
+	getFeedMetrics      *codegen.MethodMetrics
+	getImageMetrics     *codegen.MethodMetrics
+}
+
+// Check that sQLStore_routed_local_stub implements the SQLStore interface.
+var _ SQLStore = (*sQLStore_routed_local_stub)(nil)
+
+func (s sQLStore_routed_local_stub) CreatePost(ctx context.Context, a0 string, a1 time.Time, a2 ThreadID, a3 string) (err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+func (s sQLStore_routed_local_stub) CreateThread(ctx context.Context, a0 string, a1 time.Time, a2 []string, a3 string, a4 []byte) (r0 ThreadID, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+func (s sQLStore_routed_local_stub) GetFeed(ctx context.Context, a0 string) (r0 []Thread, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+func (s sQLStore_routed_local_stub) GetImage(ctx context.Context, a0 string, a1 ImageID) (r0 []byte, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
 // Note that "weaver generate" will always generate the error message below.
 // Everything is okay. The error message is only relevant if you see it when
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' (devel) (codegen
+ERROR: You generated this file with 'weaver generate' v0.25.2-0.20250419001101-42f7bf3eb269+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -741,8 +844,9 @@ please file an issue at https://github.com/eberkley/weaver/issues.
 // Server stub implementations.
 
 type imageScaler_server_stub struct {
-	impl    ImageScaler
-	addLoad func(key uint64, load float64)
+	impl         ImageScaler
+	addLoad      func(key uint64, load float64)
+	scaleMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that imageScaler_server_stub implements the codegen.Server interface.
@@ -765,6 +869,8 @@ func (s imageScaler_server_stub) scale(ctx context.Context, args []byte) (res []
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.scaleMetrics.Begin()
+	defer s.scaleMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -788,8 +894,10 @@ func (s imageScaler_server_stub) scale(ctx context.Context, args []byte) (res []
 }
 
 type localCache_server_stub struct {
-	impl    LocalCache
-	addLoad func(key uint64, load float64)
+	impl       LocalCache
+	addLoad    func(key uint64, load float64)
+	getMetrics *codegen.ConcurrentMethodMetrics
+	putMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that localCache_server_stub implements the codegen.Server interface.
@@ -814,6 +922,8 @@ func (s localCache_server_stub) get(ctx context.Context, args []byte) (res []byt
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.getMetrics.Begin()
+	defer s.getMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -839,6 +949,8 @@ func (s localCache_server_stub) put(ctx context.Context, args []byte) (res []byt
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.putMetrics.Begin()
+	defer s.putMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -875,8 +987,12 @@ func (s main_server_stub) GetStubFn(method string) func(ctx context.Context, arg
 }
 
 type sQLStore_server_stub struct {
-	impl    SQLStore
-	addLoad func(key uint64, load float64)
+	impl                SQLStore
+	addLoad             func(key uint64, load float64)
+	createPostMetrics   *codegen.ConcurrentMethodMetrics
+	createThreadMetrics *codegen.ConcurrentMethodMetrics
+	getFeedMetrics      *codegen.ConcurrentMethodMetrics
+	getImageMetrics     *codegen.ConcurrentMethodMetrics
 }
 
 // Check that sQLStore_server_stub implements the codegen.Server interface.
@@ -905,6 +1021,8 @@ func (s sQLStore_server_stub) createPost(ctx context.Context, args []byte) (res 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.createPostMetrics.Begin()
+	defer s.createPostMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -935,6 +1053,8 @@ func (s sQLStore_server_stub) createThread(ctx context.Context, args []byte) (re
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.createThreadMetrics.Begin()
+	defer s.createThreadMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -968,6 +1088,8 @@ func (s sQLStore_server_stub) getFeed(ctx context.Context, args []byte) (res []b
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.getFeedMetrics.Begin()
+	defer s.getFeedMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -981,7 +1103,7 @@ func (s sQLStore_server_stub) getFeed(ctx context.Context, args []byte) (res []b
 
 	// Encode the results.
 	enc := codegen.NewEncoder()
-	serviceweaver_enc_slice_Thread_511e1469(enc, r0)
+	serviceweaver_enc_slice_Thread_eb739abf(enc, r0)
 	enc.Error(appErr)
 	return enc.Data(), nil
 }
@@ -993,6 +1115,8 @@ func (s sQLStore_server_stub) getImage(ctx context.Context, args []byte) (res []
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.getImageMetrics.Begin()
+	defer s.getImageMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -1130,7 +1254,7 @@ func (x *Thread) WeaverMarshal(enc *codegen.Encoder) {
 		panic(fmt.Errorf("Thread.WeaverMarshal: nil receiver"))
 	}
 	enc.Int64((int64)(x.ID))
-	serviceweaver_enc_slice_Post_29a9ee83(enc, x.Posts)
+	serviceweaver_enc_slice_Post_7cb15ca2(enc, x.Posts)
 }
 
 func (x *Thread) WeaverUnmarshal(dec *codegen.Decoder) {
@@ -1138,10 +1262,10 @@ func (x *Thread) WeaverUnmarshal(dec *codegen.Decoder) {
 		panic(fmt.Errorf("Thread.WeaverUnmarshal: nil receiver"))
 	}
 	*(*int64)(&x.ID) = dec.Int64()
-	x.Posts = serviceweaver_dec_slice_Post_29a9ee83(dec)
+	x.Posts = serviceweaver_dec_slice_Post_7cb15ca2(dec)
 }
 
-func serviceweaver_enc_slice_Post_29a9ee83(enc *codegen.Encoder, arg []Post) {
+func serviceweaver_enc_slice_Post_7cb15ca2(enc *codegen.Encoder, arg []Post) {
 	if arg == nil {
 		enc.Len(-1)
 		return
@@ -1152,7 +1276,7 @@ func serviceweaver_enc_slice_Post_29a9ee83(enc *codegen.Encoder, arg []Post) {
 	}
 }
 
-func serviceweaver_dec_slice_Post_29a9ee83(dec *codegen.Decoder) []Post {
+func serviceweaver_dec_slice_Post_7cb15ca2(dec *codegen.Decoder) []Post {
 	n := dec.Len()
 	if n == -1 {
 		return nil
@@ -1212,7 +1336,7 @@ func serviceweaver_dec_slice_string_4af10117(dec *codegen.Decoder) []string {
 	return res
 }
 
-func serviceweaver_enc_slice_Thread_511e1469(enc *codegen.Encoder, arg []Thread) {
+func serviceweaver_enc_slice_Thread_eb739abf(enc *codegen.Encoder, arg []Thread) {
 	if arg == nil {
 		enc.Len(-1)
 		return
@@ -1223,7 +1347,7 @@ func serviceweaver_enc_slice_Thread_511e1469(enc *codegen.Encoder, arg []Thread)
 	}
 }
 
-func serviceweaver_dec_slice_Thread_511e1469(dec *codegen.Decoder) []Thread {
+func serviceweaver_dec_slice_Thread_eb739abf(dec *codegen.Decoder) []Thread {
 	n := dec.Len()
 	if n == -1 {
 		return nil

@@ -26,10 +26,13 @@ func init() {
 			return errer_client_stub{stub: stub, errMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/diverge/Errer", Method: "Err", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return errer_server_stub{impl: impl.(Errer), addLoad: addLoad}
+			return errer_server_stub{impl: impl.(Errer), addLoad: addLoad, errMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/weavertest/internal/diverge/Errer", Method: "Err"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return errer_reflect_stub{caller: caller}
+		},
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return errer_routed_local_stub{impl: impl.(Errer), stub: stub, tracer: tracer, isLocal: isLocal, errMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/diverge/Errer", Method: "Err", Remote: true, Generated: true})}
 		},
 		RefData: "",
 	})
@@ -44,10 +47,13 @@ func init() {
 			return pointer_client_stub{stub: stub, getMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/diverge/Pointer", Method: "Get", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return pointer_server_stub{impl: impl.(Pointer), addLoad: addLoad}
+			return pointer_server_stub{impl: impl.(Pointer), addLoad: addLoad, getMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/weavertest/internal/diverge/Pointer", Method: "Get"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return pointer_reflect_stub{caller: caller}
+		},
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return pointer_routed_local_stub{impl: impl.(Pointer), stub: stub, tracer: tracer, isLocal: isLocal, getMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/diverge/Pointer", Method: "Get", Remote: true, Generated: true})}
 		},
 		RefData: "",
 	})
@@ -241,12 +247,48 @@ func (s pointer_client_stub) Get(ctx context.Context) (r0 Pair, err error) {
 	return
 }
 
+// Routed local stub implementations.
+
+type errer_routed_local_stub struct {
+	impl       Errer
+	stub       codegen.Stub
+	tracer     trace.Tracer
+	isLocal    func(shardKey uint64) bool
+	errMetrics *codegen.MethodMetrics
+}
+
+// Check that errer_routed_local_stub implements the Errer interface.
+var _ Errer = (*errer_routed_local_stub)(nil)
+
+func (s errer_routed_local_stub) Err(ctx context.Context, a0 int) (err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+type pointer_routed_local_stub struct {
+	impl       Pointer
+	stub       codegen.Stub
+	tracer     trace.Tracer
+	isLocal    func(shardKey uint64) bool
+	getMetrics *codegen.MethodMetrics
+}
+
+// Check that pointer_routed_local_stub implements the Pointer interface.
+var _ Pointer = (*pointer_routed_local_stub)(nil)
+
+func (s pointer_routed_local_stub) Get(ctx context.Context) (r0 Pair, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
 // Note that "weaver generate" will always generate the error message below.
 // Everything is okay. The error message is only relevant if you see it when
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' (devel) (codegen
+ERROR: You generated this file with 'weaver generate' v0.25.2-0.20250419001101-42f7bf3eb269+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -267,8 +309,9 @@ please file an issue at https://github.com/eberkley/weaver/issues.
 // Server stub implementations.
 
 type errer_server_stub struct {
-	impl    Errer
-	addLoad func(key uint64, load float64)
+	impl       Errer
+	addLoad    func(key uint64, load float64)
+	errMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that errer_server_stub implements the codegen.Server interface.
@@ -291,6 +334,8 @@ func (s errer_server_stub) err(ctx context.Context, args []byte) (res []byte, er
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.errMetrics.Begin()
+	defer s.errMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -309,8 +354,9 @@ func (s errer_server_stub) err(ctx context.Context, args []byte) (res []byte, er
 }
 
 type pointer_server_stub struct {
-	impl    Pointer
-	addLoad func(key uint64, load float64)
+	impl       Pointer
+	addLoad    func(key uint64, load float64)
+	getMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that pointer_server_stub implements the codegen.Server interface.
@@ -333,6 +379,8 @@ func (s pointer_server_stub) get(ctx context.Context, args []byte) (res []byte, 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.getMetrics.Begin()
+	defer s.getMetrics.End()
 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.

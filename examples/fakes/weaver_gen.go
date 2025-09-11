@@ -25,10 +25,13 @@ func init() {
 			return clock_client_stub{stub: stub, unixMicroMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/fakes/Clock", Method: "UnixMicro", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return clock_server_stub{impl: impl.(Clock), addLoad: addLoad}
+			return clock_server_stub{impl: impl.(Clock), addLoad: addLoad, unixMicroMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/examples/fakes/Clock", Method: "UnixMicro"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return clock_reflect_stub{caller: caller}
+		},
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return clock_routed_local_stub{impl: impl.(Clock), stub: stub, tracer: tracer, isLocal: isLocal, unixMicroMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/fakes/Clock", Method: "UnixMicro", Remote: true, Generated: true})}
 		},
 		RefData: "",
 	})
@@ -128,12 +131,31 @@ func (s clock_client_stub) UnixMicro(ctx context.Context) (r0 int64, err error) 
 	return
 }
 
+// Routed local stub implementations.
+
+type clock_routed_local_stub struct {
+	impl             Clock
+	stub             codegen.Stub
+	tracer           trace.Tracer
+	isLocal          func(shardKey uint64) bool
+	unixMicroMetrics *codegen.MethodMetrics
+}
+
+// Check that clock_routed_local_stub implements the Clock interface.
+var _ Clock = (*clock_routed_local_stub)(nil)
+
+func (s clock_routed_local_stub) UnixMicro(ctx context.Context) (r0 int64, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
 // Note that "weaver generate" will always generate the error message below.
 // Everything is okay. The error message is only relevant if you see it when
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' (devel) (codegen
+ERROR: You generated this file with 'weaver generate' v0.25.2-0.20250419001101-42f7bf3eb269+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -154,8 +176,9 @@ please file an issue at https://github.com/eberkley/weaver/issues.
 // Server stub implementations.
 
 type clock_server_stub struct {
-	impl    Clock
-	addLoad func(key uint64, load float64)
+	impl             Clock
+	addLoad          func(key uint64, load float64)
+	unixMicroMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that clock_server_stub implements the codegen.Server interface.
@@ -178,6 +201,8 @@ func (s clock_server_stub) unixMicro(ctx context.Context, args []byte) (res []by
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.unixMicroMetrics.Begin()
+	defer s.unixMicroMetrics.End()
 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.

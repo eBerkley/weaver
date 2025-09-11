@@ -25,10 +25,13 @@ func init() {
 			return even_client_stub{stub: stub, doMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/collatz/Even", Method: "Do", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return even_server_stub{impl: impl.(Even), addLoad: addLoad}
+			return even_server_stub{impl: impl.(Even), addLoad: addLoad, doMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/examples/collatz/Even", Method: "Do"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return even_reflect_stub{caller: caller}
+		},
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return even_routed_local_stub{impl: impl.(Even), stub: stub, tracer: tracer, isLocal: isLocal, doMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/collatz/Even", Method: "Do", Remote: true, Generated: true})}
 		},
 		RefData: "",
 	})
@@ -47,7 +50,10 @@ func init() {
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return main_reflect_stub{caller: caller}
 		},
-		RefData: "⟦f95ad2dd:wEaVeReDgE:github.com/eberkley/weaver/Main→github.com/eberkley/weaver/examples/collatz/Odd⟧\n⟦987c175b:wEaVeReDgE:github.com/eberkley/weaver/Main→github.com/eberkley/weaver/examples/collatz/Even⟧\n⟦f3b62957:wEaVeRlIsTeNeRs:github.com/eberkley/weaver/Main→collatz⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return main_routed_local_stub{impl: impl.(weaver.Main), stub: stub, tracer: tracer, isLocal: isLocal}
+		},
+		RefData: "⟦252790d0:wEaVeReDgE:github.com/eberkley/weaver/Main→github.com/eberkley/weaver/examples/collatz/Odd⟧\n⟦a9f2c63b:wEaVeReDgE:github.com/eberkley/weaver/Main→github.com/eberkley/weaver/examples/collatz/Even⟧\n⟦b9ecd0db:wEaVeRlIsTeNeRs:github.com/eberkley/weaver/Main→collatz⟧\n",
 	})
 	codegen.Register(codegen.Registration{
 		Name:  "github.com/eberkley/weaver/examples/collatz/Odd",
@@ -60,10 +66,13 @@ func init() {
 			return odd_client_stub{stub: stub, doMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/collatz/Odd", Method: "Do", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return odd_server_stub{impl: impl.(Odd), addLoad: addLoad}
+			return odd_server_stub{impl: impl.(Odd), addLoad: addLoad, doMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/examples/collatz/Odd", Method: "Do"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return odd_reflect_stub{caller: caller}
+		},
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return odd_routed_local_stub{impl: impl.(Odd), stub: stub, tracer: tracer, isLocal: isLocal, doMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/examples/collatz/Odd", Method: "Do", Remote: true, Generated: true})}
 		},
 		RefData: "",
 	})
@@ -284,12 +293,58 @@ func (s odd_client_stub) Do(ctx context.Context, a0 int) (r0 int, err error) {
 	return
 }
 
+// Routed local stub implementations.
+
+type even_routed_local_stub struct {
+	impl      Even
+	stub      codegen.Stub
+	tracer    trace.Tracer
+	isLocal   func(shardKey uint64) bool
+	doMetrics *codegen.MethodMetrics
+}
+
+// Check that even_routed_local_stub implements the Even interface.
+var _ Even = (*even_routed_local_stub)(nil)
+
+func (s even_routed_local_stub) Do(ctx context.Context, a0 int) (r0 int, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+type main_routed_local_stub struct {
+	impl    weaver.Main
+	stub    codegen.Stub
+	tracer  trace.Tracer
+	isLocal func(shardKey uint64) bool
+}
+
+// Check that main_routed_local_stub implements the weaver.Main interface.
+var _ weaver.Main = (*main_routed_local_stub)(nil)
+
+type odd_routed_local_stub struct {
+	impl      Odd
+	stub      codegen.Stub
+	tracer    trace.Tracer
+	isLocal   func(shardKey uint64) bool
+	doMetrics *codegen.MethodMetrics
+}
+
+// Check that odd_routed_local_stub implements the Odd interface.
+var _ Odd = (*odd_routed_local_stub)(nil)
+
+func (s odd_routed_local_stub) Do(ctx context.Context, a0 int) (r0 int, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
 // Note that "weaver generate" will always generate the error message below.
 // Everything is okay. The error message is only relevant if you see it when
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' (devel) (codegen
+ERROR: You generated this file with 'weaver generate' v0.25.2-0.20250419001101-42f7bf3eb269+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -310,8 +365,9 @@ please file an issue at https://github.com/eberkley/weaver/issues.
 // Server stub implementations.
 
 type even_server_stub struct {
-	impl    Even
-	addLoad func(key uint64, load float64)
+	impl      Even
+	addLoad   func(key uint64, load float64)
+	doMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that even_server_stub implements the codegen.Server interface.
@@ -334,6 +390,8 @@ func (s even_server_stub) do(ctx context.Context, args []byte) (res []byte, err 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.doMetrics.Begin()
+	defer s.doMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -369,8 +427,9 @@ func (s main_server_stub) GetStubFn(method string) func(ctx context.Context, arg
 }
 
 type odd_server_stub struct {
-	impl    Odd
-	addLoad func(key uint64, load float64)
+	impl      Odd
+	addLoad   func(key uint64, load float64)
+	doMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that odd_server_stub implements the codegen.Server interface.
@@ -393,6 +452,8 @@ func (s odd_server_stub) do(ctx context.Context, args []byte) (res []byte, err e
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.doMetrics.Begin()
+	defer s.doMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)

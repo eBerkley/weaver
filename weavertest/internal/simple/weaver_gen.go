@@ -27,10 +27,13 @@ func init() {
 			return destination_client_stub{stub: stub, getAllMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/simple/Destination", Method: "GetAll", Remote: true, Generated: true}), getMetadataMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/simple/Destination", Method: "GetMetadata", Remote: true, Generated: true}), getpidMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/simple/Destination", Method: "Getpid", Remote: true, Generated: true}), recordMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/simple/Destination", Method: "Record", Remote: true, Generated: true}), routedRecordMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/simple/Destination", Method: "RoutedRecord", Remote: true, Generated: true}), updateMetadataMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/simple/Destination", Method: "UpdateMetadata", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return destination_server_stub{impl: impl.(Destination), addLoad: addLoad}
+			return destination_server_stub{impl: impl.(Destination), addLoad: addLoad, getAllMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/weavertest/internal/simple/Destination", Method: "GetAll"}), getMetadataMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/weavertest/internal/simple/Destination", Method: "GetMetadata"}), getpidMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/weavertest/internal/simple/Destination", Method: "Getpid"}), recordMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/weavertest/internal/simple/Destination", Method: "Record"}), routedRecordMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/weavertest/internal/simple/Destination", Method: "RoutedRecord"}), updateMetadataMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/weavertest/internal/simple/Destination", Method: "UpdateMetadata"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return destination_reflect_stub{caller: caller}
+		},
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return destination_routed_local_stub{impl: impl.(Destination), stub: stub, tracer: tracer, isLocal: isLocal, getAllMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/simple/Destination", Method: "GetAll", Remote: true, Generated: true}), getMetadataMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/simple/Destination", Method: "GetMetadata", Remote: true, Generated: true}), getpidMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/simple/Destination", Method: "Getpid", Remote: true, Generated: true}), recordMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/simple/Destination", Method: "Record", Remote: true, Generated: true}), routedRecordMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/simple/Destination", Method: "RoutedRecord", Remote: true, Generated: true}), updateMetadataMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/simple/Destination", Method: "UpdateMetadata", Remote: true, Generated: true})}
 		},
 		RefData: "",
 	})
@@ -46,12 +49,15 @@ func init() {
 			return server_client_stub{stub: stub, addressMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/simple/Server", Method: "Address", Remote: true, Generated: true}), proxyAddressMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/simple/Server", Method: "ProxyAddress", Remote: true, Generated: true}), shutdownMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/simple/Server", Method: "Shutdown", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return server_server_stub{impl: impl.(Server), addLoad: addLoad}
+			return server_server_stub{impl: impl.(Server), addLoad: addLoad, addressMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/weavertest/internal/simple/Server", Method: "Address"}), proxyAddressMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/weavertest/internal/simple/Server", Method: "ProxyAddress"}), shutdownMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/weavertest/internal/simple/Server", Method: "Shutdown"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return server_reflect_stub{caller: caller}
 		},
-		RefData: "⟦1e2dce71:wEaVeRlIsTeNeRs:github.com/eberkley/weaver/weavertest/internal/simple/Server→hello⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return server_routed_local_stub{impl: impl.(Server), stub: stub, tracer: tracer, isLocal: isLocal, addressMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/simple/Server", Method: "Address", Remote: true, Generated: true}), proxyAddressMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/simple/Server", Method: "ProxyAddress", Remote: true, Generated: true}), shutdownMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/simple/Server", Method: "Shutdown", Remote: true, Generated: true})}
+		},
+		RefData: "⟦4fbb2e3c:wEaVeRlIsTeNeRs:github.com/eberkley/weaver/weavertest/internal/simple/Server→hello⟧\n",
 	})
 	codegen.Register(codegen.Registration{
 		Name:    "github.com/eberkley/weaver/weavertest/internal/simple/Source",
@@ -65,12 +71,15 @@ func init() {
 			return source_client_stub{stub: stub, emitMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/simple/Source", Method: "Emit", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return source_server_stub{impl: impl.(Source), addLoad: addLoad}
+			return source_server_stub{impl: impl.(Source), addLoad: addLoad, emitMetrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/weavertest/internal/simple/Source", Method: "Emit"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return source_reflect_stub{caller: caller}
 		},
-		RefData: "⟦bf914175:wEaVeReDgE:github.com/eberkley/weaver/weavertest/internal/simple/Source→github.com/eberkley/weaver/weavertest/internal/simple/Destination⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return source_routed_local_stub{impl: impl.(Source), stub: stub, tracer: tracer, isLocal: isLocal, emitMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/weavertest/internal/simple/Source", Method: "Emit", Remote: true, Generated: true})}
+		},
+		RefData: "⟦a2de54ae:wEaVeReDgE:github.com/eberkley/weaver/weavertest/internal/simple/Source→github.com/eberkley/weaver/weavertest/internal/simple/Destination⟧\n",
 	})
 }
 
@@ -884,12 +893,179 @@ func (s source_client_stub) Emit(ctx context.Context, a0 string, a1 string) (err
 	return
 }
 
+// Routed local stub implementations.
+
+type destination_routed_local_stub struct {
+	impl                  Destination
+	stub                  codegen.Stub
+	tracer                trace.Tracer
+	isLocal               func(shardKey uint64) bool
+	getAllMetrics         *codegen.MethodMetrics
+	getMetadataMetrics    *codegen.MethodMetrics
+	getpidMetrics         *codegen.MethodMetrics
+	recordMetrics         *codegen.MethodMetrics
+	routedRecordMetrics   *codegen.MethodMetrics
+	updateMetadataMetrics *codegen.MethodMetrics
+}
+
+// Check that destination_routed_local_stub implements the Destination interface.
+var _ Destination = (*destination_routed_local_stub)(nil)
+
+func (s destination_routed_local_stub) GetAll(ctx context.Context, a0 string) (r0 []string, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+func (s destination_routed_local_stub) GetMetadata(ctx context.Context) (r0 map[string]string, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+func (s destination_routed_local_stub) Getpid(ctx context.Context) (r0 int, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+func (s destination_routed_local_stub) Record(ctx context.Context, a0 string, a1 string) (err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+func (s destination_routed_local_stub) RoutedRecord(ctx context.Context, a0 string, a1 string) (err error) {
+	// Update metrics.
+	var requestBytes, replyBytes int
+	begin := s.routedRecordMetrics.Begin()
+	defer func() { s.routedRecordMetrics.End(begin, err != nil, requestBytes, replyBytes) }()
+
+	span := trace.SpanFromContext(ctx)
+	if span.SpanContext().IsValid() {
+		// Create a child span for this method.
+		ctx, span = s.stub.Tracer().Start(ctx, "simple.Destination.RoutedRecord", trace.WithSpanKind(trace.SpanKindClient))
+		defer func() {
+			if err != nil {
+				span.RecordError(err)
+				span.SetStatus(codes.Error, err.Error())
+			}
+			span.End()
+		}()
+	}
+
+	// Set the shardKey.
+	var r destRouter
+	shardKey := _hashDestination(r.RoutedRecord(ctx, a0, a1))
+	if s.isLocal(shardKey) {
+		err = s.impl.RoutedRecord(ctx, a0, a1)
+		return
+	}
+
+	defer func() {
+		// Catch and return any panics detected during encoding/decoding/rpc.
+		if err == nil {
+			err = codegen.CatchPanics(recover())
+			if err != nil {
+				err = errors.Join(weaver.RemoteCallError, err)
+			}
+		}
+
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, err.Error())
+		}
+		span.End()
+
+	}()
+
+	// Preallocate a buffer of the right size.
+	size := 0
+	size += (4 + len(a0))
+	size += (4 + len(a1))
+	enc := codegen.NewEncoder()
+	enc.Reset(size)
+
+	// Encode arguments.
+	enc.String(a0)
+	enc.String(a1)
+
+	// Call the remote method.
+	requestBytes = len(enc.Data())
+	var results []byte
+	results, err = s.stub.Run(ctx, 4, enc.Data(), shardKey)
+	replyBytes = len(results)
+	if err != nil {
+		err = errors.Join(weaver.RemoteCallError, err)
+		return
+	}
+
+	// Decode the results.
+	dec := codegen.NewDecoder(results)
+	err = dec.Error()
+	return
+}
+
+func (s destination_routed_local_stub) UpdateMetadata(ctx context.Context) (err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+type server_routed_local_stub struct {
+	impl                Server
+	stub                codegen.Stub
+	tracer              trace.Tracer
+	isLocal             func(shardKey uint64) bool
+	addressMetrics      *codegen.MethodMetrics
+	proxyAddressMetrics *codegen.MethodMetrics
+	shutdownMetrics     *codegen.MethodMetrics
+}
+
+// Check that server_routed_local_stub implements the Server interface.
+var _ Server = (*server_routed_local_stub)(nil)
+
+func (s server_routed_local_stub) Address(ctx context.Context) (r0 string, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+func (s server_routed_local_stub) ProxyAddress(ctx context.Context) (r0 string, err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+func (s server_routed_local_stub) Shutdown(ctx context.Context) (err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
+type source_routed_local_stub struct {
+	impl        Source
+	stub        codegen.Stub
+	tracer      trace.Tracer
+	isLocal     func(shardKey uint64) bool
+	emitMetrics *codegen.MethodMetrics
+}
+
+// Check that source_routed_local_stub implements the Source interface.
+var _ Source = (*source_routed_local_stub)(nil)
+
+func (s source_routed_local_stub) Emit(ctx context.Context, a0 string, a1 string) (err error) {
+	err = errors.New("can not call routed local method on unrouted component")
+	err = errors.Join(weaver.RemoteCallError, err)
+	return
+}
+
 // Note that "weaver generate" will always generate the error message below.
 // Everything is okay. The error message is only relevant if you see it when
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' (devel) (codegen
+ERROR: You generated this file with 'weaver generate' v0.25.2-0.20250419001101-42f7bf3eb269+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -910,8 +1086,14 @@ please file an issue at https://github.com/eberkley/weaver/issues.
 // Server stub implementations.
 
 type destination_server_stub struct {
-	impl    Destination
-	addLoad func(key uint64, load float64)
+	impl                  Destination
+	addLoad               func(key uint64, load float64)
+	getAllMetrics         *codegen.ConcurrentMethodMetrics
+	getMetadataMetrics    *codegen.ConcurrentMethodMetrics
+	getpidMetrics         *codegen.ConcurrentMethodMetrics
+	recordMetrics         *codegen.ConcurrentMethodMetrics
+	routedRecordMetrics   *codegen.ConcurrentMethodMetrics
+	updateMetadataMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that destination_server_stub implements the codegen.Server interface.
@@ -944,6 +1126,8 @@ func (s destination_server_stub) getAll(ctx context.Context, args []byte) (res [
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.getAllMetrics.Begin()
+	defer s.getAllMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -969,6 +1153,8 @@ func (s destination_server_stub) getMetadata(ctx context.Context, args []byte) (
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.getMetadataMetrics.Begin()
+	defer s.getMetadataMetrics.End()
 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
@@ -989,6 +1175,8 @@ func (s destination_server_stub) getpid(ctx context.Context, args []byte) (res [
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.getpidMetrics.Begin()
+	defer s.getpidMetrics.End()
 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
@@ -1009,6 +1197,8 @@ func (s destination_server_stub) record(ctx context.Context, args []byte) (res [
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.recordMetrics.Begin()
+	defer s.recordMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -1035,6 +1225,8 @@ func (s destination_server_stub) routedRecord(ctx context.Context, args []byte) 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.routedRecordMetrics.Begin()
+	defer s.routedRecordMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -1063,6 +1255,8 @@ func (s destination_server_stub) updateMetadata(ctx context.Context, args []byte
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.updateMetadataMetrics.Begin()
+	defer s.updateMetadataMetrics.End()
 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
@@ -1076,8 +1270,11 @@ func (s destination_server_stub) updateMetadata(ctx context.Context, args []byte
 }
 
 type server_server_stub struct {
-	impl    Server
-	addLoad func(key uint64, load float64)
+	impl                Server
+	addLoad             func(key uint64, load float64)
+	addressMetrics      *codegen.ConcurrentMethodMetrics
+	proxyAddressMetrics *codegen.ConcurrentMethodMetrics
+	shutdownMetrics     *codegen.ConcurrentMethodMetrics
 }
 
 // Check that server_server_stub implements the codegen.Server interface.
@@ -1104,6 +1301,8 @@ func (s server_server_stub) address(ctx context.Context, args []byte) (res []byt
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.addressMetrics.Begin()
+	defer s.addressMetrics.End()
 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
@@ -1124,6 +1323,8 @@ func (s server_server_stub) proxyAddress(ctx context.Context, args []byte) (res 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.proxyAddressMetrics.Begin()
+	defer s.proxyAddressMetrics.End()
 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
@@ -1144,6 +1345,8 @@ func (s server_server_stub) shutdown(ctx context.Context, args []byte) (res []by
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.shutdownMetrics.Begin()
+	defer s.shutdownMetrics.End()
 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
@@ -1157,8 +1360,9 @@ func (s server_server_stub) shutdown(ctx context.Context, args []byte) (res []by
 }
 
 type source_server_stub struct {
-	impl    Source
-	addLoad func(key uint64, load float64)
+	impl        Source
+	addLoad     func(key uint64, load float64)
+	emitMetrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that source_server_stub implements the codegen.Server interface.
@@ -1181,6 +1385,8 @@ func (s source_server_stub) emit(ctx context.Context, args []byte) (res []byte, 
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.emitMetrics.Begin()
+	defer s.emitMetrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)

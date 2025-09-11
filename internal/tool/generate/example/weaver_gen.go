@@ -28,12 +28,15 @@ func init() {
 			return a_client_stub{stub: stub, m1Metrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/tool/generate/example/A", Method: "M1", Remote: true, Generated: true}), m2Metrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/tool/generate/example/A", Method: "M2", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return a_server_stub{impl: impl.(A), addLoad: addLoad}
+			return a_server_stub{impl: impl.(A), addLoad: addLoad, m1Metrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/internal/tool/generate/example/A", Method: "M1"}), m2Metrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/internal/tool/generate/example/A", Method: "M2"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return a_reflect_stub{caller: caller}
 		},
-		RefData: "⟦627f661b:wEaVeReDgE:github.com/eberkley/weaver/internal/tool/generate/example/A→github.com/eberkley/weaver/internal/tool/generate/example/B⟧\n⟦26168bd7:wEaVeRlIsTeNeRs:github.com/eberkley/weaver/internal/tool/generate/example/A→lis2,renamed_listener⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return a_routed_local_stub{impl: impl.(A), stub: stub, tracer: tracer, isLocal: isLocal, m1Metrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/tool/generate/example/A", Method: "M1", Remote: true, Generated: true}), m2Metrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/tool/generate/example/A", Method: "M2", Remote: true, Generated: true})}
+		},
+		RefData: "⟦aaee31fa:wEaVeReDgE:github.com/eberkley/weaver/internal/tool/generate/example/A→github.com/eberkley/weaver/internal/tool/generate/example/B⟧\n⟦1a5577e5:wEaVeRlIsTeNeRs:github.com/eberkley/weaver/internal/tool/generate/example/A→lis2,renamed_listener⟧\n",
 	})
 	codegen.Register(codegen.Registration{
 		Name:      "github.com/eberkley/weaver/internal/tool/generate/example/B",
@@ -48,12 +51,15 @@ func init() {
 			return b_client_stub{stub: stub, m1Metrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/tool/generate/example/B", Method: "M1", Remote: true, Generated: true}), m2Metrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/tool/generate/example/B", Method: "M2", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return b_server_stub{impl: impl.(B), addLoad: addLoad}
+			return b_server_stub{impl: impl.(B), addLoad: addLoad, m1Metrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/internal/tool/generate/example/B", Method: "M1"}), m2Metrics: codegen.InternalConcurrentMetricsFor(codegen.InternalMethodLabels{Component: "github.com/eberkley/weaver/internal/tool/generate/example/B", Method: "M2"})}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return b_reflect_stub{caller: caller}
 		},
-		RefData: "⟦6971bce2:wEaVeReDgE:github.com/eberkley/weaver/internal/tool/generate/example/B→github.com/eberkley/weaver/internal/tool/generate/example/A⟧\n⟦c9c43570:wEaVeRlIsTeNeRs:github.com/eberkley/weaver/internal/tool/generate/example/B→lis2,renamed_listener⟧\n",
+		RoutedLocalStubFn: func(impl any, stub codegen.Stub, caller string, tracer trace.Tracer, isLocal func(shardKey uint64) bool) any {
+			return b_routed_local_stub{impl: impl.(B), stub: stub, tracer: tracer, isLocal: isLocal, m1Metrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/tool/generate/example/B", Method: "M1", Remote: true, Generated: true}), m2Metrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/eberkley/weaver/internal/tool/generate/example/B", Method: "M2", Remote: true, Generated: true})}
+		},
+		RefData: "⟦092f0286:wEaVeReDgE:github.com/eberkley/weaver/internal/tool/generate/example/B→github.com/eberkley/weaver/internal/tool/generate/example/A⟧\n⟦1b251c9e:wEaVeRlIsTeNeRs:github.com/eberkley/weaver/internal/tool/generate/example/B→lis2,renamed_listener⟧\n",
 	})
 }
 
@@ -434,12 +440,322 @@ func (s b_client_stub) M2(ctx context.Context, a0 int, a1 string, a2 bool, a3 [1
 	return
 }
 
+// Routed local stub implementations.
+
+type a_routed_local_stub struct {
+	impl      A
+	stub      codegen.Stub
+	tracer    trace.Tracer
+	isLocal   func(shardKey uint64) bool
+	m1Metrics *codegen.MethodMetrics
+	m2Metrics *codegen.MethodMetrics
+}
+
+// Check that a_routed_local_stub implements the A interface.
+var _ A = (*a_routed_local_stub)(nil)
+
+func (s a_routed_local_stub) M1(ctx context.Context, a0 int, a1 string, a2 bool, a3 [10]int, a4 []string, a5 map[bool]int, a6 message) (r0 pair, err error) {
+	// Update metrics.
+	var requestBytes, replyBytes int
+	begin := s.m1Metrics.Begin()
+	defer func() { s.m1Metrics.End(begin, err != nil, requestBytes, replyBytes) }()
+
+	span := trace.SpanFromContext(ctx)
+	if span.SpanContext().IsValid() {
+		// Create a child span for this method.
+		ctx, span = s.stub.Tracer().Start(ctx, "main.A.M1", trace.WithSpanKind(trace.SpanKindClient))
+		defer func() {
+			if err != nil {
+				span.RecordError(err)
+				span.SetStatus(codes.Error, err.Error())
+			}
+			span.End()
+		}()
+	}
+
+	// Set the shardKey.
+	var r router
+	shardKey := _hashA(r.M1(ctx, a0, a1, a2, a3, a4, a5, a6))
+	if s.isLocal(shardKey) {
+		r0, err = s.impl.M1(ctx, a0, a1, a2, a3, a4, a5, a6)
+		return
+	}
+
+	defer func() {
+		// Catch and return any panics detected during encoding/decoding/rpc.
+		if err == nil {
+			err = codegen.CatchPanics(recover())
+			if err != nil {
+				err = errors.Join(weaver.RemoteCallError, err)
+			}
+		}
+
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, err.Error())
+		}
+		span.End()
+
+	}()
+
+	// Encode arguments.
+	enc := codegen.NewEncoder()
+	enc.Int(a0)
+	enc.String(a1)
+	enc.Bool(a2)
+	serviceweaver_enc_array_10_int_03f98313(enc, &a3)
+	serviceweaver_enc_slice_string_4af10117(enc, a4)
+	serviceweaver_enc_map_bool_int_acb668fa(enc, a5)
+	(a6).WeaverMarshal(enc)
+
+	// Call the remote method.
+	requestBytes = len(enc.Data())
+	var results []byte
+	results, err = s.stub.Run(ctx, 0, enc.Data(), shardKey)
+	replyBytes = len(results)
+	if err != nil {
+		err = errors.Join(weaver.RemoteCallError, err)
+		return
+	}
+
+	// Decode the results.
+	dec := codegen.NewDecoder(results)
+	(&r0).WeaverUnmarshal(dec)
+	err = dec.Error()
+	return
+}
+
+func (s a_routed_local_stub) M2(ctx context.Context, a0 int, a1 string, a2 bool, a3 [10]int, a4 []string, a5 map[bool]int, a6 message) (r0 pair, err error) {
+	// Update metrics.
+	var requestBytes, replyBytes int
+	begin := s.m2Metrics.Begin()
+	defer func() { s.m2Metrics.End(begin, err != nil, requestBytes, replyBytes) }()
+
+	span := trace.SpanFromContext(ctx)
+	if span.SpanContext().IsValid() {
+		// Create a child span for this method.
+		ctx, span = s.stub.Tracer().Start(ctx, "main.A.M2", trace.WithSpanKind(trace.SpanKindClient))
+		defer func() {
+			if err != nil {
+				span.RecordError(err)
+				span.SetStatus(codes.Error, err.Error())
+			}
+			span.End()
+		}()
+	}
+
+	// Set the shardKey.
+	var r router
+	shardKey := _hashA(r.M2(ctx, a0, a1, a2, a3, a4, a5, a6))
+	if s.isLocal(shardKey) {
+		r0, err = s.impl.M2(ctx, a0, a1, a2, a3, a4, a5, a6)
+		return
+	}
+
+	defer func() {
+		// Catch and return any panics detected during encoding/decoding/rpc.
+		if err == nil {
+			err = codegen.CatchPanics(recover())
+			if err != nil {
+				err = errors.Join(weaver.RemoteCallError, err)
+			}
+		}
+
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, err.Error())
+		}
+		span.End()
+
+	}()
+
+	// Encode arguments.
+	enc := codegen.NewEncoder()
+	enc.Int(a0)
+	enc.String(a1)
+	enc.Bool(a2)
+	serviceweaver_enc_array_10_int_03f98313(enc, &a3)
+	serviceweaver_enc_slice_string_4af10117(enc, a4)
+	serviceweaver_enc_map_bool_int_acb668fa(enc, a5)
+	(a6).WeaverMarshal(enc)
+
+	// Call the remote method.
+	requestBytes = len(enc.Data())
+	var results []byte
+	results, err = s.stub.Run(ctx, 1, enc.Data(), shardKey)
+	replyBytes = len(results)
+	if err != nil {
+		err = errors.Join(weaver.RemoteCallError, err)
+		return
+	}
+
+	// Decode the results.
+	dec := codegen.NewDecoder(results)
+	(&r0).WeaverUnmarshal(dec)
+	err = dec.Error()
+	return
+}
+
+type b_routed_local_stub struct {
+	impl      B
+	stub      codegen.Stub
+	tracer    trace.Tracer
+	isLocal   func(shardKey uint64) bool
+	m1Metrics *codegen.MethodMetrics
+	m2Metrics *codegen.MethodMetrics
+}
+
+// Check that b_routed_local_stub implements the B interface.
+var _ B = (*b_routed_local_stub)(nil)
+
+func (s b_routed_local_stub) M1(ctx context.Context, a0 int, a1 string, a2 bool, a3 [10]int, a4 []string, a5 map[bool]int, a6 message) (r0 pair, err error) {
+	// Update metrics.
+	var requestBytes, replyBytes int
+	begin := s.m1Metrics.Begin()
+	defer func() { s.m1Metrics.End(begin, err != nil, requestBytes, replyBytes) }()
+
+	span := trace.SpanFromContext(ctx)
+	if span.SpanContext().IsValid() {
+		// Create a child span for this method.
+		ctx, span = s.stub.Tracer().Start(ctx, "main.B.M1", trace.WithSpanKind(trace.SpanKindClient))
+		defer func() {
+			if err != nil {
+				span.RecordError(err)
+				span.SetStatus(codes.Error, err.Error())
+			}
+			span.End()
+		}()
+	}
+
+	// Set the shardKey.
+	var r router
+	shardKey := _hashB(r.M1(ctx, a0, a1, a2, a3, a4, a5, a6))
+	if s.isLocal(shardKey) {
+		r0, err = s.impl.M1(ctx, a0, a1, a2, a3, a4, a5, a6)
+		return
+	}
+
+	defer func() {
+		// Catch and return any panics detected during encoding/decoding/rpc.
+		if err == nil {
+			err = codegen.CatchPanics(recover())
+			if err != nil {
+				err = errors.Join(weaver.RemoteCallError, err)
+			}
+		}
+
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, err.Error())
+		}
+		span.End()
+
+	}()
+
+	// Encode arguments.
+	enc := codegen.NewEncoder()
+	enc.Int(a0)
+	enc.String(a1)
+	enc.Bool(a2)
+	serviceweaver_enc_array_10_int_03f98313(enc, &a3)
+	serviceweaver_enc_slice_string_4af10117(enc, a4)
+	serviceweaver_enc_map_bool_int_acb668fa(enc, a5)
+	(a6).WeaverMarshal(enc)
+
+	// Call the remote method.
+	requestBytes = len(enc.Data())
+	var results []byte
+	results, err = s.stub.Run(ctx, 0, enc.Data(), shardKey)
+	replyBytes = len(results)
+	if err != nil {
+		err = errors.Join(weaver.RemoteCallError, err)
+		return
+	}
+
+	// Decode the results.
+	dec := codegen.NewDecoder(results)
+	(&r0).WeaverUnmarshal(dec)
+	err = dec.Error()
+	return
+}
+
+func (s b_routed_local_stub) M2(ctx context.Context, a0 int, a1 string, a2 bool, a3 [10]int, a4 []string, a5 map[bool]int, a6 message) (r0 pair, err error) {
+	// Update metrics.
+	var requestBytes, replyBytes int
+	begin := s.m2Metrics.Begin()
+	defer func() { s.m2Metrics.End(begin, err != nil, requestBytes, replyBytes) }()
+
+	span := trace.SpanFromContext(ctx)
+	if span.SpanContext().IsValid() {
+		// Create a child span for this method.
+		ctx, span = s.stub.Tracer().Start(ctx, "main.B.M2", trace.WithSpanKind(trace.SpanKindClient))
+		defer func() {
+			if err != nil {
+				span.RecordError(err)
+				span.SetStatus(codes.Error, err.Error())
+			}
+			span.End()
+		}()
+	}
+
+	// Set the shardKey.
+	var r router
+	shardKey := _hashB(r.M2(ctx, a0, a1, a2, a3, a4, a5, a6))
+	if s.isLocal(shardKey) {
+		r0, err = s.impl.M2(ctx, a0, a1, a2, a3, a4, a5, a6)
+		return
+	}
+
+	defer func() {
+		// Catch and return any panics detected during encoding/decoding/rpc.
+		if err == nil {
+			err = codegen.CatchPanics(recover())
+			if err != nil {
+				err = errors.Join(weaver.RemoteCallError, err)
+			}
+		}
+
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, err.Error())
+		}
+		span.End()
+
+	}()
+
+	// Encode arguments.
+	enc := codegen.NewEncoder()
+	enc.Int(a0)
+	enc.String(a1)
+	enc.Bool(a2)
+	serviceweaver_enc_array_10_int_03f98313(enc, &a3)
+	serviceweaver_enc_slice_string_4af10117(enc, a4)
+	serviceweaver_enc_map_bool_int_acb668fa(enc, a5)
+	(a6).WeaverMarshal(enc)
+
+	// Call the remote method.
+	requestBytes = len(enc.Data())
+	var results []byte
+	results, err = s.stub.Run(ctx, 1, enc.Data(), shardKey)
+	replyBytes = len(results)
+	if err != nil {
+		err = errors.Join(weaver.RemoteCallError, err)
+		return
+	}
+
+	// Decode the results.
+	dec := codegen.NewDecoder(results)
+	(&r0).WeaverUnmarshal(dec)
+	err = dec.Error()
+	return
+}
+
 // Note that "weaver generate" will always generate the error message below.
 // Everything is okay. The error message is only relevant if you see it when
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' (devel) (codegen
+ERROR: You generated this file with 'weaver generate' v0.25.2-0.20250419001101-42f7bf3eb269+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -460,8 +776,10 @@ please file an issue at https://github.com/eberkley/weaver/issues.
 // Server stub implementations.
 
 type a_server_stub struct {
-	impl    A
-	addLoad func(key uint64, load float64)
+	impl      A
+	addLoad   func(key uint64, load float64)
+	m1Metrics *codegen.ConcurrentMethodMetrics
+	m2Metrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that a_server_stub implements the codegen.Server interface.
@@ -486,6 +804,8 @@ func (s a_server_stub) m1(ctx context.Context, args []byte) (res []byte, err err
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.m1Metrics.Begin()
+	defer s.m1Metrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -525,6 +845,8 @@ func (s a_server_stub) m2(ctx context.Context, args []byte) (res []byte, err err
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.m2Metrics.Begin()
+	defer s.m2Metrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -558,8 +880,10 @@ func (s a_server_stub) m2(ctx context.Context, args []byte) (res []byte, err err
 }
 
 type b_server_stub struct {
-	impl    B
-	addLoad func(key uint64, load float64)
+	impl      B
+	addLoad   func(key uint64, load float64)
+	m1Metrics *codegen.ConcurrentMethodMetrics
+	m2Metrics *codegen.ConcurrentMethodMetrics
 }
 
 // Check that b_server_stub implements the codegen.Server interface.
@@ -584,6 +908,8 @@ func (s b_server_stub) m1(ctx context.Context, args []byte) (res []byte, err err
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.m1Metrics.Begin()
+	defer s.m1Metrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
@@ -623,6 +949,8 @@ func (s b_server_stub) m2(ctx context.Context, args []byte) (res []byte, err err
 			err = codegen.CatchPanics(recover())
 		}
 	}()
+	s.m2Metrics.Begin()
+	defer s.m2Metrics.End()
 
 	// Decode arguments.
 	dec := codegen.NewDecoder(args)
