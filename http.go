@@ -74,6 +74,18 @@ var (
 	)
 )
 
+type InstrumentationOptions struct {
+
+	// Defaults to 1 second
+	SampleInterval time.Duration
+
+	// Defaults to false
+	SampleAll bool
+
+	// Defaults to false
+	SampleNone bool
+}
+
 // InstrumentHandler instruments the provided HTTP handler to collect sampled
 // traces and metrics of HTTP request executions. Each trace and metric is
 // labelled with the supplied label. The following metrics are collected:
@@ -83,7 +95,7 @@ var (
 //   - serviceweaver_http_request_latency_micros: Execution latency in microseconds.
 //   - serviceweaver_http_request_bytes_received: Total number of request bytes.
 //   - serviceweaver_http_request_bytes_returned: Total number of response bytes
-func InstrumentHandler(label string, handler http.Handler) http.Handler {
+func InstrumentHandler(label string, handler http.Handler, opts ...InstrumentationOptions) http.Handler {
 	h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 		// TODO(spetrovic): It is possible for the user to override r.Host
@@ -115,7 +127,32 @@ func InstrumentHandler(label string, handler http.Handler) http.Handler {
 		}
 		httpRequestBytesReturned.Get(labels).Put(float64(writer.responseSize(r)))
 	})
-	const traceSampleInterval = 1 * time.Second
+	var traceSampleInterval = 1 * time.Second
+	var sampleAll bool
+	var sampleNone bool
+	for _, opt := range opts {
+		if opt.SampleInterval != 0 {
+			traceSampleInterval = opt.SampleInterval
+		}
+		if opt.SampleAll {
+			sampleAll = true
+		}
+		if opt.SampleNone {
+			sampleNone = true
+		}
+	}
+
+	if sampleAll {
+		return otelhttp.NewHandler(h, label, otelhttp.WithFilter(func(_ *http.Request) bool {
+			return true
+		}))
+	}
+	if sampleNone {
+		return otelhttp.NewHandler(h, label, otelhttp.WithFilter(func(_ *http.Request) bool {
+			return false
+		}))
+	}
+
 	rng := rand.New(rand.NewSource(time.Now().UnixNano()))
 	s := newTraceSampler(traceSampleInterval, rng)
 	return otelhttp.NewHandler(h, label, otelhttp.WithFilter(func(r *http.Request) bool {
@@ -125,8 +162,8 @@ func InstrumentHandler(label string, handler http.Handler) http.Handler {
 
 // InstrumentHandlerFunc is identical to [InstrumentHandler] but takes a
 // function instead of an http.Handler.
-func InstrumentHandlerFunc(label string, f func(http.ResponseWriter, *http.Request)) http.Handler {
-	return InstrumentHandler(label, http.HandlerFunc(f))
+func InstrumentHandlerFunc(label string, f func(http.ResponseWriter, *http.Request), opts ...InstrumentationOptions) http.Handler {
+	return InstrumentHandler(label, http.HandlerFunc(f), opts...)
 }
 
 // traceSampler is a time-based request sampler for tracing.
