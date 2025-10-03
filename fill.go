@@ -22,12 +22,14 @@ import (
 
 	"github.com/eberkley/weaver/internal/reflection"
 	"github.com/eberkley/weaver/internal/weaver"
+	"go.opentelemetry.io/otel/trace"
 )
 
 func init() {
 	// See internal/weaver/types.go.
 	weaver.SetLogger = setLogger
 	weaver.SetWeaverInfo = setWeaverInfo
+	weaver.SetTracer = setTracer
 	weaver.HasRefs = hasRefs
 	weaver.FillRefs = fillRefs
 	weaver.HasListeners = hasListeners
@@ -53,6 +55,15 @@ func setWeaverInfo(impl any, info *weaver.WeaverInfo) error {
 		return fmt.Errorf("setWeaverInfo: %T does not implement weaver.Implements", impl)
 	}
 	x.setWeaverInfo(info)
+	return nil
+}
+
+func setTracer(impl any, tracer trace.Tracer) error {
+	x, ok := impl.(interface{ setTracer(trace.Tracer) })
+	if !ok {
+		return fmt.Errorf("setTracer: %T does not implement weaver.Implements", impl)
+	}
+	x.setTracer(tracer)
 	return nil
 }
 

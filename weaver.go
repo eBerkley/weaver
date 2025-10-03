@@ -251,6 +251,8 @@ type Implements[T any] struct {
 
 	weaverInfo *weaver.WeaverInfo
 
+	tracer trace.Tracer
+
 	// Given a component implementation type, there is currently no nice way,
 	// using reflection, to get the corresponding component interface type [1].
 	// The component_interface_type field exists to make it possible.
@@ -283,6 +285,15 @@ func (i Implements[T]) Logger(ctx context.Context) *slog.Logger {
 
 func (i *Implements[T]) setLogger(logger *slog.Logger) {
 	i.logger = logger
+}
+
+// Tracer returns the tracer associated with this component.
+func (i Implements[T]) Tracer() trace.Tracer {
+	return i.tracer
+}
+
+func (i *Implements[T]) setTracer(tracer trace.Tracer) {
+	i.tracer = tracer
 }
 
 // Weaver returns runtime information about the deployed application.

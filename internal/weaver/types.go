@@ -18,6 +18,8 @@ import (
 	"log/slog"
 	"net"
 	"reflect"
+
+	"go.opentelemetry.io/otel/trace"
 )
 
 var (
@@ -30,6 +32,9 @@ var (
 
 	// SetWeaverInfo sets the application's runtime information.
 	SetWeaverInfo func(impl any, info *WeaverInfo) error
+
+	// SetTracer sets the tracer of a component implementation struct
+	SetTracer func(impl any, tracer trace.Tracer) error
 
 	// HasRefs returns whether the provided component implementation has
 	// weaver.Refs fields.

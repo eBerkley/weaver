@@ -519,6 +519,11 @@ func (w *RemoteWeavelet) createComponent(ctx context.Context, reg *codegen.Regis
 	}
 	w.syslogger.Debug("createComponent: filled refs", "component", reg.Name)
 
+	if err := SetTracer(obj, w.tracer); err != nil {
+		return nil, err
+	}
+	w.syslogger.Debug("createComponent: set tracer", "component", reg.Name)
+
 	// Fill listener fields.
 	if err := FillListeners(obj, func(name string) (net.Listener, string, error) {
 		lis, err := w.listener(ctx, name)
