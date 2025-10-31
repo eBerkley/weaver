@@ -147,6 +147,7 @@ func (s destination_local_stub) GetAll(ctx context.Context, a0 string) (r0 []str
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.GetAll(ctx, a0)
 }
 
@@ -167,6 +168,7 @@ func (s destination_local_stub) GetMetadata(ctx context.Context) (r0 map[string]
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.GetMetadata(ctx)
 }
 
@@ -187,6 +189,7 @@ func (s destination_local_stub) Getpid(ctx context.Context) (r0 int, err error) 
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.Getpid(ctx)
 }
 
@@ -207,6 +210,7 @@ func (s destination_local_stub) Record(ctx context.Context, a0 string, a1 string
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.Record(ctx, a0, a1)
 }
 
@@ -227,6 +231,7 @@ func (s destination_local_stub) RoutedRecord(ctx context.Context, a0 string, a1 
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.RoutedRecord(ctx, a0, a1)
 }
 
@@ -247,6 +252,7 @@ func (s destination_local_stub) UpdateMetadata(ctx context.Context) (err error) 
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.UpdateMetadata(ctx)
 }
 
@@ -278,6 +284,7 @@ func (s server_local_stub) Address(ctx context.Context) (r0 string, err error) {
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.Address(ctx)
 }
 
@@ -298,6 +305,7 @@ func (s server_local_stub) ProxyAddress(ctx context.Context) (r0 string, err err
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.ProxyAddress(ctx)
 }
 
@@ -318,6 +326,7 @@ func (s server_local_stub) Shutdown(ctx context.Context) (err error) {
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.Shutdown(ctx)
 }
 
@@ -347,6 +356,7 @@ func (s source_local_stub) Emit(ctx context.Context, a0 string, a1 string) (err 
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.Emit(ctx, a0, a1)
 }
 
@@ -958,6 +968,7 @@ func (s destination_routed_local_stub) RoutedRecord(ctx context.Context, a0 stri
 	var r destRouter
 	shardKey := _hashDestination(r.RoutedRecord(ctx, a0, a1))
 	if s.isLocal(shardKey) {
+		ctx = weaver.RoutedLocal(ctx)
 		err = s.impl.RoutedRecord(ctx, a0, a1)
 		return
 	}
@@ -1065,7 +1076,7 @@ func (s source_routed_local_stub) Emit(ctx context.Context, a0 string, a1 string
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' v0.0.0-20250906171229-9a5cd00bc035+dirty (codegen
+ERROR: You generated this file with 'weaver generate' v0.0.0-20250918143212-16c227dc1170+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -1137,6 +1148,7 @@ func (s destination_server_stub) getAll(ctx context.Context, args []byte) (res [
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.GetAll(ctx, a0)
 
 	// Encode the results.
@@ -1159,6 +1171,7 @@ func (s destination_server_stub) getMetadata(ctx context.Context, args []byte) (
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.GetMetadata(ctx)
 
 	// Encode the results.
@@ -1181,6 +1194,7 @@ func (s destination_server_stub) getpid(ctx context.Context, args []byte) (res [
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.Getpid(ctx)
 
 	// Encode the results.
@@ -1210,6 +1224,7 @@ func (s destination_server_stub) record(ctx context.Context, args []byte) (res [
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	appErr := s.impl.Record(ctx, a0, a1)
 
 	// Encode the results.
@@ -1240,6 +1255,7 @@ func (s destination_server_stub) routedRecord(ctx context.Context, args []byte) 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	appErr := s.impl.RoutedRecord(ctx, a0, a1)
 
 	// Encode the results.
@@ -1261,6 +1277,7 @@ func (s destination_server_stub) updateMetadata(ctx context.Context, args []byte
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	appErr := s.impl.UpdateMetadata(ctx)
 
 	// Encode the results.
@@ -1307,6 +1324,7 @@ func (s server_server_stub) address(ctx context.Context, args []byte) (res []byt
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.Address(ctx)
 
 	// Encode the results.
@@ -1329,6 +1347,7 @@ func (s server_server_stub) proxyAddress(ctx context.Context, args []byte) (res 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.ProxyAddress(ctx)
 
 	// Encode the results.
@@ -1351,6 +1370,7 @@ func (s server_server_stub) shutdown(ctx context.Context, args []byte) (res []by
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	appErr := s.impl.Shutdown(ctx)
 
 	// Encode the results.
@@ -1398,6 +1418,7 @@ func (s source_server_stub) emit(ctx context.Context, args []byte) (res []byte, 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	appErr := s.impl.Emit(ctx, a0, a1)
 
 	// Encode the results.

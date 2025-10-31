@@ -107,6 +107,7 @@ func (s a_local_stub) M1(ctx context.Context, a0 int, a1 string, a2 bool, a3 [10
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.M1(ctx, a0, a1, a2, a3, a4, a5, a6)
 }
 
@@ -127,6 +128,7 @@ func (s a_local_stub) M2(ctx context.Context, a0 int, a1 string, a2 bool, a3 [10
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.M2(ctx, a0, a1, a2, a3, a4, a5, a6)
 }
 
@@ -157,6 +159,7 @@ func (s b_local_stub) M1(ctx context.Context, a0 int, a1 string, a2 bool, a3 [10
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.M1(ctx, a0, a1, a2, a3, a4, a5, a6)
 }
 
@@ -177,6 +180,7 @@ func (s b_local_stub) M2(ctx context.Context, a0 int, a1 string, a2 bool, a3 [10
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.M2(ctx, a0, a1, a2, a3, a4, a5, a6)
 }
 
@@ -477,6 +481,7 @@ func (s a_routed_local_stub) M1(ctx context.Context, a0 int, a1 string, a2 bool,
 	var r router
 	shardKey := _hashA(r.M1(ctx, a0, a1, a2, a3, a4, a5, a6))
 	if s.isLocal(shardKey) {
+		ctx = weaver.RoutedLocal(ctx)
 		r0, err = s.impl.M1(ctx, a0, a1, a2, a3, a4, a5, a6)
 		return
 	}
@@ -548,6 +553,7 @@ func (s a_routed_local_stub) M2(ctx context.Context, a0 int, a1 string, a2 bool,
 	var r router
 	shardKey := _hashA(r.M2(ctx, a0, a1, a2, a3, a4, a5, a6))
 	if s.isLocal(shardKey) {
+		ctx = weaver.RoutedLocal(ctx)
 		r0, err = s.impl.M2(ctx, a0, a1, a2, a3, a4, a5, a6)
 		return
 	}
@@ -631,6 +637,7 @@ func (s b_routed_local_stub) M1(ctx context.Context, a0 int, a1 string, a2 bool,
 	var r router
 	shardKey := _hashB(r.M1(ctx, a0, a1, a2, a3, a4, a5, a6))
 	if s.isLocal(shardKey) {
+		ctx = weaver.RoutedLocal(ctx)
 		r0, err = s.impl.M1(ctx, a0, a1, a2, a3, a4, a5, a6)
 		return
 	}
@@ -702,6 +709,7 @@ func (s b_routed_local_stub) M2(ctx context.Context, a0 int, a1 string, a2 bool,
 	var r router
 	shardKey := _hashB(r.M2(ctx, a0, a1, a2, a3, a4, a5, a6))
 	if s.isLocal(shardKey) {
+		ctx = weaver.RoutedLocal(ctx)
 		r0, err = s.impl.M2(ctx, a0, a1, a2, a3, a4, a5, a6)
 		return
 	}
@@ -755,7 +763,7 @@ func (s b_routed_local_stub) M2(ctx context.Context, a0 int, a1 string, a2 bool,
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' v0.0.0-20250906171229-9a5cd00bc035+dirty (codegen
+ERROR: You generated this file with 'weaver generate' v0.0.0-20250918143212-16c227dc1170+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -829,6 +837,7 @@ func (s a_server_stub) m1(ctx context.Context, args []byte) (res []byte, err err
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.M1(ctx, a0, a1, a2, a3, a4, a5, a6)
 
 	// Encode the results.
@@ -870,6 +879,7 @@ func (s a_server_stub) m2(ctx context.Context, args []byte) (res []byte, err err
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.M2(ctx, a0, a1, a2, a3, a4, a5, a6)
 
 	// Encode the results.
@@ -933,6 +943,7 @@ func (s b_server_stub) m1(ctx context.Context, args []byte) (res []byte, err err
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.M1(ctx, a0, a1, a2, a3, a4, a5, a6)
 
 	// Encode the results.
@@ -974,6 +985,7 @@ func (s b_server_stub) m2(ctx context.Context, args []byte) (res []byte, err err
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.M2(ctx, a0, a1, a2, a3, a4, a5, a6)
 
 	// Encode the results.

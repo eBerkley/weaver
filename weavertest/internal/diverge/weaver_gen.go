@@ -95,6 +95,7 @@ func (s errer_local_stub) Err(ctx context.Context, a0 int) (err error) {
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.Err(ctx, a0)
 }
 
@@ -124,6 +125,7 @@ func (s pointer_local_stub) Get(ctx context.Context) (r0 Pair, err error) {
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.Get(ctx)
 }
 
@@ -288,7 +290,7 @@ func (s pointer_routed_local_stub) Get(ctx context.Context) (r0 Pair, err error)
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' v0.0.0-20250906171229-9a5cd00bc035+dirty (codegen
+ERROR: You generated this file with 'weaver generate' v0.0.0-20250918143212-16c227dc1170+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -345,6 +347,7 @@ func (s errer_server_stub) err(ctx context.Context, args []byte) (res []byte, er
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	appErr := s.impl.Err(ctx, a0)
 
 	// Encode the results.
@@ -385,6 +388,7 @@ func (s pointer_server_stub) get(ctx context.Context, args []byte) (res []byte, 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.Get(ctx)
 
 	// Encode the results.

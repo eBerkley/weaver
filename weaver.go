@@ -542,6 +542,24 @@ type RoutedBy[T any] interface {
 	routedBy(T)
 }
 
+type _routeKey struct{}
+
+var routeKey = _routeKey{}
+
+func RoutedLocal(ctx context.Context) context.Context {
+	return context.WithValue(ctx, routeKey, true)
+}
+
+func RoutedRemote(ctx context.Context) context.Context {
+	return context.WithValue(ctx, routeKey, false)
+}
+
+func IsRoutedLocal(ctx context.Context) bool {
+	v := ctx.Value(routeKey)
+	b, ok := v.(bool)
+	return ok && b
+}
+
 // Methods of StatefulRouter types must return this.
 type StateKey = uint64
 

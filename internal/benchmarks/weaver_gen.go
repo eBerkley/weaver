@@ -280,6 +280,7 @@ func (s ping1_local_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 pa
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.PingC(ctx, a0, a1)
 }
 
@@ -300,6 +301,7 @@ func (s ping1_local_stub) PingS(ctx context.Context, a0 payloadS, a1 int) (r0 pa
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.PingS(ctx, a0, a1)
 }
 
@@ -330,6 +332,7 @@ func (s ping10_local_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 p
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.PingC(ctx, a0, a1)
 }
 
@@ -350,6 +353,7 @@ func (s ping10_local_stub) PingS(ctx context.Context, a0 payloadS, a1 int) (r0 p
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.PingS(ctx, a0, a1)
 }
 
@@ -380,6 +384,7 @@ func (s ping2_local_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 pa
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.PingC(ctx, a0, a1)
 }
 
@@ -400,6 +405,7 @@ func (s ping2_local_stub) PingS(ctx context.Context, a0 payloadS, a1 int) (r0 pa
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.PingS(ctx, a0, a1)
 }
 
@@ -430,6 +436,7 @@ func (s ping3_local_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 pa
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.PingC(ctx, a0, a1)
 }
 
@@ -450,6 +457,7 @@ func (s ping3_local_stub) PingS(ctx context.Context, a0 payloadS, a1 int) (r0 pa
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.PingS(ctx, a0, a1)
 }
 
@@ -480,6 +488,7 @@ func (s ping4_local_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 pa
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.PingC(ctx, a0, a1)
 }
 
@@ -500,6 +509,7 @@ func (s ping4_local_stub) PingS(ctx context.Context, a0 payloadS, a1 int) (r0 pa
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.PingS(ctx, a0, a1)
 }
 
@@ -530,6 +540,7 @@ func (s ping5_local_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 pa
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.PingC(ctx, a0, a1)
 }
 
@@ -550,6 +561,7 @@ func (s ping5_local_stub) PingS(ctx context.Context, a0 payloadS, a1 int) (r0 pa
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.PingS(ctx, a0, a1)
 }
 
@@ -580,6 +592,7 @@ func (s ping6_local_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 pa
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.PingC(ctx, a0, a1)
 }
 
@@ -600,6 +613,7 @@ func (s ping6_local_stub) PingS(ctx context.Context, a0 payloadS, a1 int) (r0 pa
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.PingS(ctx, a0, a1)
 }
 
@@ -630,6 +644,7 @@ func (s ping7_local_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 pa
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.PingC(ctx, a0, a1)
 }
 
@@ -650,6 +665,7 @@ func (s ping7_local_stub) PingS(ctx context.Context, a0 payloadS, a1 int) (r0 pa
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.PingS(ctx, a0, a1)
 }
 
@@ -680,6 +696,7 @@ func (s ping8_local_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 pa
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.PingC(ctx, a0, a1)
 }
 
@@ -700,6 +717,7 @@ func (s ping8_local_stub) PingS(ctx context.Context, a0 payloadS, a1 int) (r0 pa
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.PingS(ctx, a0, a1)
 }
 
@@ -730,6 +748,7 @@ func (s ping9_local_stub) PingC(ctx context.Context, a0 payloadC, a1 int) (r0 pa
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.PingC(ctx, a0, a1)
 }
 
@@ -750,6 +769,7 @@ func (s ping9_local_stub) PingS(ctx context.Context, a0 payloadS, a1 int) (r0 pa
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.PingS(ctx, a0, a1)
 }
 
@@ -2192,7 +2212,7 @@ func (s ping9_routed_local_stub) PingS(ctx context.Context, a0 payloadS, a1 int)
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' v0.0.0-20250906171229-9a5cd00bc035+dirty (codegen
+ERROR: You generated this file with 'weaver generate' v0.0.0-20250918143212-16c227dc1170+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -2254,6 +2274,7 @@ func (s ping1_server_stub) pingC(ctx context.Context, args []byte) (res []byte, 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.PingC(ctx, a0, a1)
 
 	// Encode the results.
@@ -2283,6 +2304,7 @@ func (s ping1_server_stub) pingS(ctx context.Context, args []byte) (res []byte, 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.PingS(ctx, a0, a1)
 
 	// Encode the results.
@@ -2334,6 +2356,7 @@ func (s ping10_server_stub) pingC(ctx context.Context, args []byte) (res []byte,
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.PingC(ctx, a0, a1)
 
 	// Encode the results.
@@ -2363,6 +2386,7 @@ func (s ping10_server_stub) pingS(ctx context.Context, args []byte) (res []byte,
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.PingS(ctx, a0, a1)
 
 	// Encode the results.
@@ -2414,6 +2438,7 @@ func (s ping2_server_stub) pingC(ctx context.Context, args []byte) (res []byte, 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.PingC(ctx, a0, a1)
 
 	// Encode the results.
@@ -2443,6 +2468,7 @@ func (s ping2_server_stub) pingS(ctx context.Context, args []byte) (res []byte, 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.PingS(ctx, a0, a1)
 
 	// Encode the results.
@@ -2494,6 +2520,7 @@ func (s ping3_server_stub) pingC(ctx context.Context, args []byte) (res []byte, 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.PingC(ctx, a0, a1)
 
 	// Encode the results.
@@ -2523,6 +2550,7 @@ func (s ping3_server_stub) pingS(ctx context.Context, args []byte) (res []byte, 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.PingS(ctx, a0, a1)
 
 	// Encode the results.
@@ -2574,6 +2602,7 @@ func (s ping4_server_stub) pingC(ctx context.Context, args []byte) (res []byte, 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.PingC(ctx, a0, a1)
 
 	// Encode the results.
@@ -2603,6 +2632,7 @@ func (s ping4_server_stub) pingS(ctx context.Context, args []byte) (res []byte, 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.PingS(ctx, a0, a1)
 
 	// Encode the results.
@@ -2654,6 +2684,7 @@ func (s ping5_server_stub) pingC(ctx context.Context, args []byte) (res []byte, 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.PingC(ctx, a0, a1)
 
 	// Encode the results.
@@ -2683,6 +2714,7 @@ func (s ping5_server_stub) pingS(ctx context.Context, args []byte) (res []byte, 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.PingS(ctx, a0, a1)
 
 	// Encode the results.
@@ -2734,6 +2766,7 @@ func (s ping6_server_stub) pingC(ctx context.Context, args []byte) (res []byte, 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.PingC(ctx, a0, a1)
 
 	// Encode the results.
@@ -2763,6 +2796,7 @@ func (s ping6_server_stub) pingS(ctx context.Context, args []byte) (res []byte, 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.PingS(ctx, a0, a1)
 
 	// Encode the results.
@@ -2814,6 +2848,7 @@ func (s ping7_server_stub) pingC(ctx context.Context, args []byte) (res []byte, 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.PingC(ctx, a0, a1)
 
 	// Encode the results.
@@ -2843,6 +2878,7 @@ func (s ping7_server_stub) pingS(ctx context.Context, args []byte) (res []byte, 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.PingS(ctx, a0, a1)
 
 	// Encode the results.
@@ -2894,6 +2930,7 @@ func (s ping8_server_stub) pingC(ctx context.Context, args []byte) (res []byte, 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.PingC(ctx, a0, a1)
 
 	// Encode the results.
@@ -2923,6 +2960,7 @@ func (s ping8_server_stub) pingS(ctx context.Context, args []byte) (res []byte, 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.PingS(ctx, a0, a1)
 
 	// Encode the results.
@@ -2974,6 +3012,7 @@ func (s ping9_server_stub) pingC(ctx context.Context, args []byte) (res []byte, 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.PingC(ctx, a0, a1)
 
 	// Encode the results.
@@ -3003,6 +3042,7 @@ func (s ping9_server_stub) pingS(ctx context.Context, args []byte) (res []byte, 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.PingS(ctx, a0, a1)
 
 	// Encode the results.

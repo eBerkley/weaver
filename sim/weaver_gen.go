@@ -187,6 +187,7 @@ func (s blocker_local_stub) Block(ctx context.Context) (err error) {
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.Block(ctx)
 }
 
@@ -216,6 +217,7 @@ func (s div_local_stub) Div(ctx context.Context, a0 int, a1 int) (r0 int, err er
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.Div(ctx, a0, a1)
 }
 
@@ -245,6 +247,7 @@ func (s divMod_local_stub) DivMod(ctx context.Context, a0 int, a1 int) (r0 int, 
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.DivMod(ctx, a0, a1)
 }
 
@@ -274,6 +277,7 @@ func (s identity_local_stub) Identity(ctx context.Context, a0 int) (r0 int, err 
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.Identity(ctx, a0)
 }
 
@@ -303,6 +307,7 @@ func (s mod_local_stub) Mod(ctx context.Context, a0 int, a1 int) (r0 int, err er
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.Mod(ctx, a0, a1)
 }
 
@@ -332,6 +337,7 @@ func (s panicker_local_stub) Panic(ctx context.Context, a0 bool) (err error) {
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.Panic(ctx, a0)
 }
 
@@ -826,7 +832,7 @@ func (s panicker_routed_local_stub) Panic(ctx context.Context, a0 bool) (err err
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' v0.0.0-20250906171229-9a5cd00bc035+dirty (codegen
+ERROR: You generated this file with 'weaver generate' v0.0.0-20250918143212-16c227dc1170+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -878,6 +884,7 @@ func (s blocker_server_stub) block(ctx context.Context, args []byte) (res []byte
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	appErr := s.impl.Block(ctx)
 
 	// Encode the results.
@@ -925,6 +932,7 @@ func (s div_server_stub) div(ctx context.Context, args []byte) (res []byte, err 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.Div(ctx, a0, a1)
 
 	// Encode the results.
@@ -973,6 +981,7 @@ func (s divMod_server_stub) divMod(ctx context.Context, args []byte) (res []byte
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, r1, appErr := s.impl.DivMod(ctx, a0, a1)
 
 	// Encode the results.
@@ -1020,6 +1029,7 @@ func (s identity_server_stub) identity(ctx context.Context, args []byte) (res []
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.Identity(ctx, a0)
 
 	// Encode the results.
@@ -1068,6 +1078,7 @@ func (s mod_server_stub) mod(ctx context.Context, args []byte) (res []byte, err 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.Mod(ctx, a0, a1)
 
 	// Encode the results.
@@ -1114,6 +1125,7 @@ func (s panicker_server_stub) panic(ctx context.Context, args []byte) (res []byt
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	appErr := s.impl.Panic(ctx, a0)
 
 	// Encode the results.

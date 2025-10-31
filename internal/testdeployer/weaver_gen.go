@@ -141,6 +141,7 @@ func (s a_local_stub) A(ctx context.Context, a0 int) (r0 int, err error) {
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.A(ctx, a0)
 }
 
@@ -170,6 +171,7 @@ func (s b_local_stub) B(ctx context.Context, a0 int) (r0 int, err error) {
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.B(ctx, a0)
 }
 
@@ -199,6 +201,7 @@ func (s c_local_stub) C(ctx context.Context, a0 int) (r0 int, err error) {
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.C(ctx, a0)
 }
 
@@ -228,6 +231,7 @@ func (s d_local_stub) D(ctx context.Context) (r0 string, err error) {
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.D(ctx)
 }
 
@@ -555,7 +559,7 @@ func (s d_routed_local_stub) D(ctx context.Context) (r0 string, err error) {
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' v0.0.0-20250906171229-9a5cd00bc035+dirty (codegen
+ERROR: You generated this file with 'weaver generate' v0.0.0-20250918143212-16c227dc1170+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -612,6 +616,7 @@ func (s a_server_stub) a(ctx context.Context, args []byte) (res []byte, err erro
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.A(ctx, a0)
 
 	// Encode the results.
@@ -658,6 +663,7 @@ func (s b_server_stub) b(ctx context.Context, args []byte) (res []byte, err erro
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.B(ctx, a0)
 
 	// Encode the results.
@@ -704,6 +710,7 @@ func (s c_server_stub) c(ctx context.Context, args []byte) (res []byte, err erro
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.C(ctx, a0)
 
 	// Encode the results.
@@ -745,6 +752,7 @@ func (s d_server_stub) d(ctx context.Context, args []byte) (res []byte, err erro
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.D(ctx)
 
 	// Encode the results.

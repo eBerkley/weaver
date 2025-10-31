@@ -142,6 +142,7 @@ func (s imageScaler_local_stub) Scale(ctx context.Context, a0 []byte, a1 int, a2
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.Scale(ctx, a0, a1, a2)
 }
 
@@ -172,6 +173,7 @@ func (s localCache_local_stub) Get(ctx context.Context, a0 string) (r0 string, e
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.Get(ctx, a0)
 }
 
@@ -192,6 +194,7 @@ func (s localCache_local_stub) Put(ctx context.Context, a0 string, a1 string) (e
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.Put(ctx, a0, a1)
 }
 
@@ -232,6 +235,7 @@ func (s sQLStore_local_stub) CreatePost(ctx context.Context, a0 string, a1 time.
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.CreatePost(ctx, a0, a1, a2, a3)
 }
 
@@ -252,6 +256,7 @@ func (s sQLStore_local_stub) CreateThread(ctx context.Context, a0 string, a1 tim
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.CreateThread(ctx, a0, a1, a2, a3, a4)
 }
 
@@ -272,6 +277,7 @@ func (s sQLStore_local_stub) GetFeed(ctx context.Context, a0 string) (r0 []Threa
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.GetFeed(ctx, a0)
 }
 
@@ -292,6 +298,7 @@ func (s sQLStore_local_stub) GetImage(ctx context.Context, a0 string, a1 ImageID
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.GetImage(ctx, a0, a1)
 }
 
@@ -823,7 +830,7 @@ func (s sQLStore_routed_local_stub) GetImage(ctx context.Context, a0 string, a1 
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' v0.0.0-20250906171229-9a5cd00bc035+dirty (codegen
+ERROR: You generated this file with 'weaver generate' v0.0.0-20250918143212-16c227dc1170+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -884,6 +891,7 @@ func (s imageScaler_server_stub) scale(ctx context.Context, args []byte) (res []
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.Scale(ctx, a0, a1, a2)
 
 	// Encode the results.
@@ -933,6 +941,7 @@ func (s localCache_server_stub) get(ctx context.Context, args []byte) (res []byt
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.Get(ctx, a0)
 
 	// Encode the results.
@@ -962,6 +971,7 @@ func (s localCache_server_stub) put(ctx context.Context, args []byte) (res []byt
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	appErr := s.impl.Put(ctx, a0, a1)
 
 	// Encode the results.
@@ -1038,6 +1048,7 @@ func (s sQLStore_server_stub) createPost(ctx context.Context, args []byte) (res 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	appErr := s.impl.CreatePost(ctx, a0, a1, a2, a3)
 
 	// Encode the results.
@@ -1072,6 +1083,7 @@ func (s sQLStore_server_stub) createThread(ctx context.Context, args []byte) (re
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.CreateThread(ctx, a0, a1, a2, a3, a4)
 
 	// Encode the results.
@@ -1099,6 +1111,7 @@ func (s sQLStore_server_stub) getFeed(ctx context.Context, args []byte) (res []b
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.GetFeed(ctx, a0)
 
 	// Encode the results.
@@ -1128,6 +1141,7 @@ func (s sQLStore_server_stub) getImage(ctx context.Context, args []byte) (res []
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.GetImage(ctx, a0, a1)
 
 	// Encode the results.

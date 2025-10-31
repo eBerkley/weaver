@@ -71,6 +71,7 @@ func (s clock_local_stub) UnixMicro(ctx context.Context) (r0 int64, err error) {
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.UnixMicro(ctx)
 }
 
@@ -155,7 +156,7 @@ func (s clock_routed_local_stub) UnixMicro(ctx context.Context) (r0 int64, err e
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' v0.0.0-20250906171229-9a5cd00bc035+dirty (codegen
+ERROR: You generated this file with 'weaver generate' v0.0.0-20250918143212-16c227dc1170+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -207,6 +208,7 @@ func (s clock_server_stub) unixMicro(ctx context.Context, args []byte) (res []by
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.UnixMicro(ctx)
 
 	// Encode the results.

@@ -101,6 +101,7 @@ func (s deployerControl_local_stub) ActivateComponent(ctx context.Context, a0 *p
 		}()
 	}
 
+	ctx = RoutedLocal(ctx)
 	return s.impl.ActivateComponent(ctx, a0)
 }
 
@@ -121,6 +122,7 @@ func (s deployerControl_local_stub) ExportListener(ctx context.Context, a0 *prot
 		}()
 	}
 
+	ctx = RoutedLocal(ctx)
 	return s.impl.ExportListener(ctx, a0)
 }
 
@@ -141,6 +143,7 @@ func (s deployerControl_local_stub) GetListenerAddress(ctx context.Context, a0 *
 		}()
 	}
 
+	ctx = RoutedLocal(ctx)
 	return s.impl.GetListenerAddress(ctx, a0)
 }
 
@@ -161,6 +164,7 @@ func (s deployerControl_local_stub) GetSelfCertificate(ctx context.Context, a0 *
 		}()
 	}
 
+	ctx = RoutedLocal(ctx)
 	return s.impl.GetSelfCertificate(ctx, a0)
 }
 
@@ -181,6 +185,7 @@ func (s deployerControl_local_stub) HandleTraceSpans(ctx context.Context, a0 *pr
 		}()
 	}
 
+	ctx = RoutedLocal(ctx)
 	return s.impl.HandleTraceSpans(ctx, a0)
 }
 
@@ -201,6 +206,7 @@ func (s deployerControl_local_stub) LogBatch(ctx context.Context, a0 *protos.Log
 		}()
 	}
 
+	ctx = RoutedLocal(ctx)
 	return s.impl.LogBatch(ctx, a0)
 }
 
@@ -221,6 +227,7 @@ func (s deployerControl_local_stub) VerifyClientCertificate(ctx context.Context,
 		}()
 	}
 
+	ctx = RoutedLocal(ctx)
 	return s.impl.VerifyClientCertificate(ctx, a0)
 }
 
@@ -241,6 +248,7 @@ func (s deployerControl_local_stub) VerifyServerCertificate(ctx context.Context,
 		}()
 	}
 
+	ctx = RoutedLocal(ctx)
 	return s.impl.VerifyServerCertificate(ctx, a0)
 }
 
@@ -276,6 +284,7 @@ func (s weaveletControl_local_stub) GetHealth(ctx context.Context, a0 *protos.Ge
 		}()
 	}
 
+	ctx = RoutedLocal(ctx)
 	return s.impl.GetHealth(ctx, a0)
 }
 
@@ -296,6 +305,7 @@ func (s weaveletControl_local_stub) GetLoad(ctx context.Context, a0 *protos.GetL
 		}()
 	}
 
+	ctx = RoutedLocal(ctx)
 	return s.impl.GetLoad(ctx, a0)
 }
 
@@ -316,6 +326,7 @@ func (s weaveletControl_local_stub) GetMetrics(ctx context.Context, a0 *protos.G
 		}()
 	}
 
+	ctx = RoutedLocal(ctx)
 	return s.impl.GetMetrics(ctx, a0)
 }
 
@@ -336,6 +347,7 @@ func (s weaveletControl_local_stub) GetProfile(ctx context.Context, a0 *protos.G
 		}()
 	}
 
+	ctx = RoutedLocal(ctx)
 	return s.impl.GetProfile(ctx, a0)
 }
 
@@ -356,6 +368,7 @@ func (s weaveletControl_local_stub) InitWeavelet(ctx context.Context, a0 *protos
 		}()
 	}
 
+	ctx = RoutedLocal(ctx)
 	return s.impl.InitWeavelet(ctx, a0)
 }
 
@@ -376,6 +389,7 @@ func (s weaveletControl_local_stub) UpdateComponents(ctx context.Context, a0 *pr
 		}()
 	}
 
+	ctx = RoutedLocal(ctx)
 	return s.impl.UpdateComponents(ctx, a0)
 }
 
@@ -396,6 +410,7 @@ func (s weaveletControl_local_stub) UpdateRoutingInfo(ctx context.Context, a0 *p
 		}()
 	}
 
+	ctx = RoutedLocal(ctx)
 	return s.impl.UpdateRoutingInfo(ctx, a0)
 }
 
@@ -1325,7 +1340,7 @@ func (s weaveletControl_routed_local_stub) UpdateRoutingInfo(ctx context.Context
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' v0.0.0-20250906171229-9a5cd00bc035+dirty (codegen
+ERROR: You generated this file with 'weaver generate' v0.0.0-20250918143212-16c227dc1170+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -1403,6 +1418,7 @@ func (s deployerControl_server_stub) activateComponent(ctx context.Context, args
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = RoutedRemote(ctx)
 	r0, appErr := s.impl.ActivateComponent(ctx, a0)
 
 	// Encode the results.
@@ -1430,6 +1446,7 @@ func (s deployerControl_server_stub) exportListener(ctx context.Context, args []
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = RoutedRemote(ctx)
 	r0, appErr := s.impl.ExportListener(ctx, a0)
 
 	// Encode the results.
@@ -1457,6 +1474,7 @@ func (s deployerControl_server_stub) getListenerAddress(ctx context.Context, arg
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = RoutedRemote(ctx)
 	r0, appErr := s.impl.GetListenerAddress(ctx, a0)
 
 	// Encode the results.
@@ -1484,6 +1502,7 @@ func (s deployerControl_server_stub) getSelfCertificate(ctx context.Context, arg
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = RoutedRemote(ctx)
 	r0, appErr := s.impl.GetSelfCertificate(ctx, a0)
 
 	// Encode the results.
@@ -1511,6 +1530,7 @@ func (s deployerControl_server_stub) handleTraceSpans(ctx context.Context, args 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = RoutedRemote(ctx)
 	appErr := s.impl.HandleTraceSpans(ctx, a0)
 
 	// Encode the results.
@@ -1537,6 +1557,7 @@ func (s deployerControl_server_stub) logBatch(ctx context.Context, args []byte) 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = RoutedRemote(ctx)
 	appErr := s.impl.LogBatch(ctx, a0)
 
 	// Encode the results.
@@ -1563,6 +1584,7 @@ func (s deployerControl_server_stub) verifyClientCertificate(ctx context.Context
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = RoutedRemote(ctx)
 	r0, appErr := s.impl.VerifyClientCertificate(ctx, a0)
 
 	// Encode the results.
@@ -1590,6 +1612,7 @@ func (s deployerControl_server_stub) verifyServerCertificate(ctx context.Context
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = RoutedRemote(ctx)
 	r0, appErr := s.impl.VerifyServerCertificate(ctx, a0)
 
 	// Encode the results.
@@ -1654,6 +1677,7 @@ func (s weaveletControl_server_stub) getHealth(ctx context.Context, args []byte)
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = RoutedRemote(ctx)
 	r0, appErr := s.impl.GetHealth(ctx, a0)
 
 	// Encode the results.
@@ -1681,6 +1705,7 @@ func (s weaveletControl_server_stub) getLoad(ctx context.Context, args []byte) (
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = RoutedRemote(ctx)
 	r0, appErr := s.impl.GetLoad(ctx, a0)
 
 	// Encode the results.
@@ -1708,6 +1733,7 @@ func (s weaveletControl_server_stub) getMetrics(ctx context.Context, args []byte
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = RoutedRemote(ctx)
 	r0, appErr := s.impl.GetMetrics(ctx, a0)
 
 	// Encode the results.
@@ -1735,6 +1761,7 @@ func (s weaveletControl_server_stub) getProfile(ctx context.Context, args []byte
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = RoutedRemote(ctx)
 	r0, appErr := s.impl.GetProfile(ctx, a0)
 
 	// Encode the results.
@@ -1762,6 +1789,7 @@ func (s weaveletControl_server_stub) initWeavelet(ctx context.Context, args []by
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = RoutedRemote(ctx)
 	r0, appErr := s.impl.InitWeavelet(ctx, a0)
 
 	// Encode the results.
@@ -1789,6 +1817,7 @@ func (s weaveletControl_server_stub) updateComponents(ctx context.Context, args 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = RoutedRemote(ctx)
 	r0, appErr := s.impl.UpdateComponents(ctx, a0)
 
 	// Encode the results.
@@ -1816,6 +1845,7 @@ func (s weaveletControl_server_stub) updateRoutingInfo(ctx context.Context, args
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = RoutedRemote(ctx)
 	r0, appErr := s.impl.UpdateRoutingInfo(ctx, a0)
 
 	// Encode the results.

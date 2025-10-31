@@ -1412,6 +1412,7 @@ func (g *generator) generateLocalStubs(p printFn) {
 			}
 			argList := b.String()
 			p(``)
+			p(` ctx = %s(ctx)`, g.weaver().qualify("RoutedLocal"))
 			p(`	return s.impl.%s(%s)`, m.Name(), argList)
 			p(`}`)
 		}
@@ -1754,6 +1755,7 @@ func (g *generator) generateRoutedLocalStubs(p printFn) {
 
 			// Change from local stubs, since we can't just return the s.impl.method.
 			retList := b.String()
+			p(`  ctx = %s(ctx)`, g.weaver().qualify("RoutedLocal"))
 			p(`	 %s err = s.impl.%s(%s)`, retList, m.Name(), argList)
 			p(`  return`)
 			p(` }`)
@@ -2290,6 +2292,7 @@ func (g *generator) generateServerStubs(p printFn) {
 				res = fmt.Sprintf("%s, appErr", b.String())
 			}
 
+			p(` ctx = %s(ctx)`, g.weaver().qualify("RoutedRemote"))
 			p(`	%s := s.impl.%s(%s)`, res, m.Name(), argList)
 
 			p(``)

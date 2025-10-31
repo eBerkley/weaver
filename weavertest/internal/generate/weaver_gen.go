@@ -74,6 +74,7 @@ func (s testApp_local_stub) DivMod(ctx context.Context, a0 int, a1 int) (r0 int,
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.DivMod(ctx, a0, a1)
 }
 
@@ -94,6 +95,7 @@ func (s testApp_local_stub) Get(ctx context.Context, a0 string, a1 behaviorType)
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.Get(ctx, a0, a1)
 }
 
@@ -114,6 +116,7 @@ func (s testApp_local_stub) IncPointer(ctx context.Context, a0 *int) (r0 *int, e
 		}()
 	}
 
+	ctx = weaver.RoutedLocal(ctx)
 	return s.impl.IncPointer(ctx, a0)
 }
 
@@ -340,7 +343,7 @@ func (s testApp_routed_local_stub) IncPointer(ctx context.Context, a0 *int) (r0 
 // you run "go build" or "go run".
 var _ codegen.LatestVersion = codegen.Version[[0][24]struct{}](`
 
-ERROR: You generated this file with 'weaver generate' v0.0.0-20250906171229-9a5cd00bc035+dirty (codegen
+ERROR: You generated this file with 'weaver generate' v0.0.0-20250918143212-16c227dc1170+dirty (codegen
 version v0.24.0). The generated code is incompatible with the version of the
 github.com/eberkley/weaver module that you're using. The weaver module
 version can be found in your go.mod file or by running the following command.
@@ -405,6 +408,7 @@ func (s testApp_server_stub) divMod(ctx context.Context, args []byte) (res []byt
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, r1, appErr := s.impl.DivMod(ctx, a0, a1)
 
 	// Encode the results.
@@ -435,6 +439,7 @@ func (s testApp_server_stub) get(ctx context.Context, args []byte) (res []byte, 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.Get(ctx, a0, a1)
 
 	// Encode the results.
@@ -462,6 +467,7 @@ func (s testApp_server_stub) incPointer(ctx context.Context, args []byte) (res [
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
 	// Call the local method.
+	ctx = weaver.RoutedRemote(ctx)
 	r0, appErr := s.impl.IncPointer(ctx, a0)
 
 	// Encode the results.
